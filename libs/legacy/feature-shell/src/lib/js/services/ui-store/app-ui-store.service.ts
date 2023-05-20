@@ -21,7 +21,7 @@ import {
 
 import { DuelsStatTypeFilterType } from '@firestone/duels/data-access';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, filter, map, tap } from 'rxjs/operators';
 import { TavernBrawlService } from '../../../libs/tavern-brawl/services/tavern-brawl.service';
 import { TavernBrawlState } from '../../../libs/tavern-brawl/tavern-brawl-state';
 import { BattlegroundsState } from '../../models/battlegrounds/battlegrounds-state';
@@ -471,7 +471,7 @@ export class AppUiStoreService extends Store<Preferences> {
 	}
 
 	private initDuelsHeroStats() {
-		combineLatest(
+		combineLatest([
 			this.duelsRuns$(),
 			this.listen$(
 				([main, nav]) => main.duels.globalStats?.heroes,
@@ -484,9 +484,9 @@ export class AppUiStoreService extends Store<Preferences> {
 				([main, nav, prefs]) => prefs.duelsActiveSignatureTreasureFilter2,
 				([main, nav, prefs]) => main.duels.currentDuelsMetaPatch,
 			),
-		)
+		])
 			.pipe(
-				filter(([duelsRuns, [heroes, other]]) => !!heroes?.length),
+				tap((data) => console.log('[duels-hero-stats] init duels hero stats', data)),
 				map(
 					([
 						runs,
