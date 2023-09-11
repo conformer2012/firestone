@@ -17,7 +17,7 @@ export class AssignCardIdParser implements EventParser {
 		const entityId = gameEvent.additionalData.sourceEntityId;
 		const localPlayer = gameEvent.localPlayer;
 		const controllerId = gameEvent.additionalData.sourceControllerId;
-		const isPlayer = controllerId === localPlayer.PlayerId;
+		const isPlayer = controllerId === localPlayer?.PlayerId;
 		const deck = isPlayer ? currentState.playerDeck : currentState.opponentDeck;
 
 		const newPlayerDeck = this.helper.assignCardIdToEntity(deck, entityId, cardId);
