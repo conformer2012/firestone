@@ -7,11 +7,11 @@ import {
 	EventEmitter,
 	ViewRef,
 } from '@angular/core';
+import { IOption } from '@firestone-hs/ng-select';
 import { DuelsTimeFilterType } from '@firestone/duels/data-access';
 import { TimePeriod } from '@firestone/duels/view';
 import { OverwolfService } from '@firestone/shared/framework/core';
 import { PatchesConfigService } from '@legacy-import/src/lib/js/services/patches-config.service';
-import { IOption } from 'ng-select';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { LocalizationFacadeService } from '../../../../services/localization-facade.service';

@@ -7,12 +7,12 @@ import {
 	Input,
 	Output,
 } from '@angular/core';
+import { IOption } from '@firestone-hs/ng-select';
 import { getBgsTimeFilterLabelFor } from '@firestone/battlegrounds/view';
 import { DuelsTimeFilterType } from '@firestone/duels/data-access';
 import { AbstractSubscriptionComponent, arraysEqual } from '@firestone/shared/framework/common';
 import { ILocalizationService } from '@firestone/shared/framework/core';
-import { IOption } from 'ng-select';
-import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
 import { distinctUntilChanged, filter } from 'rxjs/operators';
 
 @Component({

@@ -6,9 +6,9 @@ import {
 	Component,
 	EventEmitter,
 } from '@angular/core';
+import { IOption } from '@firestone-hs/ng-select';
 import { DuelsTreasureStatTypeFilterType } from '@firestone/duels/data-access';
 import { OverwolfService } from '@firestone/shared/framework/core';
-import { IOption } from 'ng-select';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { LocalizationFacadeService } from '../../../../services/localization-facade.service';

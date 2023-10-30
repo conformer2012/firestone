@@ -7,10 +7,10 @@ import {
 	EventEmitter,
 	ViewRef,
 } from '@angular/core';
+import { IOption } from '@firestone-hs/ng-select';
 import { BnetRegion } from '@firestone-hs/reference-data';
 import { OverwolfService } from '@firestone/shared/framework/core';
 import { MainWindowStoreEvent } from '@services/mainwindow/store/events/main-window-store-event';
-import { IOption } from 'ng-select';
 import { Observable, combineLatest } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { LocalizationFacadeService } from '../../../services/localization-facade.service';

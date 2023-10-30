@@ -6,9 +6,9 @@ import {
 	Component,
 	EventEmitter,
 } from '@angular/core';
+import { IOption } from '@firestone-hs/ng-select';
 import { OverwolfService } from '@firestone/shared/framework/core';
-import { IOption } from 'ng-select';
-import { combineLatest, Observable } from 'rxjs';
+import { Observable, combineLatest } from 'rxjs';
 import { FilterOption } from '../../../models/filter-option';
 import { GenericPreferencesUpdateEvent } from '../../../services/mainwindow/store/events/generic-preferences-update-event';
 import { MainWindowStoreEvent } from '../../../services/mainwindow/store/events/main-window-store-event';

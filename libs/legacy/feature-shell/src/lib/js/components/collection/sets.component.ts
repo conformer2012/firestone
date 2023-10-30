@@ -1,6 +1,6 @@
 import { AfterContentInit, ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { IOption } from '@firestone-hs/ng-select';
 import { StatGameFormatType } from '@firestone/stats/data-access';
-import { IOption } from 'ng-select';
 import { Observable, combineLatest } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { Preferences } from '../../models/preferences';

@@ -8,13 +8,13 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PieChartComponent } from '@components/common/chart/pie-chart.component';
 import { ColiseumComponentsModule } from '@firestone-hs/coliseum-components';
+import { SelectModule } from '@firestone-hs/ng-select';
 import { AllCardsService as RefCards } from '@firestone-hs/reference-data';
 import { NgxChartsModule } from '@sebastientromp/ngx-charts';
+import { VirtualScrollerModule } from '@sebastientromp/ngx-virtual-scroller';
 import { SimpleNotificationsModule } from 'angular2-notifications';
 import { InlineSVGModule } from 'ng-inline-svg-2';
-import { SelectModule } from 'ng-select';
 import { NgChartsModule } from 'ng2-charts';
-import { VirtualScrollerModule } from 'ngx-virtual-scroller';
 import { AchievementCategoryComponent } from './js/components/achievements/achievement-category.component';
 import { AchievementCompletionStepComponent } from './js/components/achievements/achievement-completion-step.component';
 import { AchievementHistoryItemComponent } from './js/components/achievements/achievement-history-item.component';
@@ -1860,14 +1860,6 @@ export function HttpLoaderFactory(http: HttpClient) {
 		// Twitch
 		LocalizationStandaloneService,
 		TwitchPreferencesService,
-	],
-	entryComponents: [
-		ConfirmationComponent,
-		BgsHeroSelectionTooltipComponent,
-		BgsHeroStrategyTipsTooltipComponent,
-		TwitterShareModalComponent,
-		RedditShareModalComponent,
-		BgsOverlayHeroOverviewComponent,
 	],
 	exports: [
 		DaemonComponent,

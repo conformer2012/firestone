@@ -6,9 +6,9 @@ import {
 	Component,
 	EventEmitter,
 } from '@angular/core';
+import { IOption } from '@firestone-hs/ng-select';
 import { OverwolfService } from '@firestone/shared/framework/core';
 import { MainWindowStoreEvent } from '@services/mainwindow/store/events/main-window-store-event';
-import { IOption } from 'ng-select';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { MmrGroupFilterType } from '../../../../models/mainwindow/battlegrounds/mmr-group-filter-type';

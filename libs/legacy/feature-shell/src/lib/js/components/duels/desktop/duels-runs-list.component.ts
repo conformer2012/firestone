@@ -8,7 +8,7 @@ import {
 	ViewChild,
 	ViewRef,
 } from '@angular/core';
-import { VirtualScrollerComponent } from 'ngx-virtual-scroller';
+import { VirtualScrollerComponent } from '@sebastientromp/ngx-virtual-scroller';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
 import { map, takeUntil, tap } from 'rxjs/operators';
 import { DuelsRun } from '../../../models/duels/duels-run';

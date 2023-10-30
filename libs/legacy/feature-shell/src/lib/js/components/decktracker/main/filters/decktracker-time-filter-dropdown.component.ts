@@ -7,13 +7,13 @@ import {
 	EventEmitter,
 	ViewRef,
 } from '@angular/core';
+import { IOption } from '@firestone-hs/ng-select';
 import { OverwolfService } from '@firestone/shared/framework/core';
 import { PatchesConfigService } from '@legacy-import/src/lib/js/services/patches-config.service';
 import { DeckTimeFilterType } from '@models/mainwindow/decktracker/deck-time-filter.type';
 import { ChangeDeckTimeFilterEvent } from '@services/mainwindow/store/events/decktracker/change-deck-time-filter-event';
 import { MainWindowStoreEvent } from '@services/mainwindow/store/events/main-window-store-event';
 import { formatPatch } from '@services/utils';
-import { IOption } from 'ng-select';
 import { Observable, combineLatest } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { LocalizationFacadeService } from '../../../../services/localization-facade.service';

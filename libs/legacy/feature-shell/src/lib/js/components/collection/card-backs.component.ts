@@ -1,5 +1,5 @@
 import { AfterContentInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewRef } from '@angular/core';
-import { IOption } from 'ng-select';
+import { IOption } from '@firestone-hs/ng-select';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
 import { CardBack } from '../../models/card-back';
 import { ShowCardBackDetailsEvent } from '../../services/mainwindow/store/events/collection/show-card-back-details-event';

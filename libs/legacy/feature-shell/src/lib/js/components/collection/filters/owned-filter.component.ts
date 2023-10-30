@@ -1,5 +1,5 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
-import { IOption } from 'ng-select';
+import { IOption } from '@firestone-hs/ng-select';
 import { LocalizationFacadeService } from '../../../services/localization-facade.service';
 
 @Component({

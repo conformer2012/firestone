@@ -7,9 +7,9 @@ import {
 	EventEmitter,
 	ViewRef,
 } from '@angular/core';
+import { IOption } from '@firestone-hs/ng-select';
 import { OverwolfService } from '@firestone/shared/framework/core';
 import { PatchesConfigService } from '@legacy-import/src/lib/js/services/patches-config.service';
-import { IOption } from 'ng-select';
 import { Observable, combineLatest } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ArenaTimeFilterType } from '../../../../models/arena/arena-time-filter.type';

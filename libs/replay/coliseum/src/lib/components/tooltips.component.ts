@@ -51,7 +51,6 @@ export class TooltipComponent {
 @Component({
 	selector: 'tooltips',
 	styleUrls: [`./tooltips.component.scss`],
-	entryComponents: [TooltipComponent],
 	template: ` <div class="tooltips"><ng-template #tooltips></ng-template></div> `,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })

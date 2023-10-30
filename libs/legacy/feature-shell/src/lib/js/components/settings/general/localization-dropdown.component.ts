@@ -1,5 +1,5 @@
 import { AfterContentInit, ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { IOption } from 'ng-select';
+import { IOption } from '@firestone-hs/ng-select';
 import { Observable } from 'rxjs';
 import { LocalizationUpdateEvent } from '../../../services/mainwindow/store/events/localization-update-event';
 import { AppUiStoreFacadeService } from '../../../services/ui-store/app-ui-store-facade.service';

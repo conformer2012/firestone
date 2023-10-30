@@ -8,8 +8,8 @@ import {
 	Input,
 	ViewRef,
 } from '@angular/core';
+import { IOption } from '@firestone-hs/ng-select';
 import { OverwolfService } from '@firestone/shared/framework/core';
-import { IOption } from 'ng-select';
 import { MainWindowStoreEvent } from '../services/mainwindow/store/events/main-window-store-event';
 
 @Component({

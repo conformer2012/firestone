@@ -6,7 +6,7 @@ import {
 	Input,
 	OnDestroy,
 } from '@angular/core';
-import { IOption } from 'ng-select';
+import { IOption } from '@firestone-hs/ng-select';
 import { Observable } from 'rxjs';
 import { BooleanWithLimited } from '../../models/preferences';
 import { LocalizationFacadeService } from '../../services/localization-facade.service';

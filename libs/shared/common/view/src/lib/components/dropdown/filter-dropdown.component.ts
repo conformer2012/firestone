@@ -9,7 +9,7 @@ import {
 	Output,
 	ViewRef,
 } from '@angular/core';
-import { IOption } from 'ng-select';
+import { IOption } from '@firestone-hs/ng-select';
 
 @Component({
 	selector: 'filter-dropdown',

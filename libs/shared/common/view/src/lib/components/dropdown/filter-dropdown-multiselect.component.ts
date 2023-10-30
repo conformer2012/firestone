@@ -11,12 +11,12 @@ import {
 	ViewChild,
 	ViewRef,
 } from '@angular/core';
+import { IOption } from '@firestone-hs/ng-select';
 import {
 	AbstractSubscriptionComponent,
 	arraysEqual,
 	removeFromReadonlyArray,
 } from '@firestone/shared/framework/common';
-import { IOption } from 'ng-select';
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter } from 'rxjs/operators';
 

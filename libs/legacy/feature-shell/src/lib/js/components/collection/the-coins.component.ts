@@ -1,6 +1,6 @@
 import { AfterContentInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewRef } from '@angular/core';
+import { IOption } from '@firestone-hs/ng-select';
 import { CardsFacadeService } from '@firestone/shared/framework/core';
-import { IOption } from 'ng-select';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
 import { Coin } from '../../models/coin';
 import { AppUiStoreFacadeService } from '../../services/ui-store/app-ui-store-facade.service';

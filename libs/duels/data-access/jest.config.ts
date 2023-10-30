@@ -3,15 +3,16 @@ export default {
 	displayName: 'duels-data-access',
 	preset: '../../../jest.preset.js',
 	setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
-	globals: {
-		'ts-jest': {
-			tsconfig: '<rootDir>/tsconfig.spec.json',
-			stringifyContentPathRegex: '\\.(html|svg)$',
-		},
-	},
+	globals: {},
 	coverageDirectory: '../../../coverage/libs/duels/data-access',
 	transform: {
-		'^.+\\.(ts|mjs|js|html)$': 'jest-preset-angular',
+		'^.+\\.(ts|mjs|js|html)$': [
+			'jest-preset-angular',
+			{
+				tsconfig: '<rootDir>/tsconfig.spec.json',
+				stringifyContentPathRegex: '\\.(html|svg)$',
+			},
+		],
 	},
 	transformIgnorePatterns: ['node_modules/(?!.*\\.mjs$)'],
 	snapshotSerializers: [
