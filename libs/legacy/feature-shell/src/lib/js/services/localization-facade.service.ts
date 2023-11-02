@@ -45,6 +45,7 @@ export class LocalizationFacadeService implements ILocalizationService {
 			this.service = await this.windowManager.getGlobalService('localizationService');
 			attempts++;
 		}
+		// console.debug('[debug] localization facade init done', this['uuid'], new Error().stack, this.service);
 	}
 
 	public getCardImage(cardId: string, options?: ImageLocalizationOptions): string {
@@ -76,6 +77,7 @@ export class LocalizationFacadeService implements ILocalizationService {
 	}
 
 	public translateString(key: string, params: any = null): string {
+		// console.debug('[debug] translateString', this['uuid'], this.service);
 		return this.service.translateString(key, params);
 	}
 

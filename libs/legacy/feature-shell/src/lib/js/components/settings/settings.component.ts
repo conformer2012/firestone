@@ -17,44 +17,54 @@ import { LocalizationFacadeService } from '../../services/localization-facade.se
 	selector: 'settings',
 	styleUrls: [`../../../css/component/settings/settings.component.scss`],
 	template: `
-		<ng-container *ngIf="initReady">
-			<window-wrapper [activeTheme]="'general'">
-				<section class="title-bar">
-					<div class="title" [owTranslate]="'settings.title'"></div>
-					<div class="controls">
-						<control-close [windowId]="thisWindowId" [shouldHide]="true"></control-close>
-					</div>
-				</section>
-				<settings-app-selection [selectedApp]="selectedApp" (onAppSelected)="onAppSelected($event)">
-				</settings-app-selection>
-				<ng-container [ngSwitch]="selectedApp">
-					<settings-general *ngSwitchCase="'general'" [selectedMenu]="selectedMenu"></settings-general>
-					<settings-achievements
-						*ngSwitchCase="'achievements'"
-						[selectedMenu]="selectedMenu"
-					></settings-achievements>
-					<settings-collection
-						*ngSwitchCase="'collection'"
-						[selectedMenu]="selectedMenu"
-					></settings-collection>
-					<settings-decktracker
-						*ngSwitchCase="'decktracker'"
-						[selectedMenu]="selectedMenu"
-					></settings-decktracker>
-					<settings-replays *ngSwitchCase="'replays'" [selectedMenu]="selectedMenu"></settings-replays>
-					<settings-battlegrounds
-						*ngSwitchCase="'battlegrounds'"
-						[selectedMenu]="selectedMenu"
-					></settings-battlegrounds>
-					<settings-mercenaries
-						*ngSwitchCase="'mercenaries'"
-						[selectedMenu]="selectedMenu"
-					></settings-mercenaries>
+		<root-renderer>
+			<ng-template>
+				<ng-container *ngIf="initReady">
+					<window-wrapper [activeTheme]="'general'">
+						<section class="title-bar">
+							<div class="title" [owTranslate]="'settings.title'"></div>
+							<div class="controls">
+								<control-close [windowId]="thisWindowId" [shouldHide]="true"></control-close>
+							</div>
+						</section>
+						<settings-app-selection [selectedApp]="selectedApp" (onAppSelected)="onAppSelected($event)">
+						</settings-app-selection>
+						<ng-container [ngSwitch]="selectedApp">
+							<settings-general
+								*ngSwitchCase="'general'"
+								[selectedMenu]="selectedMenu"
+							></settings-general>
+							<settings-achievements
+								*ngSwitchCase="'achievements'"
+								[selectedMenu]="selectedMenu"
+							></settings-achievements>
+							<settings-collection
+								*ngSwitchCase="'collection'"
+								[selectedMenu]="selectedMenu"
+							></settings-collection>
+							<settings-decktracker
+								*ngSwitchCase="'decktracker'"
+								[selectedMenu]="selectedMenu"
+							></settings-decktracker>
+							<settings-replays
+								*ngSwitchCase="'replays'"
+								[selectedMenu]="selectedMenu"
+							></settings-replays>
+							<settings-battlegrounds
+								*ngSwitchCase="'battlegrounds'"
+								[selectedMenu]="selectedMenu"
+							></settings-battlegrounds>
+							<settings-mercenaries
+								*ngSwitchCase="'mercenaries'"
+								[selectedMenu]="selectedMenu"
+							></settings-mercenaries>
+						</ng-container>
+						<settings-advanced-toggle></settings-advanced-toggle>
+						<settings-modal></settings-modal>
+					</window-wrapper>
 				</ng-container>
-				<settings-advanced-toggle></settings-advanced-toggle>
-				<settings-modal></settings-modal>
-			</window-wrapper>
-		</ng-container>
+			</ng-template>
+		</root-renderer>
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })

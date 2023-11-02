@@ -22,35 +22,39 @@ import { AbstractSubscriptionStoreComponent } from '../abstract-subscription-sto
 	],
 	encapsulation: ViewEncapsulation.None, // FIXME: not sure that's needed
 	template: `
-		<window-wrapper [activeTheme]="'battlegrounds'" [allowResize]="true" [avoidGameOverlap]="true">
-			<section class="menu-bar">
-				<div class="first">
-					<div class="navigation">
-						<i class="i-117X33 gold-theme logo">
-							<svg class="svg-icon-fill">
-								<use xlink:href="assets/svg/sprite.svg#logo" />
-							</svg>
-						</i>
-						<menu-selection-bgs></menu-selection-bgs>
-					</div>
-				</div>
-				<hotkey class="exclude-dbclick" [hotkeyName]="'battlegrounds'"></hotkey>
-				<div class="controls exclude-dbclick">
-					<control-bug></control-bug>
-					<control-settings [settingsApp]="'battlegrounds'"></control-settings>
-					<control-discord></control-discord>
-					<control-website></control-website>
-					<control-minimize [windowId]="windowId"></control-minimize>
-					<control-maximize
-						[windowId]="windowId"
-						[doubleClickListenerParentClass]="'menu-bar'"
-						[exludeClassForDoubleClick]="'exclude-dbclick'"
-					></control-maximize>
-					<control-close [windowId]="windowId" [closeAll]="true"></control-close>
-				</div>
-			</section>
-			<battlegrounds-content> </battlegrounds-content>
-		</window-wrapper>
+		<root-renderer>
+			<ng-template>
+				<window-wrapper [activeTheme]="'battlegrounds'" [allowResize]="true" [avoidGameOverlap]="true">
+					<section class="menu-bar">
+						<div class="first">
+							<div class="navigation">
+								<i class="i-117X33 gold-theme logo">
+									<svg class="svg-icon-fill">
+										<use xlink:href="assets/svg/sprite.svg#logo" />
+									</svg>
+								</i>
+								<menu-selection-bgs></menu-selection-bgs>
+							</div>
+						</div>
+						<hotkey class="exclude-dbclick" [hotkeyName]="'battlegrounds'"></hotkey>
+						<div class="controls exclude-dbclick">
+							<control-bug></control-bug>
+							<control-settings [settingsApp]="'battlegrounds'"></control-settings>
+							<control-discord></control-discord>
+							<control-website></control-website>
+							<control-minimize [windowId]="windowId"></control-minimize>
+							<control-maximize
+								[windowId]="windowId"
+								[doubleClickListenerParentClass]="'menu-bar'"
+								[exludeClassForDoubleClick]="'exclude-dbclick'"
+							></control-maximize>
+							<control-close [windowId]="windowId" [closeAll]="true"></control-close>
+						</div>
+					</section>
+					<battlegrounds-content> </battlegrounds-content>
+				</window-wrapper>
+			</ng-template>
+		</root-renderer>
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })

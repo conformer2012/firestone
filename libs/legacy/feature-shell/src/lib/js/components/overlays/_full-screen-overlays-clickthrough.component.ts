@@ -34,24 +34,28 @@ import { AbstractSubscriptionStoreComponent } from '../abstract-subscription-sto
 		'../../../css/component/overlays/full-screen-overlays-clickthrough.component.scss',
 	],
 	template: `
-		<div
-			class="full-screen-overlays-clickthrough drag-boundary overlay-container-parent"
-			[activeTheme]="activeTheme$ | async"
-		>
-			<bgs-hero-selection-widget-wrapper></bgs-hero-selection-widget-wrapper>
-			<bgs-leaderboard-widget-wrapper></bgs-leaderboard-widget-wrapper>
-			<bgs-board-widget-wrapper></bgs-board-widget-wrapper>
+		<root-renderer>
+			<ng-template>
+				<div
+					class="full-screen-overlays-clickthrough drag-boundary overlay-container-parent"
+					[activeTheme]="activeTheme$ | async"
+				>
+					<bgs-hero-selection-widget-wrapper></bgs-hero-selection-widget-wrapper>
+					<bgs-leaderboard-widget-wrapper></bgs-leaderboard-widget-wrapper>
+					<bgs-board-widget-wrapper></bgs-board-widget-wrapper>
 
-			<constructed-board-widget-wrapper></constructed-board-widget-wrapper>
-			<player-hero-power-widget-wrapper></player-hero-power-widget-wrapper>
-			<choosing-card-widget-wrapper></choosing-card-widget-wrapper>
+					<constructed-board-widget-wrapper></constructed-board-widget-wrapper>
+					<player-hero-power-widget-wrapper></player-hero-power-widget-wrapper>
+					<choosing-card-widget-wrapper></choosing-card-widget-wrapper>
 
-			<mercs-treasure-selection-widget-wrapper></mercs-treasure-selection-widget-wrapper>
+					<mercs-treasure-selection-widget-wrapper></mercs-treasure-selection-widget-wrapper>
 
-			<duels-max-life-opponent-widget-wrapper></duels-max-life-opponent-widget-wrapper>
-			<duels-ooc-treasure-selection-widget-wrapper></duels-ooc-treasure-selection-widget-wrapper>
-			<duels-ooc-hero-selection-widget-wrapper></duels-ooc-hero-selection-widget-wrapper>
-		</div>
+					<duels-max-life-opponent-widget-wrapper></duels-max-life-opponent-widget-wrapper>
+					<duels-ooc-treasure-selection-widget-wrapper></duels-ooc-treasure-selection-widget-wrapper>
+					<duels-ooc-hero-selection-widget-wrapper></duels-ooc-hero-selection-widget-wrapper>
+				</div>
+			</ng-template>
+		</root-renderer>
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	encapsulation: ViewEncapsulation.None, // Needed to the cdk overlay styling to work

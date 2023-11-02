@@ -19,91 +19,100 @@ import { LotteryTabType } from './lottery-navigation.component';
 	selector: 'lottery',
 	styleUrls: [`../../../css/themes/general-theme.scss`, '../../../css/component/lottery/lottery.component.scss'],
 	template: `
-		<div class="lottery-container scalable general-theme" *ngIf="{ opacity: opacity$ | async } as value">
-			<div class="background" [style.opacity]="value.opacity"></div>
-			<div class="title-bar" [style.opacity]="value.opacity">
-				<div class="controls">
-					<div
-						class="tracking-indicator"
-						*ngIf="{
-							trackingOngoing: trackingOngoing$ | async
-						} as value"
-						[helpTooltip]="trackingTooltip$ | async"
-						[helpTooltipClasses]="'general-theme'"
-					>
-						<div
-							class="light"
-							[ngClass]="{ tracking: value.trackingOngoing, 'not-tracking': !value.trackingOngoing }"
-						></div>
-					</div>
-					<preference-toggle
-						field="lotteryOverlay"
-						[label]="'app.lottery.overlay-toggle-label' | owTranslate"
-						[helpTooltip]="'app.lottery.overlay-toggle-tooltip' | owTranslate"
-						[helpTooltipClasses]="'general-theme'"
-					></preference-toggle>
-					<div
-						class="control opt-out"
-						inlineSVG="assets/svg/delete.svg"
-						[helpTooltip]="'app.lottery.opt-out-tooltip' | owTranslate"
-						[helpTooltipClasses]="'general-theme'"
-						[helpTooltipWidth]="300"
-						confirmationTooltip
-						[askConfirmation]="true"
-						[confirmationText]="'app.lottery.opt-out-confirmation-text' | owTranslate"
-						[validButtonText]="'app.lottery.opt-out-button-ok' | owTranslate"
-						[cancelButtonText]="'app.lottery.opt-out-button-cancel' | owTranslate"
-						[confirmationPosition]="'right'"
-						(onConfirm)="optOut()"
-					></div>
-					<control-close-simple
-						class="control"
-						(requestClose)="close()"
-						[requestConfirmation]="true"
-						[confirmationText]="closeConfirmationText"
-						[confirmationCancel]="closeConfirmationCancelText"
-						[confirmationOk]="closeConfirmationOkText"
-					></control-close-simple>
-				</div>
-			</div>
-
-			<div class="content-header" [style.opacity]="value.opacity">
-				<lottery-navigation class="navigation"></lottery-navigation>
-				<ng-container *ngIf="selectedModule$ | async as selectedModule">
-					<ng-container *ngIf="selectedModule === 'lottery'">
-						<div class="tab-name lottery">
-							<div class="tab-title">{{ currentModuleName$ | async }}</div>
-							<div class="season-duration" [helpTooltip]="seasonStartDate$ | async">
-								{{ seasonDurationEnd$ | async }}
+		<root-renderer>
+			<ng-template>
+				<div class="lottery-container scalable general-theme" *ngIf="{ opacity: opacity$ | async } as value">
+					<div class="background" [style.opacity]="value.opacity"></div>
+					<div class="title-bar" [style.opacity]="value.opacity">
+						<div class="controls">
+							<div
+								class="tracking-indicator"
+								*ngIf="{
+									trackingOngoing: trackingOngoing$ | async
+								} as value"
+								[helpTooltip]="trackingTooltip$ | async"
+								[helpTooltipClasses]="'general-theme'"
+							>
+								<div
+									class="light"
+									[ngClass]="{
+										tracking: value.trackingOngoing,
+										'not-tracking': !value.trackingOngoing
+									}"
+								></div>
 							</div>
+							<preference-toggle
+								field="lotteryOverlay"
+								[label]="'app.lottery.overlay-toggle-label' | owTranslate"
+								[helpTooltip]="'app.lottery.overlay-toggle-tooltip' | owTranslate"
+								[helpTooltipClasses]="'general-theme'"
+							></preference-toggle>
+							<div
+								class="control opt-out"
+								inlineSVG="assets/svg/delete.svg"
+								[helpTooltip]="'app.lottery.opt-out-tooltip' | owTranslate"
+								[helpTooltipClasses]="'general-theme'"
+								[helpTooltipWidth]="300"
+								confirmationTooltip
+								[askConfirmation]="true"
+								[confirmationText]="'app.lottery.opt-out-confirmation-text' | owTranslate"
+								[validButtonText]="'app.lottery.opt-out-button-ok' | owTranslate"
+								[cancelButtonText]="'app.lottery.opt-out-button-cancel' | owTranslate"
+								[confirmationPosition]="'right'"
+								(onConfirm)="optOut()"
+							></div>
+							<control-close-simple
+								class="control"
+								(requestClose)="close()"
+								[requestConfirmation]="true"
+								[confirmationText]="closeConfirmationText"
+								[confirmationCancel]="closeConfirmationCancelText"
+								[confirmationOk]="closeConfirmationOkText"
+							></control-close-simple>
 						</div>
-						<div
-							*ngIf="selectedModule === 'lottery'"
-							class="control info"
-							inlineSVG="assets/svg/info.svg"
-							[helpTooltip]="'app.lottery.lottery.info-text' | owTranslate"
-							[helpTooltipClasses]="'general-theme'"
-							[helpTooltipWidth]="300"
-						></div>
-					</ng-container>
-					<div class="tab-title" *ngIf="selectedModule !== 'lottery'">{{ currentModuleName$ | async }}</div>
-				</ng-container>
-			</div>
+					</div>
 
-			<div class="content-main" [style.opacity]="value.opacity">
-				<ng-container [ngSwitch]="selectedModule$ | async">
-					<lottery-lottery *ngSwitchCase="'lottery'"></lottery-lottery>
-					<lottery-achievements *ngSwitchCase="'achievements'"></lottery-achievements>
-				</ng-container>
-			</div>
+					<div class="content-header" [style.opacity]="value.opacity">
+						<lottery-navigation class="navigation"></lottery-navigation>
+						<ng-container *ngIf="selectedModule$ | async as selectedModule">
+							<ng-container *ngIf="selectedModule === 'lottery'">
+								<div class="tab-name lottery">
+									<div class="tab-title">{{ currentModuleName$ | async }}</div>
+									<div class="season-duration" [helpTooltip]="seasonStartDate$ | async">
+										{{ seasonDurationEnd$ | async }}
+									</div>
+								</div>
+								<div
+									*ngIf="selectedModule === 'lottery'"
+									class="control info"
+									inlineSVG="assets/svg/info.svg"
+									[helpTooltip]="'app.lottery.lottery.info-text' | owTranslate"
+									[helpTooltipClasses]="'general-theme'"
+									[helpTooltipWidth]="300"
+								></div>
+							</ng-container>
+							<div class="tab-title" *ngIf="selectedModule !== 'lottery'">
+								{{ currentModuleName$ | async }}
+							</div>
+						</ng-container>
+					</div>
 
-			<single-ad
-				class="ad"
-				[adId]="'bottom'"
-				*ngIf="displayAd$ | async"
-				(adVisibility)="onAdVisibilityChanged($event)"
-			></single-ad>
-		</div>
+					<div class="content-main" [style.opacity]="value.opacity">
+						<ng-container [ngSwitch]="selectedModule$ | async">
+							<lottery-lottery *ngSwitchCase="'lottery'"></lottery-lottery>
+							<lottery-achievements *ngSwitchCase="'achievements'"></lottery-achievements>
+						</ng-container>
+					</div>
+
+					<single-ad
+						class="ad"
+						[adId]="'bottom'"
+						*ngIf="displayAd$ | async"
+						(adVisibility)="onAdVisibilityChanged($event)"
+					></single-ad>
+				</div>
+			</ng-template>
+		</root-renderer>
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })

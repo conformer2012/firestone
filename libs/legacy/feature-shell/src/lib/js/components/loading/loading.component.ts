@@ -16,58 +16,62 @@ import { LocalizationFacadeService } from '../../services/localization-facade.se
 	selector: 'loading',
 	styleUrls: [`../../../css/component/loading/loading.component.scss`],
 	template: `
-		<window-wrapper [activeTheme]="'general'">
-			<section class="menu-bar">
-				<i class="i-117X33 gold-theme logo">
-					<svg class="svg-icon-fill">
-						<use xlink:href="assets/svg/sprite.svg#logo" />
-					</svg>
-				</i>
-				<div class="controls">
-					<control-settings></control-settings>
-					<control-discord></control-discord>
-					<control-website></control-website>
-					<button
-						class="i-30 pink-button"
-						(mousedown)="minimizeWindow()"
-						inlineSVG="assets/svg/control_minimize.svg"
-					></button>
-					<button class="i-30 close-button" (mousedown)="closeWindow()">
-						<svg class="svg-icon-fill">
-							<use
-								xmlns:xlink="https://www.w3.org/1999/xlink"
-								xlink:href="assets/svg/sprite.svg#window-control_close"
-							></use>
-						</svg>
-					</button>
-				</div>
-			</section>
-			<section class="content-container">
-				<div class="app-title">
-					<i class="i-35 gold-theme left">
-						<svg class="svg-icon-fill">
-							<use xlink:href="assets/svg/sprite.svg#title_decor" />
-						</svg>
-					</i>
-					<span class="title">{{ title }}</span>
-					<i class="i-35 gold-theme right">
-						<svg class="svg-icon-fill">
-							<use xlink:href="assets/svg/sprite.svg#title_decor" />
-						</svg>
-					</i>
-				</div>
-				<i class="i-54 loading-icon gold-theme" *ngIf="loading">
-					<svg class="svg-icon-fill">
-						<use xlink:href="assets/svg/sprite.svg#loading_spiral" />
-					</svg>
-				</i>
-				<div class="sub-title" *ngIf="!loading">
-					<span [owTranslate]="'loading.hotkey'"></span>
-					<hotkey></hotkey>
-				</div>
-			</section>
-			<single-ad [adId]="'loading'" class="ads"></single-ad>
-		</window-wrapper>
+		<root-renderer>
+			<ng-template>
+				<window-wrapper [activeTheme]="'general'">
+					<section class="menu-bar">
+						<i class="i-117X33 gold-theme logo">
+							<svg class="svg-icon-fill">
+								<use xlink:href="assets/svg/sprite.svg#logo" />
+							</svg>
+						</i>
+						<div class="controls">
+							<control-settings></control-settings>
+							<control-discord></control-discord>
+							<control-website></control-website>
+							<button
+								class="i-30 pink-button"
+								(mousedown)="minimizeWindow()"
+								inlineSVG="assets/svg/control_minimize.svg"
+							></button>
+							<button class="i-30 close-button" (mousedown)="closeWindow()">
+								<svg class="svg-icon-fill">
+									<use
+										xmlns:xlink="https://www.w3.org/1999/xlink"
+										xlink:href="assets/svg/sprite.svg#window-control_close"
+									></use>
+								</svg>
+							</button>
+						</div>
+					</section>
+					<section class="content-container">
+						<div class="app-title">
+							<i class="i-35 gold-theme left">
+								<svg class="svg-icon-fill">
+									<use xlink:href="assets/svg/sprite.svg#title_decor" />
+								</svg>
+							</i>
+							<span class="title">{{ title }}</span>
+							<i class="i-35 gold-theme right">
+								<svg class="svg-icon-fill">
+									<use xlink:href="assets/svg/sprite.svg#title_decor" />
+								</svg>
+							</i>
+						</div>
+						<i class="i-54 loading-icon gold-theme" *ngIf="loading">
+							<svg class="svg-icon-fill">
+								<use xlink:href="assets/svg/sprite.svg#loading_spiral" />
+							</svg>
+						</i>
+						<div class="sub-title" *ngIf="!loading">
+							<span [owTranslate]="'loading.hotkey'"></span>
+							<hotkey></hotkey>
+						</div>
+					</section>
+					<single-ad [adId]="'loading'" class="ads"></single-ad>
+				</window-wrapper>
+			</ng-template>
+		</root-renderer>
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	encapsulation: ViewEncapsulation.None, // TODO: clean this

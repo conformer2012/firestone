@@ -518,6 +518,7 @@ import { OpponentSpellWidgetWrapperComponent } from '@components/overlays/counte
 import { PlayerChaoticTendrilWidgetWrapperComponent } from '@components/overlays/counters/player-chaotic-tendril-widget-wrapper.component';
 import { PlayerExcavateWidgetWrapperComponent } from '@components/overlays/counters/player-excavate-widget-wrapper.component';
 import { PlayerSecretsPlayedWidgetWrapperComponent } from '@components/overlays/counters/player-secrets-played-widget-wrapper.component';
+import { RootRendererComponent } from '@components/root-renderer.component';
 import { PreferenceYNLimitedComponent } from '@components/settings/preference-ynlimited-dropdown.component';
 import { ProfileMatchStatsClassInfoComponent } from '@components/stats/desktop/match-stats/profile-match-stats-class-info.component';
 import { ProfileMatchStatsModeOverviewComponent } from '@components/stats/desktop/match-stats/profile-match-stats-mode-overview.component';
@@ -889,9 +890,9 @@ export function HttpLoaderFactory(http: HttpClient) {
 		VirtualScrollerModule,
 	],
 	declarations: [
-		// Needed for Twitch
 		WindowWrapperComponent,
 		SecondaryDefaultComponent,
+		RootRendererComponent,
 
 		ControlHelpComponent,
 		ControlMinimizeComponent,
@@ -1017,7 +1018,6 @@ export function HttpLoaderFactory(http: HttpClient) {
 		ImportDeckstringComponent,
 		SecretsHelperListComponent,
 
-		WindowWrapperComponent,
 		SecondaryDefaultComponent,
 
 		HotkeyComponent,
