@@ -10,12 +10,7 @@ import {
 	DuelsTreasureStatTypeFilterType,
 } from '@firestone/duels/data-access';
 import { DuelsHeroSortFilterType } from '@firestone/duels/view';
-import {
-	AbstractFacadeService,
-	AppInjector,
-	OverwolfService,
-	WindowManagerService,
-} from '@firestone/shared/framework/core';
+import { AbstractFacadeService, AppInjector, WindowManagerService } from '@firestone/shared/framework/core';
 import { BehaviorSubject, sampleTime } from 'rxjs';
 import { ArenaClassFilterType } from '../models/arena/arena-class-filter.type';
 import { ArenaTimeFilterType } from '../models/arena/arena-time-filter.type';
@@ -50,7 +45,6 @@ export class PreferencesService extends AbstractFacadeService<PreferencesService
 	public preferences$$: BehaviorSubject<Preferences>;
 
 	private storage: GenericStorageService;
-	private ow: OverwolfService;
 
 	constructor(protected override readonly windowManager: WindowManagerService) {
 		super(windowManager, 'preferencesService', () => !!this.preferences$$);
@@ -62,7 +56,6 @@ export class PreferencesService extends AbstractFacadeService<PreferencesService
 
 	protected async init() {
 		this.storage = AppInjector.get(GenericStorageService);
-		this.ow = AppInjector.get(OverwolfService);
 		this.preferences$$ = new BehaviorSubject<Preferences>(this.storage.getUserPreferences());
 
 		this.preferences$$.pipe(sampleTime(1500)).subscribe((prefs) => this.storage.saveUserPreferences(prefs));
