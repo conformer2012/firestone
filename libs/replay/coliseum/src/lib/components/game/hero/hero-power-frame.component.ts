@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 @Component({
-	selector: 'hero-power-frame',
+	selector: 'cl-hero-power-frame',
 	styleUrls: ['./hero-power-frame.component.scss'],
 	template: ` <img src="{{ image }}" class="hero-power-frame" [ngClass]="{ premium: _premium }" /> `,
 	changeDetection: ChangeDetectionStrategy.OnPush,

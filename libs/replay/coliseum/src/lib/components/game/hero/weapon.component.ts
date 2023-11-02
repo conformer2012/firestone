@@ -3,14 +3,14 @@ import { GameTag } from '@firestone-hs/reference-data';
 import { Entity } from '@firestone-hs/replay-parser';
 
 @Component({
-	selector: 'weapon',
+	selector: 'cl-weapon',
 	styleUrls: ['./weapon.component.scss'],
 	template: `
 		<div class="weapon" cardTooltip [tooltipEntity]="_weapon" [attr.data-entity-id]="entityId">
-			<weapon-art [cardId]="cardId" *ngIf="!exhausted"></weapon-art>
-			<weapon-frame [exhausted]="exhausted"></weapon-frame>
-			<weapon-stats [cardId]="cardId" [attack]="attack" [durability]="durability" [damage]="damage">
-			</weapon-stats>
+			<cl-weapon-art [cardId]="cardId" *ngIf="!exhausted"></cl-weapon-art>
+			<cl-weapon-frame [exhausted]="exhausted"></cl-weapon-frame>
+			<cl-weapon-stats [cardId]="cardId" [attack]="attack" [durability]="durability" [damage]="damage">
+			</cl-weapon-stats>
 		</div>
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,

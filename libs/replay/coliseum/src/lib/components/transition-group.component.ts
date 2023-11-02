@@ -3,22 +3,22 @@ import { TransitionGroupItemDirective } from '../directives/transition-group-ite
 
 // https://stackoverflow.com/questions/43928524/how-to-implement-item-reorder-shuffle-animations-with-angulars-ngfor
 @Component({
-	selector: '[transition-group]',
+	selector: '[cl-transition-group]',
 	template: '<ng-content></ng-content>',
 })
 export class TransitionGroupComponent {
-	@Input('transition-group') class;
+	@Input('cl-transition-group') class;
 
 	@ContentChildren(TransitionGroupItemDirective) items: QueryList<TransitionGroupItemDirective>;
 
 	ngAfterViewInit() {
 		setTimeout(() => this.refreshPosition('prevPos'), 0); // save init positions on next 'tick'
 
-		this.items.changes.subscribe(items => {
-			items.forEach(item => (item.prevPos = item.newPos || item.prevPos));
+		this.items.changes.subscribe((items) => {
+			items.forEach((item) => (item.prevPos = item.newPos || item.prevPos));
 			items.forEach(this.runCallback);
 			this.refreshPosition('newPos');
-			items.forEach(item => (item.prevPos = item.prevPos || item.newPos)); // for new items
+			items.forEach((item) => (item.prevPos = item.prevPos || item.newPos)); // for new items
 
 			const animate = () => {
 				items.forEach(this.applyTranslation);
@@ -26,7 +26,7 @@ export class TransitionGroupComponent {
 				this.items.forEach(this.runTransition.bind(this));
 			};
 
-			const willMoveSome = items.some(item => {
+			const willMoveSome = items.some((item) => {
 				const dx = item.prevPos.left - item.newPos.left;
 				const dy = item.prevPos.top - item.newPos.top;
 				return dx || dy;
@@ -76,7 +76,7 @@ export class TransitionGroupComponent {
 
 	refreshPosition(prop: string) {
 		try {
-			this.items.forEach(item => {
+			this.items.forEach((item) => {
 				item[prop] = item.el.getBoundingClientRect();
 			});
 		} catch (e) {

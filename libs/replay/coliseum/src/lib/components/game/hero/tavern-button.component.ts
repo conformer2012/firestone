@@ -3,7 +3,7 @@ import { GameTag } from '@firestone-hs/reference-data';
 import { Entity } from '@firestone-hs/replay-parser';
 
 @Component({
-	selector: 'tavern-button',
+	selector: 'cl-tavern-button',
 	styleUrls: ['./tavern-button.component.scss'],
 	template: `
 		<div *ngIf="_entity" class="tavern-button" [ngClass]="{ highlight: _option }" [attr.data-entity-id]="entityId">
@@ -12,7 +12,7 @@ import { Entity } from '@firestone-hs/replay-parser';
 				class="frame"
 				src="https://static.zerotoheroes.com/hearthstone/asset/coliseum/images/battlegrounds/tavern-button-frame.png"
 			/>
-			<coin-cost [cardId]="cardId" [cost]="cost"></coin-cost>
+			<cl-coin-cost [cardId]="cardId" [cost]="cost"></cl-coin-cost>
 		</div>
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,

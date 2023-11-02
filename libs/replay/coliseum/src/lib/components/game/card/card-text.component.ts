@@ -4,7 +4,7 @@ import { CardType, GameTag } from '@firestone-hs/reference-data';
 import { AllCardsService, Entity } from '@firestone-hs/replay-parser';
 
 @Component({
-	selector: 'card-text',
+	selector: 'cl-card-text',
 	styleUrls: ['../../../text.scss', './card-text.component.scss'],
 	template: `
 		<div class="card-text {{ _cardType }}" [ngClass]="{ premium: premium }" *ngIf="text">

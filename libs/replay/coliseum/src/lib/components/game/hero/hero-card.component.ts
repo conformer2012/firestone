@@ -3,7 +3,7 @@ import { CardType, GameTag } from '@firestone-hs/reference-data';
 import { Entity } from '@firestone-hs/replay-parser';
 
 @Component({
-	selector: 'hero-card',
+	selector: 'cl-hero-card',
 	styleUrls: ['./hero-card.component.scss'],
 	template: `
 		<div
@@ -12,13 +12,13 @@ import { Entity } from '@firestone-hs/replay-parser';
 			[attr.data-entity-id]="entityId"
 			[attr.data-player-entity-id]="playerEntityId"
 		>
-			<hero-art [cardId]="cardId"></hero-art>
-			<hero-frame [premium]="premium"></hero-frame>
-			<hero-overlays [entity]="_entity"></hero-overlays>
-			<secrets [secrets]="_secrets" *ngIf="_secrets && _secrets.length > 0"></secrets>
-			<hero-stats [cardId]="cardId" [attack]="attack" [health]="health" [damage]="damage" [armor]="armor">
-			</hero-stats>
-			<damage *ngIf="shownDamage" [amount]="shownDamage"></damage>
+			<cl-hero-art [cardId]="cardId"></cl-hero-art>
+			<cl-hero-frame [premium]="premium"></cl-hero-frame>
+			<cl-hero-overlays [entity]="_entity"></cl-hero-overlays>
+			<cl-secrets [secrets]="_secrets" *ngIf="_secrets && _secrets.length > 0"></cl-secrets>
+			<cl-hero-stats [cardId]="cardId" [attack]="attack" [health]="health" [damage]="damage" [armor]="armor">
+			</cl-hero-stats>
+			<cl-damage *ngIf="shownDamage" [amount]="shownDamage"></cl-damage>
 		</div>
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,

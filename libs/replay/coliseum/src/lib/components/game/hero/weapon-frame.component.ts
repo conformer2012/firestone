@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 @Component({
-	selector: 'weapon-frame',
+	selector: 'cl-weapon-frame',
 	styleUrls: ['./weapon-frame.component.scss'],
 	template: ` <img src="{{ image }}" class="weapon-frame" /> `,
 	changeDetection: ChangeDetectionStrategy.OnPush,

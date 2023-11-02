@@ -10,22 +10,22 @@ import { GameHelper } from '../../services/game-helper';
 	template: `
 		<div class="play-area" [ngClass]="{ mulligan: _isMulligan }">
 			<hand [entities]="hand" [showCards]="_showCards" [options]="handOptions" [controller]="playerEntity"></hand>
-			<hero
+			<cl-hero
 				[entities]="_entities"
 				[playerId]="_playerId"
 				[opponentId]="opponentId"
 				[options]="_options"
 				[entitiesToAnimate]="entitiesToAnimate"
 			>
-			</hero>
-			<board
+			</cl-hero>
+			<cl-board
 				[entities]="board"
 				[enchantmentCandidates]="enchantmentCandidates"
 				[options]="boardOptions"
 				[isMainPlayer]="isMainPlayer"
 				[isRecruitPhase]="isRecruitPhase"
 			>
-			</board>
+			</cl-board>
 			<mana-tray
 				[total]="totalCrystals"
 				[available]="availableCrystals"

@@ -3,7 +3,7 @@ import { CardClass, CardType, ReferenceCard } from '@firestone-hs/reference-data
 import { AllCardsService } from '@firestone-hs/replay-parser';
 
 @Component({
-	selector: 'card-frame',
+	selector: 'cl-card-frame',
 	styleUrls: ['./card-frame.component.scss'],
 	template: ` <img src="{{ image }}" class="card-frame" /> `,
 	changeDetection: ChangeDetectionStrategy.OnPush,

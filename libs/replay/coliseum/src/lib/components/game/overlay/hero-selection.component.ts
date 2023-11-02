@@ -9,7 +9,8 @@ import { Map } from 'immutable';
 	template: `
 		<div class="hero-selection">
 			<li *ngFor="let entity of mulliganCards; let i = index; trackBy: trackByFn">
-				<hero-card [hero]="entity" [ngClass]="{ picked: _crossed?.indexOf(entity.id) === -1 }"> </hero-card>
+				<cl-hero-card [hero]="entity" [ngClass]="{ picked: _crossed?.indexOf(entity.id) === -1 }">
+				</cl-hero-card>
 			</li>
 		</div>
 	`,

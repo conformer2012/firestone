@@ -15,14 +15,14 @@ import { Map } from 'immutable';
 					[style.top.%]="positionOffsetTop(i)"
 					[style.transform]="transform(i)"
 				>
-					<hero-card [hero]="entity"> </hero-card>
+					<cl-hero-card [hero]="entity"> </cl-hero-card>
 				</li>
 			</ul>
 			<img
 				class="vs"
 				src="https://static.zerotoheroes.com/hearthstone/asset/coliseum/images/battlegrounds/vs_letters.png"
 			/>
-			<hero-card class="player" [hero]="player"> </hero-card>
+			<cl-hero-card class="player" [hero]="player"> </cl-hero-card>
 		</div>
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,

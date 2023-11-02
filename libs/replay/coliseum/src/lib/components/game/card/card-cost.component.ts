@@ -3,7 +3,7 @@ import { CardType } from '@firestone-hs/reference-data';
 import { AllCardsService } from '@firestone-hs/replay-parser';
 
 @Component({
-	selector: 'card-cost',
+	selector: 'cl-card-cost',
 	styleUrls: ['../../../text.scss', './card-cost.component.scss', './card-cost-colors.scss'],
 	template: `
 		<div class="card-cost {{ costClass }} {{ _cardType }}" cardElementResize [fontSizeRatio]="fontSizeRatio">

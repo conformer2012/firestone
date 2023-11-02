@@ -11,7 +11,7 @@ import {
 import { AllCardsService } from '@firestone-hs/replay-parser';
 
 @Component({
-	selector: 'hero-power-cost',
+	selector: 'cl-hero-power-cost',
 	styleUrls: ['../../../text.scss', '../card/card-cost-colors.scss', './hero-power-cost.component.scss'],
 	template: `
 		<div class="hero-power-cost {{ costClass }}" [ngClass]="{ premium: _premium }">

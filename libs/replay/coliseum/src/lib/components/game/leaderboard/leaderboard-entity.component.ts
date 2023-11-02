@@ -18,7 +18,7 @@ import { Entity } from '@firestone-hs/replay-parser';
 				src="https://static.zerotoheroes.com/hearthstone/asset/coliseum/images/skull.png"
 				*ngIf="isDead"
 			/>
-			<tavern-level-icon [level]="tavernLevel"></tavern-level-icon>
+			<cl-tavern-level-icon [level]="tavernLevel"></cl-tavern-level-icon>
 		</div>
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,

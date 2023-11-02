@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 @Component({
-	selector: 'damage',
+	selector: 'cl-damage',
 	styleUrls: ['../../../text.scss', './damage.component.scss'],
 	template: `
 		<div class="damage" cardElementResize [fontSizeRatio]="0.3">

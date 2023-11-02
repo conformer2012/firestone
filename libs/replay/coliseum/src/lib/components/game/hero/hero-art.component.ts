@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 @Component({
-	selector: 'hero-art',
+	selector: 'cl-hero-art',
 	styleUrls: ['./hero-art.component.scss'],
 	template: ` <img src="{{ image }}" class="hero-art" /> `,
 	changeDetection: ChangeDetectionStrategy.OnPush,

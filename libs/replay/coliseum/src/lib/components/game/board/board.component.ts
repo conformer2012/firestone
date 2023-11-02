@@ -3,10 +3,10 @@ import { GameTag } from '@firestone-hs/reference-data';
 import { Entity } from '@firestone-hs/replay-parser';
 
 @Component({
-	selector: 'board',
+	selector: 'cl-board',
 	styleUrls: ['./board.component.scss'],
 	template: `
-		<ul class="board" [transition-group]="'flip-list'">
+		<ul class="board" [cl-transition-group]="'flip-list'">
 			<li *ngFor="let entity of _entities; trackBy: trackByFn">
 				<card-on-board
 					transition-group-item

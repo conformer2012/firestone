@@ -6,36 +6,36 @@ import { GameConfService } from '../../../services/game-conf.service';
 import { GameHelper } from '../../../services/game-helper';
 
 @Component({
-	selector: 'hero',
+	selector: 'cl-hero',
 	styleUrls: ['./hero.component.scss'],
 	template: `
 		<div class="hero">
-			<weapon [weapon]="_weapon" *ngIf="_weapon"></weapon>
-			<hero-card [hero]="_hero" [playerEntity]="playerEntity" [secrets]="_secrets" [option]="isOption(_hero)">
-			</hero-card>
-			<hero-power [heroPower]="_heroPower" [option]="isOption(_heroPower)"></hero-power>
-			<tavern-level-icon *ngIf="tavernLevel > 0" [level]="tavernLevel"></tavern-level-icon>
-			<tavern-button
+			<cl-weapon [weapon]="_weapon" *ngIf="_weapon"></cl-weapon>
+			<cl-hero-card [hero]="_hero" [playerEntity]="playerEntity" [secrets]="_secrets" [option]="isOption(_hero)">
+			</cl-hero-card>
+			<cl-hero-power [heroPower]="_heroPower" [option]="isOption(_heroPower)"></cl-hero-power>
+			<cl-tavern-level-icon *ngIf="tavernLevel > 0" [level]="tavernLevel"></cl-tavern-level-icon>
+			<cl-tavern-button
 				class="tavern-upgrade"
 				*ngIf="tavernUpgradeEntity"
 				[entity]="tavernUpgradeEntity"
 				[option]="isOption(tavernUpgradeEntity)"
 				[shouldAnimate]="shouldAnimate(tavernUpgradeEntity)"
-			></tavern-button>
-			<tavern-button
+			></cl-tavern-button>
+			<cl-tavern-button
 				class="tavern-reroll"
 				*ngIf="tavernRerollEntity"
 				[entity]="tavernRerollEntity"
 				[option]="isOption(tavernRerollEntity)"
 				[shouldAnimate]="shouldAnimate(tavernRerollEntity)"
-			></tavern-button>
-			<tavern-button
+			></cl-tavern-button>
+			<cl-tavern-button
 				class="tavern-freeze"
 				*ngIf="tavernFreezeEntity"
 				[entity]="tavernFreezeEntity"
 				[option]="isOption(tavernFreezeEntity)"
 				[shouldAnimate]="shouldAnimate(tavernFreezeEntity)"
-			></tavern-button>
+			></cl-tavern-button>
 		</div>
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,

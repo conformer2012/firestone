@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input } from '@angular/core';
 
 @Component({
-	selector: 'tavern-level-icon',
+	selector: 'cl-tavern-level-icon',
 	styleUrls: ['./tavern-level-icon.component.scss'],
 	template: `
 		<div class="tavern-level-icon">

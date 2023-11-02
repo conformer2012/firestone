@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { AllCardsService } from '@firestone-hs/replay-parser';
 
 @Component({
-	selector: 'hero-stats',
+	selector: 'cl-hero-stats',
 	styleUrls: ['../../../text.scss', './hero-stats.component.scss'],
 	template: `
 		<div class="hero-stats" *ngIf="hasStats" cardElementResize [fontSizeRatio]="0.15">

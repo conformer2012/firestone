@@ -3,7 +3,7 @@ import { GameTag } from '@firestone-hs/reference-data';
 import { Entity } from '@firestone-hs/replay-parser';
 
 @Component({
-	selector: 'hero-overlays',
+	selector: 'cl-hero-overlays',
 	styleUrls: ['../../../text.scss', './hero-overlays.component.scss'],
 	template: `
 		<div class="hero-overlays" *ngIf="overlays.length > 0">

@@ -3,7 +3,7 @@ import { GameTag } from '@firestone-hs/reference-data';
 import { Entity } from '@firestone-hs/replay-parser';
 
 @Component({
-	selector: 'power-indicator',
+	selector: 'cl-power-indicator',
 	styleUrls: ['../../../text.scss', './power-indicator.component.scss'],
 	template: `
 		<div class="power-indicator {{ effect }}" *ngIf="effect">

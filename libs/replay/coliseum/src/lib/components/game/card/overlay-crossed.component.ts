@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
-	selector: 'overlay-crossed',
+	selector: 'cl-overlay-crossed',
 	styleUrls: ['./overlay-crossed.component.scss'],
 	template: `
 		<img

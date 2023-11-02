@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { AllCardsService, Entity } from '@firestone-hs/replay-parser';
 
 @Component({
-	selector: 'card-enchantment',
+	selector: 'cl-card-enchantment',
 	styleUrls: ['../../../text.scss', './card-enchantment.component.scss'],
 	template: `
 		<div class="card-enchantment" cardElementResize [fontSizeRatio]="0.1">

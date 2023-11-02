@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
-	selector: 'sleeping',
+	selector: 'cl-sleeping',
 	styleUrls: ['../../../text.scss', './sleeping.component.scss'],
 	template: `
 		<div class="sleeping">

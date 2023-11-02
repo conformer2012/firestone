@@ -17,14 +17,16 @@ import { GameConfService } from '../../../services/game-conf.service';
 			[hasTooltip]="_showCard && _hasTooltip"
 			[attr.data-entity-id]="!forbiddenTargetSource && _entity.id"
 		>
-			<card-art [cardId]="cardId" [cardType]="cardType"></card-art>
-			<card-frame [cardId]="cardId" [premium]="premium" *ngIf="cardId"></card-frame>
-			<card-rarity [cardId]="cardId" *ngIf="cardId"></card-rarity>
-			<card-name [cardId]="cardId" *ngIf="cardId"></card-name>
-			<card-text *ngIf="cardId" [entity]="_entity" [controller]="_controller" [cardType]="cardType"> </card-text>
-			<card-race *ngIf="race" [race]="race"> </card-race>
-			<card-cost *ngIf="cardId && !tavernTier" [cardType]="cardType" [cardId]="cardId" [cost]="cost"> </card-cost>
-			<tavern-level-icon *ngIf="tavernTier ?? 0 > 0" [level]="tavernTier"></tavern-level-icon>
+			<cl-card-art [cardId]="cardId" [cardType]="cardType"></cl-card-art>
+			<cl-card-frame [cardId]="cardId" [premium]="premium" *ngIf="cardId"></cl-card-frame>
+			<cl-card-rarity [cardId]="cardId" *ngIf="cardId"></cl-card-rarity>
+			<cl-card-name [cardId]="cardId" *ngIf="cardId"></cl-card-name>
+			<cl-card-text *ngIf="cardId" [entity]="_entity" [controller]="_controller" [cardType]="cardType">
+			</cl-card-text>
+			<cl-card-race *ngIf="race" [race]="race"> </cl-card-race>
+			<cl-card-cost *ngIf="cardId && !tavernTier" [cardType]="cardType" [cardId]="cardId" [cost]="cost">
+			</cl-card-cost>
+			<cl-tavern-level-icon *ngIf="tavernTier ?? 0 > 0" [level]="tavernTier"></cl-tavern-level-icon>
 			<card-stats
 				*ngIf="cardId"
 				[cardId]="cardId"
@@ -35,11 +37,11 @@ import { GameConfService } from '../../../services/game-conf.service';
 				[armor]="armor"
 			>
 			</card-stats>
-			<overlay-crossed *ngIf="_crossed"></overlay-crossed>
-			<overlay-burned *ngIf="_burned"></overlay-burned>
-			<overlay-ticked *ngIf="_ticked"></overlay-ticked>
-			<card-enchantments *ngIf="_enchantments && _enchantments.length > 0" [enchantments]="_enchantments">
-			</card-enchantments>
+			<cl-overlay-crossed *ngIf="_crossed"></cl-overlay-crossed>
+			<cl-overlay-burned *ngIf="_burned"></cl-overlay-burned>
+			<cl-overlay-ticked *ngIf="_ticked"></cl-overlay-ticked>
+			<cl-card-enchantments *ngIf="_enchantments && _enchantments.length > 0" [enchantments]="_enchantments">
+			</cl-card-enchantments>
 		</div>
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,

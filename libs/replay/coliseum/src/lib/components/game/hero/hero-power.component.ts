@@ -4,7 +4,7 @@ import { GameTag } from '@firestone-hs/reference-data';
 import { Entity } from '@firestone-hs/replay-parser';
 
 @Component({
-	selector: 'hero-power',
+	selector: 'cl-hero-power',
 	styleUrls: ['./hero-power.component.scss'],
 	template: `
 		<div
@@ -16,12 +16,12 @@ import { Entity } from '@firestone-hs/replay-parser';
 			[@flipState]="status"
 		>
 			<div class="box-side active" [ngClass]="{ highlight: _option }">
-				<hero-power-art [cardId]="cardId"></hero-power-art>
-				<hero-power-frame [exhausted]="false" [premium]="premium"></hero-power-frame>
-				<hero-power-cost [cardId]="cardId" [cost]="cost"></hero-power-cost>
+				<cl-hero-power-art [cardId]="cardId"></cl-hero-power-art>
+				<cl-hero-power-frame [exhausted]="false" [premium]="premium"></cl-hero-power-frame>
+				<cl-hero-power-cost [cardId]="cardId" [cost]="cost"></cl-hero-power-cost>
 			</div>
 			<div class="box-side exhausted">
-				<hero-power-frame [exhausted]="true" [premium]="premium"></hero-power-frame>
+				<cl-hero-power-frame [exhausted]="true" [premium]="premium"></cl-hero-power-frame>
 			</div>
 		</div>
 	`,

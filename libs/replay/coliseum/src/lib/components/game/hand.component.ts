@@ -5,7 +5,7 @@ import { Entity } from '@firestone-hs/replay-parser';
 	selector: 'hand',
 	styleUrls: ['./hand.component.scss'],
 	template: `
-		<ul class="hand" [transition-group]="'flip-list'">
+		<ul class="hand" [cl-transition-group]="'flip-list'">
 			<li
 				transition-group-item
 				*ngFor="let entity of _entities; let i = index; trackBy: trackByFn"

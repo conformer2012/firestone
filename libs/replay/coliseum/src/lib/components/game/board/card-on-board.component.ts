@@ -18,7 +18,7 @@ import { AllCardsService, Entity } from '@firestone-hs/replay-parser';
 				class="main-card"
 				[ngClass]="{ highlight: _option, 'in-recruit': isRecruitPhase, 'main-player': isMainPlayer }"
 			>
-				<card-art [cardId]="cardId" [cardType]="cardType"></card-art>
+				<cl-card-art [cardId]="cardId" [cardType]="cardType"></cl-card-art>
 				<board-card-frame [taunt]="taunt" [hideStats]="hideStats" [premium]="premium" [cardType]="cardType">
 				</board-card-frame>
 				<board-card-stats
@@ -31,14 +31,14 @@ import { AllCardsService, Entity } from '@firestone-hs/replay-parser';
 				>
 				</board-card-stats>
 			</div>
-			<damage *ngIf="shownDamage" [amount]="shownDamage"></damage>
-			<sleeping *ngIf="sleeping"></sleeping>
-			<power-indicator [entity]="_entity"></power-indicator>
-			<card-on-board-overlays [entity]="_entity"></card-on-board-overlays>
-			<tavern-level-icon
+			<cl-damage *ngIf="shownDamage" [amount]="shownDamage"></cl-damage>
+			<cl-sleeping *ngIf="sleeping"></cl-sleeping>
+			<cl-power-indicator [entity]="_entity"></cl-power-indicator>
+			<cl-card-on-board-overlays [entity]="_entity"></cl-card-on-board-overlays>
+			<cl-tavern-level-icon
 				*ngIf="!isMainPlayer && tavernTier > 0 && isRecruitPhase"
 				[level]="tavernTier"
-			></tavern-level-icon>
+			></cl-tavern-level-icon>
 		</div>
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
