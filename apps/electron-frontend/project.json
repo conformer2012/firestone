@@ -1,0 +1,117 @@
+{
+	"name": "electron-frontend",
+	"$schema": "../../node_modules/nx/schemas/project-schema.json",
+	"projectType": "application",
+	"sourceRoot": "apps/electron-frontend/src",
+	"prefix": "electron-frontend",
+	"targets": {
+		"build": {
+			"executor": "@angular-devkit/build-angular:browser",
+			"outputs": ["{options.outputPath}"],
+			"options": {
+				"outputPath": "dist/apps/electron-frontend",
+				"index": "apps/electron-frontend/src/index.html",
+				"main": "apps/electron-frontend/src/main.ts",
+				"polyfills": ["zone.js", "apps/electron-frontend/src/polyfills.ts"],
+				"tsConfig": "apps/electron-frontend/tsconfig.app.json",
+				"inlineStyleLanguage": "scss",
+				"assets": [
+					{
+						"glob": "**/*",
+						"input": "libs/shared/assets/src/assets",
+						"output": "./assets"
+					},
+					{
+						"glob": "**/*",
+						"input": "dependencies",
+						"output": "./"
+					}
+				],
+				"sourceMap": {
+					"scripts": true,
+					"styles": true,
+					"vendor": true
+				},
+				"styles": ["apps/electron-frontend/src/styles.scss"],
+				"scripts": [],
+				"webWorkerTsConfig": "apps/electron-frontend/tsconfig.worker.json",
+				"allowedCommonJsDependencies": [
+					"@firestone-hs/build-global-stats/dist/stats-builder",
+					"@firestone-hs/hs-replay-xml-parser/dist/public-api",
+					"@firestone-hs/hs-replay-xml-parser/dist/lib/model/bgs-face-off",
+					"@firestone-hs/reference-data",
+					"@firestone-hs/simulate-bgs-battle",
+					"@tweenjs/tween.js",
+					"bezier-easing",
+					"deep-equal",
+					"deepmerge",
+					"jszip",
+					"localforage",
+					"pako"
+				]
+			},
+			"configurations": {
+				"production": {
+					"budgets": [
+						{
+							"type": "initial",
+							"maximumWarning": "500kb",
+							"maximumError": "20mb"
+						},
+						{
+							"type": "anyComponentStyle",
+							"maximumWarning": "2kb",
+							"maximumError": "20mb"
+						}
+					],
+					"outputHashing": "all"
+				},
+				"development": {
+					"buildOptimizer": false,
+					"optimization": false,
+					"vendorChunk": true,
+					"extractLicenses": false,
+					"namedChunks": true
+				}
+			},
+			"defaultConfiguration": "development"
+		},
+		"serve": {
+			"executor": "@angular-devkit/build-angular:dev-server",
+			"configurations": {
+				"production": {
+					"browserTarget": "electron-frontend:build:production"
+				},
+				"development": {
+					"browserTarget": "electron-frontend:build:development"
+				}
+			},
+			"defaultConfiguration": "development",
+			"options": {
+				"proxyConfig": "apps/electron-frontend/proxy.conf.json"
+			}
+		},
+		"extract-i18n": {
+			"executor": "@angular-devkit/build-angular:extract-i18n",
+			"options": {
+				"browserTarget": "electron-frontend:build"
+			}
+		},
+		"lint": {
+			"executor": "@nx/eslint:lint",
+			"options": {
+				"lintFilePatterns": ["apps/electron-frontend/**/*.ts", "apps/electron-frontend/**/*.html"]
+			}
+		},
+		"test": {
+			"executor": "@nx/jest:jest",
+			"outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+			"options": {
+				"jestConfig": "apps/electron-frontend/jest.config.ts",
+				"passWithNoTests": true,
+				"webWorkerTsConfig": "apps/electron-frontend/tsconfig.worker.json"
+			}
+		}
+	},
+	"tags": []
+}

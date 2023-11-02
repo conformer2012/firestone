@@ -1,8 +1,8 @@
-import { BrowserWindow, shell, screen } from 'electron';
-import { rendererAppName, rendererAppPort } from './constants';
-import { environment } from '../environments/environment';
+import { BrowserWindow, screen, shell } from 'electron';
 import { join } from 'path';
 import { format } from 'url';
+import { environment } from '../environments/environment';
+import { rendererAppName, rendererAppPort } from './constants';
 
 export default class App {
 	// Keep a global reference of the window object, if you don't, the window will
@@ -73,12 +73,12 @@ export default class App {
 				preload: join(__dirname, 'main.preload.js'),
 			},
 		});
-		App.mainWindow.setMenu(null);
-		App.mainWindow.center();
+		// App.mainWindow.setMenu(null);
+		// App.mainWindow.center();
 
 		// if main window is ready to show, close the splash window and show the main window
 		App.mainWindow.once('ready-to-show', () => {
-			App.mainWindow.show();
+			// App.mainWindow.show();
 		});
 
 		// handle all external redirects in a new browser window
@@ -94,6 +94,8 @@ export default class App {
 			// when you should delete the corresponding element.
 			App.mainWindow = null;
 		});
+
+		App.mainWindow.webContents.openDevTools({ mode: 'detach' });
 	}
 
 	private static loadMainWindow() {
