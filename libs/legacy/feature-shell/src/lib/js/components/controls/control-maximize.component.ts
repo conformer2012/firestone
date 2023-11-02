@@ -10,7 +10,7 @@ import {
 	OnDestroy,
 	ViewRef,
 } from '@angular/core';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { MainWindowStoreEvent } from '../../services/mainwindow/store/events/main-window-store-event';
 
 @Component({
@@ -48,10 +48,16 @@ export class ControlMaximizeComponent implements AfterViewInit, OnDestroy {
 	private stateUpdater: EventEmitter<MainWindowStoreEvent>;
 	private stateChangedListener: (message: any) => void;
 
-	constructor(private ow: OverwolfService, private el: ElementRef, private cdr: ChangeDetectorRef) {}
+	constructor(
+		private ow: OverwolfService,
+		private el: ElementRef,
+		private cdr: ChangeDetectorRef,
+		private readonly windowManager: WindowManagerService,
+	) {}
 
 	async ngAfterViewInit() {
-		this.stateUpdater = this.ow.getMainWindow().mainWindowStoreUpdater;
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.stateUpdater = mainWindow.mainWindowStoreUpdater;
 
 		const currentWindow = await this.ow.getCurrentWindow();
 		const windowName = currentWindow.name;

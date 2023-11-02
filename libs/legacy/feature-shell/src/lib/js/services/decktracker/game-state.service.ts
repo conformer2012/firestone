@@ -1,6 +1,6 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { GameTag } from '@firestone-hs/reference-data';
-import { CardsFacadeService, OverwolfService } from '@firestone/shared/framework/core';
+import { CardsFacadeService, WindowManagerService } from '@firestone/shared/framework/core';
 import { AttackParser } from '@legacy-import/src/lib/js/services/decktracker/event-parser/attack-parser';
 import { CustomEffects2Parser } from '@legacy-import/src/lib/js/services/decktracker/event-parser/custom-effects-2-parser';
 import { AttackOnBoardService, hasTag } from '@services/decktracker/attack-on-board.service';
@@ -173,7 +173,6 @@ export class GameStateService {
 		private prefs: PreferencesService,
 		private twitch: TwitchAuthService,
 		private deckCardService: DeckCardService,
-		private ow: OverwolfService,
 		private deckParser: DeckParserService,
 		private helper: DeckManipulationHelper,
 		private aiDecks: AiDeckService,
@@ -185,6 +184,7 @@ export class GameStateService {
 		private readonly owUtils: OwUtilsService,
 		private readonly attackOnBoardService: AttackOnBoardService,
 		private readonly duelsRunService: DuelsDecksProviderService,
+		private readonly windowManager: WindowManagerService,
 	) {
 		this.init();
 	}
@@ -192,10 +192,6 @@ export class GameStateService {
 	private async init() {
 		window['deckEventBus'] = this.deckEventBus;
 		window['deckUpdater'] = this.deckUpdater;
-		if (!this.ow) {
-			console.warn('[game-state] Could not find OW service');
-			return;
-		}
 
 		this.eventParsers = this.buildEventParsers();
 		this.registerGameEvents();
@@ -217,7 +213,8 @@ export class GameStateService {
 		this.deckUpdater.subscribe((event: GameEvent | GameStateEvent) => {
 			this.processingQueue.enqueue(event);
 		});
-		const decktrackerDisplayEventBus: BehaviorSubject<boolean> = this.ow.getMainWindow().decktrackerDisplayEventBus;
+		const decktrackerDisplayEventBus: BehaviorSubject<boolean> = (await this.windowManager.getMainWindow())
+			.decktrackerDisplayEventBus;
 		decktrackerDisplayEventBus.subscribe((event) => {
 			if (this.showDecktrackerFromGameMode === event) {
 				return;

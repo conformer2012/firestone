@@ -8,7 +8,7 @@ import {
 	ViewRef,
 } from '@angular/core';
 import { SceneMode } from '@firestone-hs/reference-data';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
 import { PreferencesService } from '../../m../../services/preferences.service';
 import { Preferences } from '../../models/preferences';
@@ -62,6 +62,7 @@ export class DecktrackerOpponentWidgetWrapperComponent
 		protected readonly store: AppUiStoreFacadeService,
 		protected readonly cdr: ChangeDetectorRef,
 		private readonly scene: SceneService,
+		private readonly windowManager: WindowManagerService,
 	) {
 		super(ow, el, prefs, renderer, store, cdr);
 	}
@@ -69,7 +70,8 @@ export class DecktrackerOpponentWidgetWrapperComponent
 	async ngAfterContentInit() {
 		await this.scene.isReady();
 
-		const displayFromGameModeSubject: BehaviorSubject<boolean> = this.ow.getMainWindow().decktrackerDisplayEventBus;
+		const mainWindow = await this.windowManager.getMainWindow();
+		const displayFromGameModeSubject: BehaviorSubject<boolean> = mainWindow.decktrackerDisplayEventBus;
 		const displayFromGameMode$ = displayFromGameModeSubject.asObservable();
 		this.showWidget$ = combineLatest([
 			this.scene.currentScene$$,

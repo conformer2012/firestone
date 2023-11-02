@@ -1,6 +1,6 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { generateToken } from '@components/third-party/out-of-cards-callback.component';
-import { ApiRunner, OverwolfService } from '@firestone/shared/framework/core';
+import { ApiRunner, OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { GameStatusService } from '@legacy-import/src/lib/js/services/game-status.service';
 import { FORCE_LOCAL_PROP, Preferences } from '../../js/models/preferences';
 import { FirestoneAchievementsChallengeService } from '../../js/services/achievement/firestone-achievements-challenges.service';
@@ -39,6 +39,7 @@ export class AppStartupService {
 		private readonly localizationService: LocalizationFacadeService,
 		private readonly notifs: OwNotificationsService,
 		private readonly api: ApiRunner,
+		private readonly windowManager: WindowManagerService,
 	) {}
 
 	public async init() {
@@ -131,7 +132,7 @@ export class AppStartupService {
 			}
 		});
 
-		this.stateUpdater = this.ow.getMainWindow().mainWindowStoreUpdater;
+		this.stateUpdater = (await this.windowManager.getMainWindow()).mainWindowStoreUpdater;
 		const settingsWindow = await this.ow.getSettingsWindow(prefs);
 		await this.ow.hideWindow(settingsWindow.id);
 		setTimeout(() => this.addAnalytics());

@@ -1,6 +1,6 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input } from '@angular/core';
 import { isPassive } from '@firestone-hs/reference-data';
-import { CardsFacadeService, OverwolfService } from '@firestone/shared/framework/core';
+import { CardsFacadeService, WindowManagerService } from '@firestone/shared/framework/core';
 import { DuelsDeckStat } from '../../../models/duels/duels-player-stats';
 import { LocalizationFacadeService } from '../../../services/localization-facade.service';
 import { DuelsViewDeckDetailsEvent } from '../../../services/mainwindow/store/events/duels/duels-view-deck-details-event';
@@ -165,13 +165,14 @@ export class DuelsDeckStatVignetteComponent implements AfterViewInit {
 	private stateUpdater: EventEmitter<MainWindowStoreEvent>;
 
 	constructor(
-		private readonly ow: OverwolfService,
 		private readonly allCards: CardsFacadeService,
 		private readonly i18n: LocalizationFacadeService,
+		private readonly windowManager: WindowManagerService,
 	) {}
 
-	ngAfterViewInit() {
-		this.stateUpdater = this.ow.getMainWindow().mainWindowStoreUpdater;
+	async ngAfterViewInit() {
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.stateUpdater = mainWindow.mainWindowStoreUpdater;
 	}
 
 	viewDetails() {

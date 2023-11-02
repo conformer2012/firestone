@@ -9,7 +9,7 @@ import {
 	ViewEncapsulation,
 	ViewRef,
 } from '@angular/core';
-import { AnalyticsService, OverwolfService } from '@firestone/shared/framework/core';
+import { AnalyticsService, OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { BehaviorSubject, Observable, combineLatest, startWith } from 'rxjs';
 import { CurrentAppType } from '../models/mainwindow/current-app.type';
 import { DebugService } from '../services/debug.service';
@@ -136,6 +136,7 @@ export class MainWindowComponent
 		private readonly hotkeyService: HotkeyService,
 		private readonly preferencesService: PreferencesService,
 		private readonly analytics: AnalyticsService,
+		private readonly windowManager: WindowManagerService,
 	) {
 		super(store, cdr);
 	}
@@ -211,7 +212,8 @@ export class MainWindowComponent
 
 		this.hotkey = await this.ow.getHotKey('collection');
 		this.hotkeyText = await this.hotkeyService.getHotkeyCombination('collection');
-		this.hotkeyPressedHandler = this.ow.getMainWindow().mainWindowHotkeyPressed;
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.hotkeyPressedHandler = mainWindow.mainWindowHotkeyPressed;
 		// Only needed for the hotkey
 		if (!(this.cdr as ViewRef)?.destroyed) {
 			this.cdr.detectChanges();

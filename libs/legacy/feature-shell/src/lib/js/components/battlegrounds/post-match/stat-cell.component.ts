@@ -1,5 +1,5 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input } from '@angular/core';
-import { CardsFacadeService, OverwolfService } from '@firestone/shared/framework/core';
+import { CardsFacadeService, WindowManagerService } from '@firestone/shared/framework/core';
 import { LocalizationFacadeService } from '../../../services/localization-facade.service';
 import { MainWindowStoreEvent } from '../../../services/mainwindow/store/events/main-window-store-event';
 import { ShowReplayEvent } from '../../../services/mainwindow/store/events/replays/show-replay-event';
@@ -24,7 +24,7 @@ import { ShowReplayEvent } from '../../../services/mainwindow/store/events/repla
 					*ngIf="_heroCardId"
 					[helpTooltip]="
 						'app.battlegrounds.personal-stats.records.rows.best-stat-hero'
-							| owTranslate: { heroName: getCardName(_heroCardId) }
+							| owTranslate : { heroName: getCardName(_heroCardId) }
 					"
 					[src]="heroImage"
 					class="portrait"
@@ -33,7 +33,7 @@ import { ShowReplayEvent } from '../../../services/mainwindow/store/events/repla
 					*ngIf="heroIcon"
 					[helpTooltip]="
 						'app.battlegrounds.personal-stats.records.rows.best-stat-hero'
-							| owTranslate: { heroName: getCardName(heroIcon) }
+							| owTranslate : { heroName: getCardName(heroIcon) }
 					"
 					[src]="'https://static.zerotoheroes.com/hearthstone/cardart/256x/' + heroIcon + '.jpg'"
 					class="portrait"
@@ -75,13 +75,14 @@ export class StatCellComponent implements AfterViewInit {
 	private stateUpdater: EventEmitter<MainWindowStoreEvent>;
 
 	constructor(
-		private readonly ow: OverwolfService,
 		private readonly cards: CardsFacadeService,
 		private readonly i18n: LocalizationFacadeService,
+		private readonly windowManager: WindowManagerService,
 	) {}
 
-	ngAfterViewInit() {
-		this.stateUpdater = this.ow.getMainWindow().mainWindowStoreUpdater;
+	async ngAfterViewInit() {
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.stateUpdater = mainWindow.mainWindowStoreUpdater;
 	}
 
 	showReplay() {

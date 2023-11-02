@@ -6,7 +6,7 @@ import {
 	Component,
 	EventEmitter,
 } from '@angular/core';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { WindowManagerService } from '@firestone/shared/framework/core';
 import { Observable } from 'rxjs';
 import { DuelsCategory } from '../../../models/mainwindow/duels/duels-category';
 import { DuelsCategoryType } from '../../../models/mainwindow/duels/duels-category.type';
@@ -89,9 +89,9 @@ export class DuelsDesktopComponent
 	private stateUpdater: EventEmitter<MainWindowStoreEvent>;
 
 	constructor(
-		private readonly ow: OverwolfService,
 		protected readonly store: AppUiStoreFacadeService,
 		protected readonly cdr: ChangeDetectorRef,
+		private readonly windowManager: WindowManagerService,
 	) {
 		super(store, cdr);
 	}
@@ -115,8 +115,9 @@ export class DuelsDesktopComponent
 		this.showAds$ = this.store.showAds$().pipe(this.mapData((info) => info));
 	}
 
-	ngAfterViewInit() {
-		this.stateUpdater = this.ow.getMainWindow().mainWindowStoreUpdater;
+	async ngAfterViewInit() {
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.stateUpdater = mainWindow.mainWindowStoreUpdater;
 	}
 
 	selectCategory(categoryId: DuelsCategoryType) {

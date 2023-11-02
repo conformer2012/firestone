@@ -8,7 +8,7 @@ import {
 	ViewRef,
 } from '@angular/core';
 import { ReferenceCard } from '@firestone-hs/reference-data';
-import { CardsFacadeService, OverwolfService } from '@firestone/shared/framework/core';
+import { CardsFacadeService, WindowManagerService } from '@firestone/shared/framework/core';
 import { MercenariesReferenceDataService } from '@legacy-import/src/lib/js/services/mercenaries/mercenaries-reference-data.service';
 import { Observable, combineLatest } from 'rxjs';
 import { MercenariesSynergiesHighlightService } from '../../../../services/mercenaries/highlights/mercenaries-synergies-highlight.service';
@@ -44,9 +44,9 @@ export class MercenariesOutOfCombatTreasureSelectionComponent
 	constructor(
 		protected readonly store: AppUiStoreFacadeService,
 		protected readonly cdr: ChangeDetectorRef,
-		private readonly ow: OverwolfService,
 		private readonly allCards: CardsFacadeService,
 		private readonly mercenariesReferenceData: MercenariesReferenceDataService,
+		private readonly windowManager: WindowManagerService,
 	) {
 		super(store, cdr);
 	}
@@ -77,7 +77,8 @@ export class MercenariesOutOfCombatTreasureSelectionComponent
 	}
 
 	async ngAfterViewInit() {
-		this.highlightService = this.ow.getMainWindow().mercenariesSynergiesHighlightService;
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.highlightService = mainWindow.mercenariesSynergiesHighlightService;
 	}
 
 	@HostListener('mouseenter')

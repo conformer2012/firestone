@@ -1,7 +1,6 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input } from '@angular/core';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { GameEvent } from '../../models/game-event';
-import { PreferencesService } from '../../services/preferences.service';
 
 @Component({
 	selector: 'secrets-helper-widget-icon',
@@ -21,16 +20,14 @@ export class SecretsHelperWidgetIconComponent implements AfterViewInit {
 	@Input() active: boolean;
 	big: boolean;
 
-	private windowId: string;
 	private deckUpdater: EventEmitter<GameEvent>;
-	private draggingTimeout;
 	private isDragging: boolean;
 
-	constructor(private prefs: PreferencesService, private ow: OverwolfService) {}
+	constructor(private ow: OverwolfService, private readonly windowManager: WindowManagerService) {}
 
 	async ngAfterViewInit() {
-		this.deckUpdater = this.ow.getMainWindow().deckUpdater;
-		this.windowId = (await this.ow.getCurrentWindow()).id;
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.deckUpdater = mainWindow.deckUpdater;
 	}
 
 	toggleSecretsHelper(event: MouseEvent) {

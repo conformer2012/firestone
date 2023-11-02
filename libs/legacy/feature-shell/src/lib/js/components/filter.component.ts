@@ -9,7 +9,7 @@ import {
 	ViewRef,
 } from '@angular/core';
 import { IOption } from '@firestone-hs/ng-select';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { MainWindowStoreEvent } from '../services/mainwindow/store/events/main-window-store-event';
 
 @Component({
@@ -49,10 +49,16 @@ export class FilterComponent implements AfterViewInit {
 
 	private stateUpdater: EventEmitter<MainWindowStoreEvent>;
 
-	constructor(private ow: OverwolfService, private el: ElementRef, private cdr: ChangeDetectorRef) {}
+	constructor(
+		private ow: OverwolfService,
+		private el: ElementRef,
+		private cdr: ChangeDetectorRef,
+		private readonly windowManager: WindowManagerService,
+	) {}
 
-	ngAfterViewInit() {
-		this.stateUpdater = this.ow.getMainWindow().mainWindowStoreUpdater;
+	async ngAfterViewInit() {
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.stateUpdater = mainWindow.mainWindowStoreUpdater;
 		const singleEls: HTMLElement[] = this.el.nativeElement.querySelectorAll('.single');
 		singleEls.forEach((singleEl) => {
 			const caretEl = singleEl.appendChild(document.createElement('i'));

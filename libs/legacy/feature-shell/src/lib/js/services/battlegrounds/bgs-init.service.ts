@@ -1,22 +1,16 @@
-import { EventEmitter, Injectable } from '@angular/core';
-import { ApiRunner, DiskCacheService, OverwolfService } from '@firestone/shared/framework/core';
+import { Injectable } from '@angular/core';
+import { ApiRunner, DiskCacheService } from '@firestone/shared/framework/core';
 import { GameStat } from '@firestone/stats/data-access';
-import { LocalizationFacadeService } from '@services/localization-facade.service';
 import { BattlegroundsPerfectGamesLoadedEvent } from '../mainwindow/store/events/battlegrounds/bgs-perfect-games-loaded-event';
 import { GameStatsLoaderService } from '../stats/game/game-stats-loader.service';
 import { AppUiStoreFacadeService } from '../ui-store/app-ui-store-facade.service';
-import { BattlegroundsStoreEvent } from './store/events/_battlegrounds-store-event';
 
 const RETRIEVE_PERFECT_GAMES_ENDPOINT = 'https://static.zerotoheroes.com/api/bgs-perfect-games.json';
 
 @Injectable()
 export class BgsInitService {
-	private bgsStateUpdater: EventEmitter<BattlegroundsStoreEvent>;
-
 	constructor(
-		private readonly ow: OverwolfService,
 		private readonly api: ApiRunner,
-		private readonly i18n: LocalizationFacadeService,
 		private readonly diskCache: DiskCacheService,
 		private readonly store: AppUiStoreFacadeService,
 		private readonly gameStats: GameStatsLoaderService,
@@ -26,9 +20,6 @@ export class BgsInitService {
 
 	private async init() {
 		await this.gameStats.isReady();
-		setTimeout(() => {
-			this.bgsStateUpdater = this.ow.getMainWindow().battlegroundsUpdater;
-		});
 	}
 
 	public async loadInitialPerfectGames() {

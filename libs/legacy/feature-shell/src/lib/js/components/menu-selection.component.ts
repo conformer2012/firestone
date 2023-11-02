@@ -9,7 +9,7 @@ import {
 	ViewEncapsulation,
 	ViewRef,
 } from '@angular/core';
-import { AnalyticsService, OverwolfService } from '@firestone/shared/framework/core';
+import { AnalyticsService, OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { Observable, combineLatest } from 'rxjs';
 import { CurrentAppType } from '../models/mainwindow/current-app.type';
 import { LocalizationFacadeService } from '../services/localization-facade.service';
@@ -274,6 +274,7 @@ export class MenuSelectionComponent
 		private readonly i18n: LocalizationFacadeService,
 		private readonly analytics: AnalyticsService,
 		private readonly userService: UserService,
+		private readonly windowManager: WindowManagerService,
 	) {
 		super(store, cdr);
 	}
@@ -308,7 +309,8 @@ export class MenuSelectionComponent
 	}
 
 	async ngAfterViewInit() {
-		this.stateUpdater = this.ow.getMainWindow().mainWindowStoreUpdater;
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.stateUpdater = mainWindow.mainWindowStoreUpdater;
 	}
 
 	selectModule(module: CurrentAppType) {

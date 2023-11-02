@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AllCardsService, CardType, ReferenceCard } from '@firestone-hs/reference-data';
 import { sleep } from '@firestone/shared/framework/common';
-import { OverwolfService } from './overwolf.service';
+import { WindowManagerService } from './window-manager.service';
 
 @Injectable()
 export class CardsFacadeService {
@@ -9,7 +9,7 @@ export class CardsFacadeService {
 
 	private allAnomalies: readonly ReferenceCard[];
 
-	constructor(private readonly ow: OverwolfService) {
+	constructor(private readonly windowManager: WindowManagerService) {
 		this.init();
 	}
 
@@ -34,13 +34,13 @@ export class CardsFacadeService {
 		// eslint-disable-next-line no-async-promise-executor
 		return new Promise<void>(async (resolve, reject) => {
 			let retriesLeft = 150;
-			this.service = this.ow?.getMainWindow()?.cards;
-			while (!this.service && this.ow && retriesLeft >= 0) {
+			this.service = (await this.windowManager.getMainWindow())?.cards;
+			while (!this.service && retriesLeft >= 0) {
 				await sleep(500);
-				this.service = this.ow?.getMainWindow()?.cards;
+				this.service = (await this.windowManager.getMainWindow())?.cards;
 				retriesLeft--;
 			}
-			if (!this.service && this.ow) {
+			if (!this.service) {
 				console.error('[cards] cards service should have been initialized', new Error().stack);
 				reject();
 			} else {

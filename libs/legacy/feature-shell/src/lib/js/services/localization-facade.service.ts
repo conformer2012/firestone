@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { sleep } from '@firestone/shared/framework/common';
-import { ILocalizationService, ImageLocalizationOptions, OverwolfService } from '@firestone/shared/framework/core';
+import { ILocalizationService, ImageLocalizationOptions, WindowManagerService } from '@firestone/shared/framework/core';
 import { TranslateService } from '@ngx-translate/core';
 import { LocalizationService } from './localization.service';
 
@@ -8,7 +8,7 @@ import { LocalizationService } from './localization.service';
 export class LocalizationFacadeService implements ILocalizationService {
 	private service: LocalizationService;
 
-	constructor(private readonly ow: OverwolfService) {
+	constructor(private readonly windowManager: WindowManagerService) {
 		this.init();
 	}
 
@@ -29,13 +29,14 @@ export class LocalizationFacadeService implements ILocalizationService {
 			return;
 		}
 
-		this.service = this.ow.getMainWindow().localizationService;
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.service = mainWindow.localizationService;
 		while (!this.service) {
 			if (attempts > 0 && attempts % 50 === 0) {
 				console.warn('localization init failed, retrying');
 			}
 			await sleep(200);
-			this.service = this.ow.getMainWindow().localizationService;
+			this.service = mainWindow.localizationService;
 			attempts++;
 		}
 	}

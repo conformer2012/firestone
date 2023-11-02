@@ -10,14 +10,18 @@ export class WindowManagerService {
 	}
 
 	public async isMainWindow() {
-		const currentWindow = await this.ow?.getCurrentWindow();
-		return !this.ow || !currentWindow || currentWindow?.name === OverwolfService.MAIN_WINDOW;
+		const currentWindow = this.ow?.isOwEnabled() ? await this.ow.getCurrentWindow() : null;
+		return !currentWindow || currentWindow?.name === OverwolfService.MAIN_WINDOW;
 	}
 
 	public async getMainWindow() {
 		if (!this.mainWindow) {
 			await this.init();
 		}
+		return this.mainWindow;
+	}
+
+	public getMainWindowSyncWithPossibleNull() {
 		return this.mainWindow;
 	}
 

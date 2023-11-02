@@ -1,5 +1,5 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input } from '@angular/core';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { WindowManagerService } from '@firestone/shared/framework/core';
 import { StatGameFormatType } from '@firestone/stats/data-access';
 import { DeckSummary } from '../../../models/mainwindow/decktracker/deck-summary';
 import { LocalizationFacadeService } from '../../../services/localization-facade.service';
@@ -30,7 +30,7 @@ import { MainWindowStoreEvent } from '../../../services/mainwindow/store/events/
 					class="text total-games"
 					[owTranslate]="'app.decktracker.deck-summary.total-games'"
 					[translateParams]="{ value: totalGames }"
-					[attr.aria-label]="'app.decktracker.deck-summary.total-games' | owTranslate: { value: totalGames }"
+					[attr.aria-label]="'app.decktracker.deck-summary.total-games' | owTranslate : { value: totalGames }"
 				></div>
 				<div
 					class="text win-rate"
@@ -38,7 +38,7 @@ import { MainWindowStoreEvent } from '../../../services/mainwindow/store/events/
 					[owTranslate]="'app.decktracker.deck-summary.winrate'"
 					[translateParams]="{ value: winRatePercentage }"
 					[attr.aria-label]="
-						'app.decktracker.deck-summary.winrate' | owTranslate: { value: winRatePercentage }
+						'app.decktracker.deck-summary.winrate' | owTranslate : { value: winRatePercentage }
 					"
 				></div>
 				<div
@@ -46,14 +46,14 @@ import { MainWindowStoreEvent } from '../../../services/mainwindow/store/events/
 					*ngIf="totalGames > 0"
 					[owTranslate]="'app.decktracker.deck-summary.last-used'"
 					[translateParams]="{ value: lastUsed }"
-					[attr.aria-label]="'app.decktracker.deck-summary.last-used' | owTranslate: { value: lastUsed }"
+					[attr.aria-label]="'app.decktracker.deck-summary.last-used' | owTranslate : { value: lastUsed }"
 				></div>
 				<div
 					class="last-used"
 					*ngIf="totalGames == 0"
 					[owTranslate]="'app.decktracker.deck-summary.created-on'"
 					[translateParams]="{ value: lastUsed }"
-					[attr.aria-label]="'app.decktracker.deck-summary.created-on' | owTranslate: { value: lastUsed }"
+					[attr.aria-label]="'app.decktracker.deck-summary.created-on' | owTranslate : { value: lastUsed }"
 				></div>
 			</div>
 			<div class="buttons">
@@ -139,10 +139,14 @@ export class DecktrackerDeckSummaryComponent implements AfterViewInit {
 
 	private stateUpdater: EventEmitter<MainWindowStoreEvent>;
 
-	constructor(private readonly ow: OverwolfService, private readonly i18n: LocalizationFacadeService) {}
+	constructor(
+		private readonly i18n: LocalizationFacadeService,
+		private readonly windowManager: WindowManagerService,
+	) {}
 
-	ngAfterViewInit() {
-		this.stateUpdater = this.ow.getMainWindow().mainWindowStoreUpdater;
+	async ngAfterViewInit() {
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.stateUpdater = mainWindow.mainWindowStoreUpdater;
 	}
 
 	hideDeck(event: MouseEvent) {

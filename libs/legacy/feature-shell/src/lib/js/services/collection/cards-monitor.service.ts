@@ -1,7 +1,7 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { BoosterType, boosterIdToSetId } from '@firestone-hs/reference-data';
 import { sleep } from '@firestone/shared/framework/common';
-import { CardsFacadeService, OverwolfService } from '@firestone/shared/framework/core';
+import { CardsFacadeService, WindowManagerService } from '@firestone/shared/framework/core';
 import { BehaviorSubject } from 'rxjs';
 import { debounceTime, filter, tap } from 'rxjs/operators';
 import { CollectionCardType } from '../../models/collection/collection-card-type.type';
@@ -35,21 +35,22 @@ export class CardsMonitorService {
 	constructor(
 		private readonly cards: CardsFacadeService,
 		private readonly events: Events,
-		private readonly ow: OverwolfService,
 		private readonly collectionManager: CollectionManager,
 		private readonly prefs: PreferencesService,
 		private readonly notifications: CardNotificationsService,
 		private readonly memoryService: MemoryInspectionService,
 		private readonly allCards: CardsFacadeService,
 		private readonly mercenariesReferenceData: MercenariesReferenceDataService,
+		private readonly windowManager: WindowManagerService,
 	) {
 		this.init();
 	}
 
 	private async init() {
 		await sleep(1);
-		this.stateUpdater = this.ow.getMainWindow().mainWindowStoreUpdater;
-		this.mainWindowStore = this.ow.getMainWindow().mainWindowStoreMerged;
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.stateUpdater = mainWindow.mainWindowStoreUpdater;
+		this.mainWindowStore = mainWindow.mainWindowStoreMerged;
 		this.events.on(Events.MEMORY_UPDATE).subscribe((event) => {
 			const changes: MemoryUpdate = event.data[0];
 			if (changes.IsOpeningPack) {

@@ -1,7 +1,7 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { Input as ArenaRewards } from '@firestone-hs/api-arena-rewards/dist/sqs-event';
 import { GameType, SceneMode } from '@firestone-hs/reference-data';
-import { ApiRunner, CardsFacadeService, OverwolfService } from '@firestone/shared/framework/core';
+import { ApiRunner, CardsFacadeService, WindowManagerService } from '@firestone/shared/framework/core';
 import { GameStat } from '@firestone/stats/data-access';
 import { filter, take } from 'rxjs';
 import { ArenaInfo } from '../../models/arena-info';
@@ -16,6 +16,7 @@ import { MainWindowStoreEvent } from '../mainwindow/store/events/main-window-sto
 import { ManastormInfo } from '../manastorm-bridge/manastorm-info';
 import { MemoryInspectionService } from '../plugins/memory-inspection.service';
 import { GameStatsLoaderService } from '../stats/game/game-stats-loader.service';
+import { UserService } from '../user.service';
 import { uuid } from '../utils';
 
 const UPDATE_URL = 'https://5ko26odaiczaspuvispnw3iv3e0kthll.lambda-url.us-west-2.on.aws/';
@@ -43,18 +44,20 @@ export class ArenaRunParserService {
 		private gameEvents: GameEventsEmitterService,
 		private memory: MemoryInspectionService,
 		private allCards: CardsFacadeService,
-		private ow: OverwolfService,
 		private events: Events,
 		private api: ApiRunner,
 		private gamesStats: GameStatsLoaderService,
 		private scene: SceneService,
 		private gameStatus: GameStatusService,
+		private readonly windowManager: WindowManagerService,
+		private readonly userService: UserService,
 	) {
 		this.init();
 	}
 
 	private async init() {
 		await this.gamesStats.isReady();
+		await this.userService.isReady();
 
 		this.gameStatus.inGame$$
 			.pipe(
@@ -104,8 +107,8 @@ export class ArenaRunParserService {
 					}
 				});
 
-				setTimeout(() => {
-					this.stateUpdater = this.ow.getMainWindow().mainWindowStoreUpdater;
+				setTimeout(async () => {
+					this.stateUpdater = (await this.windowManager.getMainWindow()).mainWindowStoreUpdater;
 				});
 			});
 	}
@@ -124,7 +127,7 @@ export class ArenaRunParserService {
 			return;
 		}
 
-		const user = await this.ow.getCurrentUser();
+		const user = await this.userService.getCurrentUser();
 		this.rewardsInput = {
 			userId: user.userId,
 			userName: user.username,

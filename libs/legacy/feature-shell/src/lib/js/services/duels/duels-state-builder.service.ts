@@ -3,7 +3,7 @@ import { EventEmitter, Injectable } from '@angular/core';
 import { DeckDefinition } from '@firestone-hs/deckstrings';
 import { DeckStat, DuelsStatDecks } from '@firestone-hs/duels-global-stats/dist/stat';
 import { DuelsRunInfo } from '@firestone-hs/retrieve-users-duels-runs/dist/duels-run-info';
-import { ApiRunner, CardsFacadeService, OverwolfService } from '@firestone/shared/framework/core';
+import { ApiRunner, WindowManagerService } from '@firestone/shared/framework/core';
 import { GameStat } from '@firestone/stats/data-access';
 import { DuelsAdventureInfoService } from '@legacy-import/src/lib/js/services/duels/duels-adventure-info.service';
 import { DuelsInfo } from '@models/memory/memory-duels';
@@ -18,7 +18,6 @@ import { BehaviorSubject, skipWhile } from 'rxjs';
 import { DuelsDeckStat } from '../../models/duels/duels-player-stats';
 import { Events } from '../events.service';
 import { HsGameMetaData, runLoop } from '../game-mode-data.service';
-import { LocalizationFacadeService } from '../localization-facade.service';
 import { DuelsTopDeckRunDetailsLoadedEvent } from '../mainwindow/store/events/duels/duels-top-deck-run-details-loaded-event';
 import { MainWindowStoreEvent } from '../mainwindow/store/events/main-window-store-event';
 import { AppUiStoreFacadeService } from '../ui-store/app-ui-store-facade.service';
@@ -35,14 +34,11 @@ export class DuelsStateBuilderService {
 
 	constructor(
 		private readonly api: ApiRunner,
-		private readonly ow: OverwolfService,
-		// private readonly prefs: PreferencesService,
-		private readonly allCards: CardsFacadeService,
 		private readonly events: Events,
-		private readonly i18n: LocalizationFacadeService,
 		private readonly memory: MemoryInspectionService,
 		private readonly duelsMemoryCeche: DuelsAdventureInfoService,
 		private readonly store: AppUiStoreFacadeService,
+		private readonly windowManager: WindowManagerService,
 	) {
 		this.init();
 	}
@@ -81,8 +77,8 @@ export class DuelsStateBuilderService {
 			}
 		});
 
-		setTimeout(() => {
-			this.mainWindowStateUpdater = this.ow.getMainWindow().mainWindowStoreUpdater;
+		setTimeout(async () => {
+			this.mainWindowStateUpdater = (await this.windowManager.getMainWindow()).mainWindowStoreUpdater;
 
 			// Don't emit the initial value
 			this.duelsInfo$$.pipe(skipWhile((info) => info == null)).subscribe((duelsInfo) => {

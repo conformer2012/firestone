@@ -4,7 +4,7 @@ import { ALL_BG_RACES } from '@firestone-hs/reference-data';
 import { BgsMetaHeroStatTierItem, buildHeroStats, enhanceHeroStat } from '@firestone/battlegrounds/data-access';
 import { filterDuelsHeroStats } from '@firestone/duels/data-access';
 import { PrefsSelector, Store, SubscriberAwareBehaviorSubject } from '@firestone/shared/framework/common';
-import { CardsFacadeService, OverwolfService } from '@firestone/shared/framework/core';
+import { CardsFacadeService, WindowManagerService } from '@firestone/shared/framework/core';
 import { GameStat } from '@firestone/stats/data-access';
 import { ModsConfig } from '@legacy-import/src/lib/libs/mods/model/mods-config';
 import { MailState } from '@mails/mail-state';
@@ -143,11 +143,11 @@ export class AppUiStoreService extends Store<Preferences> {
 	private initialized = false;
 
 	constructor(
-		private readonly ow: OverwolfService,
 		private readonly allCards: CardsFacadeService,
 		private readonly ads: AdService,
 		private readonly patchesConfig: PatchesConfigService,
 		private readonly prefsService: PreferencesService,
+		private readonly windowManager: WindowManagerService,
 	) {
 		super();
 		window['appStore'] = this;
@@ -158,16 +158,17 @@ export class AppUiStoreService extends Store<Preferences> {
 	public async start() {
 		await this.prefsService.isReady();
 
-		this.mainStore = this.ow.getMainWindow().mainWindowStoreMerged;
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.mainStore = mainWindow.mainWindowStoreMerged;
 		this.prefs = this.prefsService.preferences$$;
-		this.modsConfig = this.ow.getMainWindow().modsConfig;
-		this.deckStore = this.ow.getMainWindow().deckEventBus;
-		this.gameNativeState = this.ow.getMainWindow().gameNativeStateStore;
-		this.battlegroundsStore = this.ow.getMainWindow().battlegroundsStore;
-		this.mercenariesStore = this.ow.getMainWindow().mercenariesStore;
-		this.mercenariesOutOfCombatStore = this.ow.getMainWindow().mercenariesOutOfCombatStore;
-		this.mercenariesSynergiesStore = this.ow.getMainWindow().mercenariesSynergiesStore;
-		this.stateUpdater = this.ow.getMainWindow().mainWindowStoreUpdater;
+		this.modsConfig = mainWindow.modsConfig;
+		this.deckStore = mainWindow.deckEventBus;
+		this.gameNativeState = mainWindow.gameNativeStateStore;
+		this.battlegroundsStore = mainWindow.battlegroundsStore;
+		this.mercenariesStore = mainWindow.mercenariesStore;
+		this.mercenariesOutOfCombatStore = mainWindow.mercenariesOutOfCombatStore;
+		this.mercenariesSynergiesStore = mainWindow.mercenariesSynergiesStore;
+		this.stateUpdater = mainWindow.mainWindowStoreUpdater;
 		this.init();
 	}
 
@@ -453,171 +454,99 @@ export class AppUiStoreService extends Store<Preferences> {
 	private async init() {
 		await this.patchesConfig.isReady();
 		// Has to be first, since other observables depend on it
-		this.initGameStats();
+		this.gameStats = (
+			(await this.windowManager.getMainWindow()).gameStatsProvider as GameStatsProviderService
+		).gameStats$;
 		// Needs to be before duels stuff
-		this.initDuelsRuns();
+		this.duelsRuns = (
+			(await this.windowManager.getMainWindow()).duelsDecksProvider as DuelsDecksProviderService
+		).duelsRuns$$;
 		// The rest
 		this.initBgsMetaStatsHero();
 		this.initDuelsHeroStats();
-		this.initDecks();
-		this.initDuelsDecks();
+		this.decks = ((await this.windowManager.getMainWindow()).decksProvider as DecksProviderService).decks$;
+		this.duelsDecks = (
+			(await this.windowManager.getMainWindow()).duelsDecksProvider as DuelsDecksProviderService
+		).duelsDecks$$;
 		this.duelsAdventureInfo = (
-			this.ow.getMainWindow().duelsAdventureInfo as DuelsAdventureInfoService
+			(await this.windowManager.getMainWindow()).duelsAdventureInfo as DuelsAdventureInfoService
 		).duelsAdventureInfo$$;
-		this.duelsBuckets = (this.ow.getMainWindow().duelsBuckets as DuelsBucketsService).duelsBuckets$$;
-		this.duelsMetaStats = (this.ow.getMainWindow().duelsMetaStats as DuelsMetaStatsService).duelsMetaStats$$;
+		this.duelsBuckets = (
+			(await this.windowManager.getMainWindow()).duelsBuckets as DuelsBucketsService
+		).duelsBuckets$$;
+		this.duelsMetaStats = (
+			(await this.windowManager.getMainWindow()).duelsMetaStats as DuelsMetaStatsService
+		).duelsMetaStats$$;
 		this.duelsLeaderboard = (
-			this.ow.getMainWindow().duelsLeaderboard as DuelsLeaderboardService
+			(await this.windowManager.getMainWindow()).duelsLeaderboard as DuelsLeaderboardService
 		).duelsLeaderboard$$;
-		this.initMails();
-		this.initCardBacks();
-		this.initCoins();
-		this.initCollection();
-		this.initBgHeroSkins();
-		this.initSets();
-		this.initAllTimeBoosters();
-		this.initTavernBrawl();
-		this.initShouldTrackLottery();
-		this.initShouldShowLotteryOverlay();
-		this.initLottery();
-		this.initAchievementsProgressTracking();
-		this.initProfileClassProgress();
-		this.initProfileDuelsHeroStat();
-		this.initProfileBgHeroStat();
-		this.initBgsQuests();
-		this.initAchievementCategories();
-		this.achievementsHistory = (
-			this.ow.getMainWindow().achievementsHistory as AchievementHistoryService
-		).achievementsHistory$$;
-		this.initPackStats();
-		this.initCardsHistory();
-		this.initHighlightedBgsMinions();
-		this.constructedMetaDecks = (
-			this.ow.getMainWindow().constructedMetaDecks as ConstructedMetaDecksStateService
-		).constructedMetaDecks$$;
-		this.currentConstructedMetaDeck = (
-			this.ow.getMainWindow().constructedMetaDecks as ConstructedMetaDecksStateService
-		).currentConstructedMetaDeck$$;
-		this.constructedMetaArchetypes = (
-			this.ow.getMainWindow().constructedMetaDecks as ConstructedMetaDecksStateService
-		).constructedMetaArchetypes$$;
-		this.currentConstructedMetaArchetype = (
-			this.ow.getMainWindow().constructedMetaDecks as ConstructedMetaDecksStateService
-		).currentConstructedMetaArchetype$$;
-		// this.duelsTopDecks = (this.ow.getMainWindow().duelsTopDeckService as DuelsTopDeckService).topDeck$$;
-		this.initialized = true;
-	}
-
-	private initTavernBrawl() {
-		this.tavernBrawl = (this.ow.getMainWindow().tavernBrawlProvider as TavernBrawlService).tavernBrawl$;
-	}
-
-	private initAllTimeBoosters() {
-		this.allTimeBoosters = (this.ow.getMainWindow().collectionManager as CollectionManager).allTimeBoosters$$;
-	}
-
-	private initSets() {
-		this.sets = (this.ow.getMainWindow().setsManager as SetsManagerService).sets$$;
-	}
-
-	private initBgHeroSkins() {
-		this.bgHeroSkins = (this.ow.getMainWindow().collectionManager as CollectionManager).bgHeroSkins$$;
-	}
-
-	private initCollection() {
-		this.collection = (this.ow.getMainWindow().collectionManager as CollectionManager).collection$$;
-	}
-
-	private initCoins() {
-		this.coins = (this.ow.getMainWindow().collectionManager as CollectionManager).coins$$;
-	}
-
-	private initCardBacks() {
-		this.cardBacks = (this.ow.getMainWindow().collectionManager as CollectionManager).cardBacks$$;
-	}
-
-	private initMails() {
-		this.mails = (this.ow.getMainWindow().mailsProvider as MailsService).mails$;
-	}
-
-	private initShouldTrackLottery() {
+		this.mails = ((await this.windowManager.getMainWindow()).mailsProvider as MailsService).mails$;
+		this.cardBacks = (
+			(await this.windowManager.getMainWindow()).collectionManager as CollectionManager
+		).cardBacks$$;
+		this.coins = ((await this.windowManager.getMainWindow()).collectionManager as CollectionManager).coins$$;
+		this.collection = (
+			(await this.windowManager.getMainWindow()).collectionManager as CollectionManager
+		).collection$$;
+		this.bgHeroSkins = (
+			(await this.windowManager.getMainWindow()).collectionManager as CollectionManager
+		).bgHeroSkins$$;
+		this.sets = ((await this.windowManager.getMainWindow()).setsManager as SetsManagerService).sets$$;
+		this.allTimeBoosters = (
+			(await this.windowManager.getMainWindow()).collectionManager as CollectionManager
+		).allTimeBoosters$$;
+		this.tavernBrawl = (
+			(await this.windowManager.getMainWindow()).tavernBrawlProvider as TavernBrawlService
+		).tavernBrawl$;
 		this.shouldTrackLottery = (
-			this.ow.getMainWindow().lotteryWidgetController as LotteryWidgetControllerService
+			(await this.windowManager.getMainWindow()).lotteryWidgetController as LotteryWidgetControllerService
 		).shouldTrack$$;
-	}
-
-	private initShouldShowLotteryOverlay() {
 		this.shouldShowLotteryOverlay = (
-			this.ow.getMainWindow().lotteryWidgetController as LotteryWidgetControllerService
+			(await this.windowManager.getMainWindow()).lotteryWidgetController as LotteryWidgetControllerService
 		).shouldShowOverlay$$;
-	}
-
-	private initLottery() {
-		this.lottery = (this.ow.getMainWindow().lotteryProvider as LotteryService).lottery$$;
-	}
-
-	private initAchievementsProgressTracking() {
+		this.lottery = ((await this.windowManager.getMainWindow()).lotteryProvider as LotteryService).lottery$$;
 		this.achievementsProgressTracking = (
-			this.ow.getMainWindow().achievementsMonitor as AchievementsLiveProgressTrackingService
+			(await this.windowManager.getMainWindow()).achievementsMonitor as AchievementsLiveProgressTrackingService
 		).achievementsProgressTracking$$;
-	}
-
-	private initProfileClassProgress() {
-		this.profileClassesProgress = this.ow.getMainWindow().profileClassesProgress as BehaviorSubject<
-			readonly ProfileClassProgress[]
-		>;
-	}
-
-	private initProfileDuelsHeroStat() {
-		this.profileDuelsHeroStats = this.ow.getMainWindow().profileDuelsHeroStats as BehaviorSubject<
-			readonly ProfileDuelsHeroStat[]
-		>;
-	}
-
-	private initProfileBgHeroStat() {
-		this.profileBgHeroStat = this.ow.getMainWindow().profileBgHeroStat as BehaviorSubject<
+		this.profileClassesProgress = (await this.windowManager.getMainWindow())
+			.profileClassesProgress as BehaviorSubject<readonly ProfileClassProgress[]>;
+		this.profileDuelsHeroStats = (await this.windowManager.getMainWindow())
+			.profileDuelsHeroStats as BehaviorSubject<readonly ProfileDuelsHeroStat[]>;
+		this.profileBgHeroStat = (await this.windowManager.getMainWindow()).profileBgHeroStat as BehaviorSubject<
 			readonly ProfileBgHeroStat[]
 		>;
-	}
-
-	private initAchievementCategories() {
+		this.bgsQuests = (
+			(await this.windowManager.getMainWindow()).bgsQuests as BattlegroundsQuestsService
+		).questStats$$;
 		this.achievementCategories = (
-			this.ow.getMainWindow().achievementsStateManager as AchievementsStateManagerService
+			(await this.windowManager.getMainWindow()).achievementsStateManager as AchievementsStateManagerService
 		).groupedAchievements$$;
-	}
-
-	private initBgsQuests() {
-		this.bgsQuests = (this.ow.getMainWindow().bgsQuests as BattlegroundsQuestsService).questStats$$;
-	}
-
-	private initPackStats() {
-		this.packStats = (this.ow.getMainWindow().collectionBootstrap as CollectionBootstrapService).packStats$$;
-	}
-
-	private initCardsHistory() {
-		this.cardHistory = (this.ow.getMainWindow().collectionBootstrap as CollectionBootstrapService).cardHistory$$;
-	}
-
-	private initDuelsDecks() {
-		this.duelsDecks = (this.ow.getMainWindow().duelsDecksProvider as DuelsDecksProviderService).duelsDecks$$;
-	}
-
-	private initDuelsRuns() {
-		this.duelsRuns = (this.ow.getMainWindow().duelsDecksProvider as DuelsDecksProviderService).duelsRuns$$;
-	}
-
-	private initDecks() {
-		this.decks = (this.ow.getMainWindow().decksProvider as DecksProviderService).decks$;
-	}
-
-	private initGameStats() {
-		this.gameStats = (this.ow.getMainWindow().gameStatsProvider as GameStatsProviderService).gameStats$;
-	}
-
-	private initHighlightedBgsMinions() {
+		this.achievementsHistory = (
+			(await this.windowManager.getMainWindow()).achievementsHistory as AchievementHistoryService
+		).achievementsHistory$$;
+		this.packStats = (
+			(await this.windowManager.getMainWindow()).collectionBootstrap as CollectionBootstrapService
+		).packStats$$;
+		this.cardHistory = (
+			(await this.windowManager.getMainWindow()).collectionBootstrap as CollectionBootstrapService
+		).cardHistory$$;
 		this.highlightedBgsMinions = (
-			this.ow.getMainWindow().bgsBoardHighlighter as BgsBoardHighlighterService
+			(await this.windowManager.getMainWindow()).bgsBoardHighlighter as BgsBoardHighlighterService
 		).shopMinions$$;
+		this.constructedMetaDecks = (
+			(await this.windowManager.getMainWindow()).constructedMetaDecks as ConstructedMetaDecksStateService
+		).constructedMetaDecks$$;
+		this.currentConstructedMetaDeck = (
+			(await this.windowManager.getMainWindow()).constructedMetaDecks as ConstructedMetaDecksStateService
+		).currentConstructedMetaDeck$$;
+		this.constructedMetaArchetypes = (
+			(await this.windowManager.getMainWindow()).constructedMetaDecks as ConstructedMetaDecksStateService
+		).constructedMetaArchetypes$$;
+		this.currentConstructedMetaArchetype = (
+			(await this.windowManager.getMainWindow()).constructedMetaDecks as ConstructedMetaDecksStateService
+		).currentConstructedMetaArchetype$$;
+		// this.duelsTopDecks = ((await this.windowManager.getMainWindow()).duelsTopDeckService as DuelsTopDeckService).topDeck$$;
+		this.initialized = true;
 	}
 
 	private initDuelsHeroStats() {

@@ -7,7 +7,7 @@ import {
 	ViewRef,
 } from '@angular/core';
 import { sleep } from '@firestone/shared/framework/common';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { WindowManagerService } from '@firestone/shared/framework/core';
 import { ModConfig, ModsConfig, toModVersion } from '@legacy-import/src/lib/libs/mods/model/mods-config';
 import { ModsConfigService } from '@legacy-import/src/lib/libs/mods/services/mods-config.service';
 import { ModData, ModsManagerService } from '@legacy-import/src/lib/libs/mods/services/mods-manager.service';
@@ -176,14 +176,15 @@ export class SettingsGeneralModsComponent
 		private readonly modUtils: ModsUtilsService,
 		private readonly prefs: PreferencesService,
 		private readonly modsConfig: ModsConfigService,
-		private readonly ow: OverwolfService,
 		private readonly gameStatus: GameStatusService,
+		private readonly windowManager: WindowManagerService,
 	) {
 		super(store, cdr);
 	}
 
 	async ngAfterContentInit() {
-		this.modsManager = this.ow.getMainWindow().modsManager;
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.modsManager = mainWindow.modsManager;
 
 		this.inGame$ = this.gameStatus.inGame$$.asObservable().pipe(this.mapData((info) => info));
 		this.modsManager.modsData$$

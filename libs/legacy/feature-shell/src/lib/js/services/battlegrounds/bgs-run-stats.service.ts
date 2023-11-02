@@ -1,6 +1,6 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { BgsBestStat, Input as BgsComputeRunStatsInput, buildNewStats } from '@firestone-hs/user-bgs-post-match-stats';
-import { ApiRunner, OverwolfService } from '@firestone/shared/framework/core';
+import { ApiRunner, WindowManagerService } from '@firestone/shared/framework/core';
 import { BgsGame } from '../../models/battlegrounds/bgs-game';
 import { BgsPostMatchStatsForReview } from '../../models/battlegrounds/bgs-post-match-stats-for-review';
 import { BgsPostMatchStats } from '../../models/battlegrounds/post-match/bgs-post-match-stats';
@@ -27,8 +27,8 @@ export class BgsRunStatsService {
 	constructor(
 		private readonly apiRunner: ApiRunner,
 		private readonly events: Events,
-		private readonly ow: OverwolfService,
 		private readonly userService: UserService,
+		private readonly windowManager: WindowManagerService,
 	) {
 		this.events.on(Events.START_BGS_RUN_STATS).subscribe(async (event) => {
 			this.computeRunStats(event.data[0], event.data[1], event.data[2], event.data[3]);
@@ -36,9 +36,10 @@ export class BgsRunStatsService {
 		this.events.on(Events.POPULATE_HERO_DETAILS_FOR_BG).subscribe(async (event) => {
 			this.computeHeroDetailsForBg(event.data[0]);
 		});
-		setTimeout(() => {
-			this.bgsStateUpdater = this.ow.getMainWindow().battlegroundsUpdater;
-			this.stateUpdater = this.ow.getMainWindow().mainWindowStoreUpdater;
+		setTimeout(async () => {
+			const mainWindow = await this.windowManager.getMainWindow();
+			this.bgsStateUpdater = mainWindow.battlegroundsUpdater;
+			this.stateUpdater = mainWindow.mainWindowStoreUpdater;
 		});
 	}
 

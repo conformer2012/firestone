@@ -7,7 +7,7 @@ import {
 	EventEmitter,
 } from '@angular/core';
 import { DuelsMetaStatsViewComponent } from '@firestone/duels/view';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { Preferences } from '@models/preferences';
 import { GenericPreferencesUpdateEvent } from '@services/mainwindow/store/events/generic-preferences-update-event';
 import { Observable } from 'rxjs';
@@ -94,6 +94,7 @@ export class DuelsFiltersComponent
 		private readonly i18n: LocalizationFacadeService,
 		protected readonly store: AppUiStoreFacadeService,
 		protected readonly cdr: ChangeDetectorRef,
+		private readonly windowManager: WindowManagerService,
 	) {
 		super(store, cdr);
 	}
@@ -132,8 +133,9 @@ export class DuelsFiltersComponent
 			.pipe(this.mapData(([selectedCategoryId]) => ['duels-top-decks'].includes(selectedCategoryId)));
 	}
 
-	ngAfterViewInit() {
-		this.stateUpdater = this.ow.getMainWindow().mainWindowStoreUpdater;
+	async ngAfterViewInit() {
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.stateUpdater = mainWindow.mainWindowStoreUpdater;
 	}
 
 	toggleShowHiddenDecks = (newValue: boolean) => {

@@ -1,8 +1,6 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input } from '@angular/core';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { DuelsGroupedDecks } from '../../../models/duels/duels-grouped-decks';
 import { DuelsDeckStat } from '../../../models/duels/duels-player-stats';
-import { MainWindowStoreEvent } from '../../../services/mainwindow/store/events/main-window-store-event';
 
 @Component({
 	selector: 'duels-grouped-top-decks',
@@ -20,20 +18,12 @@ import { MainWindowStoreEvent } from '../../../services/mainwindow/store/events/
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DuelsGroupedTopDecksComponent implements AfterViewInit {
+export class DuelsGroupedTopDecksComponent {
 	header: string;
 	_groupedDecks: readonly DuelsDeckStat[];
-
-	private stateUpdater: EventEmitter<MainWindowStoreEvent>;
 
 	@Input() set groupedDecks(value: DuelsGroupedDecks) {
 		this.header = value.header;
 		this._groupedDecks = value.decks;
-	}
-
-	constructor(private ow: OverwolfService) {}
-
-	ngAfterViewInit() {
-		this.stateUpdater = this.ow.getMainWindow().mainWindowStoreUpdater;
 	}
 }

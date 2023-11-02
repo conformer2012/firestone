@@ -9,7 +9,7 @@ import {
 	ViewEncapsulation,
 	ViewRef,
 } from '@angular/core';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { Notification, NotificationType, NotificationsService } from 'angular2-notifications';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
@@ -63,12 +63,14 @@ export class NotificationsComponent implements AfterViewInit, OnDestroy {
 		private readonly ow: OverwolfService,
 		private readonly elRef: ElementRef,
 		private readonly store: AppUiStoreFacadeService,
+		private readonly windowManager: WindowManagerService,
 	) {
 		this.init();
 	}
 
 	private async init() {
-		this.notifications$ = this.ow.getMainWindow().notificationsEmitterBus;
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.notifications$ = mainWindow.notificationsEmitterBus;
 		this.windowId = (await this.ow.getCurrentWindow()).id;
 		await this.ow.restoreWindow(this.windowId);
 		await this.ow.bringToFront(this.windowId);

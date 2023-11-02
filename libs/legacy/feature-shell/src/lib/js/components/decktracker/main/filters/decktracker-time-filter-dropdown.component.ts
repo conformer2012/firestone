@@ -8,7 +8,7 @@ import {
 	ViewRef,
 } from '@angular/core';
 import { IOption } from '@firestone-hs/ng-select';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { PatchesConfigService } from '@legacy-import/src/lib/js/services/patches-config.service';
 import { DeckTimeFilterType } from '@models/mainwindow/decktracker/deck-time-filter.type';
 import { ChangeDeckTimeFilterEvent } from '@services/mainwindow/store/events/decktracker/change-deck-time-filter-event';
@@ -49,6 +49,7 @@ export class DecktrackerTimeFilterDropdownComponent
 		private readonly ow: OverwolfService,
 		private readonly i18n: LocalizationFacadeService,
 		private readonly patchesConfig: PatchesConfigService,
+		private readonly windowManager: WindowManagerService,
 	) {
 		super(store, cdr);
 	}
@@ -112,8 +113,9 @@ export class DecktrackerTimeFilterDropdownComponent
 		}
 	}
 
-	ngAfterViewInit() {
-		this.stateUpdater = this.ow.getMainWindow().mainWindowStoreUpdater;
+	async ngAfterViewInit() {
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.stateUpdater = mainWindow.mainWindowStoreUpdater;
 	}
 
 	onSelected(option: IOption) {

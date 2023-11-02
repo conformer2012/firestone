@@ -8,11 +8,8 @@ import {
 import { AllCardsService } from '@firestone-hs/reference-data';
 import { extractStats } from '@firestone-hs/trigger-process-mercenaries-review';
 import { ReviewMessage } from '@firestone-hs/trigger-process-mercenaries-review/dist/review-message';
-import { CardsFacadeService, OverwolfService } from '@firestone/shared/framework/core';
+import { CardsFacadeService } from '@firestone/shared/framework/core';
 import { GameStat, StatGameModeType } from '@firestone/stats/data-access';
-import { BehaviorSubject } from 'rxjs';
-import { MainWindowState } from '../../../models/mainwindow/main-window-state';
-import { NavigationState } from '../../../models/mainwindow/navigation/navigation-state';
 import { isBattlegrounds } from '../../battlegrounds/bgs-utils';
 import { Events } from '../../events.service';
 import { MainWindowStoreEvent } from '../../mainwindow/store/events/main-window-store-event';
@@ -31,18 +28,12 @@ export class GameStatsUpdaterService {
 	// This is set directly by the store
 	public stateUpdater: EventEmitter<MainWindowStoreEvent>;
 
-	private stateEmitter: BehaviorSubject<[MainWindowState, NavigationState]>;
-
 	constructor(
 		private readonly events: Events,
-		private readonly ow: OverwolfService,
 		private readonly allCards: CardsFacadeService,
 		private readonly mercenariesReferenceData: MercenariesReferenceDataService,
 	) {
 		this.init();
-		setTimeout(() => {
-			this.stateEmitter = this.ow.getMainWindow().mainWindowStoreMerged;
-		});
 	}
 
 	private async init() {

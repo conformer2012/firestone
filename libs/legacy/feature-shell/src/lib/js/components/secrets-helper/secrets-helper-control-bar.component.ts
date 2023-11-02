@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input } from '@angular/core';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { WindowManagerService } from '@firestone/shared/framework/core';
 import { GameEvent } from '../../models/game-event';
 
 @Component({
@@ -18,8 +18,13 @@ export class SecretsHelperControlBarComponent {
 
 	private deckUpdater: EventEmitter<GameEvent>;
 
-	constructor(private readonly ow: OverwolfService) {
-		this.deckUpdater = this.ow.getMainWindow().deckUpdater;
+	constructor(private readonly windowManager: WindowManagerService) {
+		this.init();
+	}
+
+	private async init() {
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.deckUpdater = mainWindow.deckUpdater;
 		this.minimizeHandler = () =>
 			this.deckUpdater.next(
 				Object.assign(new GameEvent(), {

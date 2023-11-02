@@ -7,7 +7,7 @@ import {
 	EventEmitter,
 } from '@angular/core';
 import { IOption } from '@firestone-hs/ng-select';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { Observable, combineLatest } from 'rxjs';
 import { FilterOption } from '../../../models/filter-option';
 import { GenericPreferencesUpdateEvent } from '../../../services/mainwindow/store/events/generic-preferences-update-event';
@@ -46,6 +46,7 @@ export class AchievementsCompletedFilterDropdownComponent
 		private readonly ow: OverwolfService,
 		protected readonly store: AppUiStoreFacadeService,
 		protected readonly cdr: ChangeDetectorRef,
+		private readonly windowManager: WindowManagerService,
 	) {
 		super(store, cdr);
 	}
@@ -73,8 +74,9 @@ export class AchievementsCompletedFilterDropdownComponent
 		);
 	}
 
-	ngAfterViewInit() {
-		this.stateUpdater = this.ow.getMainWindow().mainWindowStoreUpdater;
+	async ngAfterViewInit() {
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.stateUpdater = mainWindow.mainWindowStoreUpdater;
 	}
 
 	onSelected(option: IOption) {

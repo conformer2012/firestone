@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BgsMetaHeroStatTierItem } from '@firestone/battlegrounds/data-access';
 import { PrefsSelector } from '@firestone/shared/framework/common';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { WindowManagerService } from '@firestone/shared/framework/core';
 import { GameStat } from '@firestone/stats/data-access';
 import { MailState } from '@mails/mail-state';
 import { DuelsHeroPlayerStat } from '@models/duels/duels-player-stats';
@@ -54,18 +54,19 @@ export class AppUiStoreFacadeService {
 
 	private store: AppUiStoreService;
 
-	constructor(private readonly ow: OverwolfService) {
+	constructor(private readonly windowManager: WindowManagerService) {
 		this.init();
 	}
 
 	private async init(attempts = 0) {
-		this.store = this.ow.getMainWindow()?.appStore;
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.store = mainWindow.appStore;
 		while (!this.store) {
 			if (attempts > 0 && attempts % 50 === 0) {
 				console.warn('could not retrieve store from main window');
 			}
 			await sleep(200);
-			this.store = this.ow.getMainWindow()?.appStore;
+			this.store = mainWindow.appStore;
 			attempts++;
 		}
 		this.eventBus$$ = this.store.eventBus$$;

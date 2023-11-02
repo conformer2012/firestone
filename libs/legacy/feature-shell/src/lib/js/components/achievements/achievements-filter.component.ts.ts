@@ -8,7 +8,7 @@ import {
 	OnDestroy,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { WindowManagerService } from '@firestone/shared/framework/core';
 import { Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { FilterShownAchievementsEvent } from '../../services/mainwindow/store/events/achievements/filter-shown-achievements-event';
@@ -39,10 +39,11 @@ export class AchievementsFilterComponent implements AfterViewInit, OnDestroy {
 	private stateUpdater: EventEmitter<MainWindowStoreEvent>;
 	private subscription: Subscription;
 
-	constructor(private ow: OverwolfService) {}
+	constructor(private readonly windowManager: WindowManagerService) {}
 
-	ngAfterViewInit() {
-		this.stateUpdater = this.ow.getMainWindow().mainWindowStoreUpdater;
+	async ngAfterViewInit() {
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.stateUpdater = mainWindow.mainWindowStoreUpdater;
 		this.subscription = this.searchForm.valueChanges
 			.pipe(debounceTime(400))
 			.pipe(distinctUntilChanged())

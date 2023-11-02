@@ -1,7 +1,5 @@
-import { AfterViewInit, ChangeDetectorRef, EventEmitter, Input, ViewRef } from '@angular/core';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { ChangeDetectorRef, Input, ViewRef } from '@angular/core';
 import { CardsFacadeService } from '@firestone/shared/framework/core';
-import { MainWindowStoreEvent } from '../../../services/mainwindow/store/events/main-window-store-event';
 
 // @Component({
 // 	selector: 'duels-treasure-stat-vignette',
@@ -54,7 +52,7 @@ import { MainWindowStoreEvent } from '../../../services/mainwindow/store/events/
 // 	changeDetection: ChangeDetectionStrategy.OnPush,
 // })
 // Deprecated
-export class DuelsTreasureStatVignetteComponent implements AfterViewInit {
+export class DuelsTreasureStatVignetteComponent {
 	@Input() set stat(value: any) {
 		if (!value || value === this._stat) {
 			return;
@@ -85,17 +83,7 @@ export class DuelsTreasureStatVignetteComponent implements AfterViewInit {
 	playerPickRate: number;
 	numberOfGamesTooltip: string;
 
-	private stateUpdater: EventEmitter<MainWindowStoreEvent>;
-
-	constructor(
-		private readonly ow: OverwolfService,
-		private readonly cards: CardsFacadeService,
-		private readonly cdr: ChangeDetectorRef,
-	) {}
-
-	ngAfterViewInit() {
-		this.stateUpdater = this.ow.getMainWindow().mainWindowStoreUpdater;
-	}
+	constructor(private readonly cards: CardsFacadeService, private readonly cdr: ChangeDetectorRef) {}
 
 	buildPercents(value: number): string {
 		return value == null || isNaN(value) ? '-' : value.toFixed(1) + '%';

@@ -10,7 +10,7 @@ import {
 import { IOption } from '@firestone-hs/ng-select';
 import { DuelsTimeFilterType } from '@firestone/duels/data-access';
 import { TimePeriod } from '@firestone/duels/view';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { PatchesConfigService } from '@legacy-import/src/lib/js/services/patches-config.service';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -51,6 +51,7 @@ export class DuelsTimeFilterDropdownComponent
 		private readonly ow: OverwolfService,
 		private readonly i18n: LocalizationFacadeService,
 		private readonly patchesConfig: PatchesConfigService,
+		private readonly windowManager: WindowManagerService,
 	) {
 		super(store, cdr);
 	}
@@ -90,8 +91,9 @@ export class DuelsTimeFilterDropdownComponent
 		}
 	}
 
-	ngAfterViewInit() {
-		this.stateUpdater = this.ow.getMainWindow().mainWindowStoreUpdater;
+	async ngAfterViewInit() {
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.stateUpdater = mainWindow.mainWindowStoreUpdater;
 	}
 
 	onSelected(option: IOption) {

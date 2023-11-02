@@ -11,7 +11,7 @@ import { BgsHeroTier, MmrPercentile } from '@firestone-hs/bgs-global-stats';
 import { ALL_BG_RACES, Race, getTribeName } from '@firestone-hs/reference-data';
 import { BgsMetaHeroStatTierItem, buildTiers } from '@firestone/battlegrounds/data-access';
 import { getBgsRankFilterLabelFor, getBgsTimeFilterLabelFor } from '@firestone/battlegrounds/view';
-import { CardsFacadeService, OverwolfService } from '@firestone/shared/framework/core';
+import { CardsFacadeService, OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { Observable, combineLatest } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { BattlegroundsStoreEvent } from '../../../../services/battlegrounds/store/events/_battlegrounds-store-event';
@@ -28,7 +28,7 @@ import { AbstractSubscriptionStoreComponent } from '../../../abstract-subscripti
 			<div class="title">
 				{{
 					'app.battlegrounds.tier-list.header'
-						| owTranslate: { value: stats.totalMatches.toLocaleString('en-US') }
+						| owTranslate : { value: stats.totalMatches.toLocaleString('en-US') }
 				}}
 				<div class="info" [helpTooltip]="stats.tooltip" helpTooltipClasses="bgs-heroes-tier-list-tooltip">
 					<svg>
@@ -63,12 +63,14 @@ export class BattlegroundsTierListComponent
 		private readonly i18n: LocalizationFacadeService,
 		private readonly ow: OverwolfService,
 		private readonly allCards: CardsFacadeService,
+		private readonly windowManager: WindowManagerService,
 	) {
 		super(store, cdr);
 	}
 
 	async ngAfterViewInit() {
-		this.battlegroundsUpdater = (await this.ow.getMainWindow()).battlegroundsUpdater;
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.battlegroundsUpdater = mainWindow.battlegroundsUpdater;
 	}
 
 	ngAfterContentInit() {

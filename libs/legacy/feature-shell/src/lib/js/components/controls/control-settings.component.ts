@@ -1,5 +1,5 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input } from '@angular/core';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { PreferencesService } from '../../services/preferences.service';
 
 @Component({
@@ -27,10 +27,15 @@ export class ControlSettingsComponent implements AfterViewInit {
 
 	private settingsEventBus: EventEmitter<[string, string]>;
 
-	constructor(private ow: OverwolfService, private prefs: PreferencesService) {}
+	constructor(
+		private ow: OverwolfService,
+		private prefs: PreferencesService,
+		private readonly windowManager: WindowManagerService,
+	) {}
 
 	async ngAfterViewInit() {
-		this.settingsEventBus = this.ow.getMainWindow().settingsEventBus;
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.settingsEventBus = mainWindow.settingsEventBus;
 	}
 
 	async showSettings() {

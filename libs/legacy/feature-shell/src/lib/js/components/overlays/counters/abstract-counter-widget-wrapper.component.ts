@@ -8,7 +8,7 @@ import {
 	ViewRef,
 } from '@angular/core';
 import { SceneMode } from '@firestone-hs/reference-data';
-import { AppInjector, OverwolfService } from '@firestone/shared/framework/core';
+import { AppInjector, OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { BattlegroundsState } from '@models/battlegrounds/battlegrounds-state';
 import { BehaviorSubject, Observable, combineLatest, distinctUntilChanged } from 'rxjs';
 import { GameState } from '../../../models/decktracker/game-state';
@@ -65,6 +65,7 @@ export class AbstractCounterWidgetWrapperComponent extends AbstractWidgetWrapper
 	protected onBgs: boolean;
 
 	private scene: SceneService;
+	private windowManager: WindowManagerService;
 
 	constructor(
 		protected readonly ow: OverwolfService,
@@ -76,12 +77,14 @@ export class AbstractCounterWidgetWrapperComponent extends AbstractWidgetWrapper
 	) {
 		super(ow, el, prefs, renderer, store, cdr);
 		this.scene = AppInjector.get(SceneService);
+		this.windowManager = AppInjector.get(WindowManagerService);
 	}
 
 	async ngAfterContentInit() {
 		await this.scene.isReady();
 
-		const displayFromGameModeSubject: BehaviorSubject<boolean> = this.ow.getMainWindow().decktrackerDisplayEventBus;
+		const mainWindow = await this.windowManager.getMainWindow();
+		const displayFromGameModeSubject: BehaviorSubject<boolean> = mainWindow.decktrackerDisplayEventBus;
 		const displayFromGameMode$ = displayFromGameModeSubject.asObservable();
 		this.showWidget$ = combineLatest([
 			this.scene.currentScene$$,

@@ -1,5 +1,5 @@
 import { AfterContentInit, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { LocalizationFacadeService } from '@services/localization-facade.service';
 import { Observable } from 'rxjs';
 import { PreferencesService } from '../../../services/preferences.service';
@@ -154,6 +154,7 @@ export class SettingsGeneralLaunchComponent
 		private readonly ow: OverwolfService,
 		private readonly prefs: PreferencesService,
 		private readonly i18n: LocalizationFacadeService,
+		private readonly windowManager: WindowManagerService,
 	) {
 		super(store, cdr);
 	}
@@ -162,8 +163,9 @@ export class SettingsGeneralLaunchComponent
 		this.enableMailbox$ = this.listenForBasicPref$((prefs) => prefs.enableMailbox);
 	}
 
-	ngAfterViewInit() {
-		this.reloadWindows = this.ow.getMainWindow().reloadWindows;
+	async ngAfterViewInit() {
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.reloadWindows = mainWindow.reloadWindows;
 	}
 
 	toggleOverlay = () => {

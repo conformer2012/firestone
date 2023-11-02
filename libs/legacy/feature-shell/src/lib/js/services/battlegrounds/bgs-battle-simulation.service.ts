@@ -5,7 +5,7 @@ import { BgsBattleOptions } from '@firestone-hs/simulate-bgs-battle/dist/bgs-bat
 import { BgsPlayerEntity } from '@firestone-hs/simulate-bgs-battle/dist/bgs-player-entity';
 import { SimulationResult } from '@firestone-hs/simulate-bgs-battle/dist/simulation-result';
 import { GameSample } from '@firestone-hs/simulate-bgs-battle/dist/simulation/spectator/game-sample';
-import { ApiRunner, CardsFacadeService, OverwolfService } from '@firestone/shared/framework/core';
+import { ApiRunner, CardsFacadeService, WindowManagerService } from '@firestone/shared/framework/core';
 import { Preferences } from '../../models/preferences';
 import { PreferencesService } from '../preferences.service';
 import { AppUiStoreFacadeService } from '../ui-store/app-ui-store-facade.service';
@@ -27,14 +27,12 @@ export class BgsBattleSimulationService {
 		private readonly cards: CardsFacadeService,
 		private readonly executor: BgsBattleSimulationExecutorService,
 		private readonly store: AppUiStoreFacadeService,
-		@Optional() private readonly ow: OverwolfService,
+		private readonly windowManager: WindowManagerService,
 		@Optional() private readonly prefs: PreferencesService,
 	) {
-		if (ow?.isOwEnabled()) {
-			setTimeout(() => {
-				this.stateUpdater = this.ow.getMainWindow().battlegroundsUpdater;
-			});
-		}
+		setTimeout(async () => {
+			this.stateUpdater = (await this.windowManager.getMainWindow()).battlegroundsUpdater;
+		});
 		this.init();
 	}
 
@@ -107,7 +105,7 @@ export class BgsBattleSimulationService {
 			delete resultForLog.outcomeSamples;
 		}
 		console.log('[bgs-simulation] battle simulation result', resultForLog);
-		this.stateUpdater.next(
+		this.stateUpdater?.next(
 			new BattlegroundsBattleSimulationEvent(
 				battleId,
 				result,

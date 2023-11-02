@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Directive, ElementRef, Input, Optional } from '@angular/core';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { TranslateDirective, TranslateService } from '@ngx-translate/core';
 
 @Directive({
@@ -16,9 +16,21 @@ export class OwTranslateDirective extends TranslateDirective {
 		_ref: ChangeDetectorRef,
 		// Used when OW is not available
 		@Optional() translate: TranslateService,
+		private readonly windowManager: WindowManagerService,
 	) {
-		const translateService: TranslateService =
-			(ow?.isOwEnabled() ? ow?.getMainWindow()?.translateService : null) ?? translate;
+		const mainWindow = windowManager.getMainWindowSyncWithPossibleNull();
+		const translateService: TranslateService = mainWindow?.translateService ?? translate;
 		super(translateService, element, _ref);
+		if (!mainWindow?.translateService) {
+			this.postInit();
+		}
+	}
+
+	private async postInit() {
+		const mainWindow = await this.windowManager.getMainWindow();
+		const translateService: TranslateService = mainWindow.translateService;
+		if (!translateService) {
+			this['translateService'] = translateService;
+		}
 	}
 }

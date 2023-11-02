@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CardsFacadeService, OverwolfService } from '@firestone/shared/framework/core';
+import { CardsFacadeService, WindowManagerService } from '@firestone/shared/framework/core';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
 import { concatMap, debounceTime, distinctUntilChanged, filter, skipWhile } from 'rxjs/operators';
 import { GameEvent } from '../../models/game-event';
@@ -47,9 +47,9 @@ export class MercenariesStoreService {
 	constructor(
 		private readonly events: GameEventsEmitterService,
 		private readonly allCards: CardsFacadeService,
-		private readonly ow: OverwolfService,
 		private readonly memoryCache: MercenariesMemoryCacheService,
 		private readonly referenceData: MercenariesReferenceDataService,
+		private readonly windowManager: WindowManagerService,
 	) {
 		window['battleStateUpdater'] = this.internalEventSubject$;
 		window['mercenariesStore'] = this.store$;
@@ -58,8 +58,8 @@ export class MercenariesStoreService {
 		this.init();
 
 		// So that we're sure that all services have been initialized
-		setTimeout(() => {
-			this.mainWindowState$ = this.ow.getMainWindow().mainWindowStoreMerged as BehaviorSubject<
+		setTimeout(async () => {
+			this.mainWindowState$ = (await this.windowManager.getMainWindow()).mainWindowStoreMerged as BehaviorSubject<
 				[MainWindowState, NavigationState]
 			>;
 

@@ -1,5 +1,5 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter } from '@angular/core';
-import { ApiRunner, OverwolfService } from '@firestone/shared/framework/core';
+import { ApiRunner, OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { DebugService } from '../../services/debug.service';
 import { OutOfCardsToken } from '../../services/mainwindow/out-of-cards.service';
 
@@ -13,13 +13,19 @@ import { OutOfCardsToken } from '../../services/mainwindow/out-of-cards.service'
 export class OutOfCardsCallbackComponent implements AfterViewInit {
 	private stateUpdater: EventEmitter<any>;
 
-	constructor(private debugService: DebugService, private ow: OverwolfService, private api: ApiRunner) {}
+	constructor(
+		private debugService: DebugService,
+		private ow: OverwolfService,
+		private api: ApiRunner,
+		private readonly windowManager: WindowManagerService,
+	) {}
 
 	async ngAfterViewInit() {
 		const windowId = (await this.ow.getCurrentWindow()).id;
 		await this.ow.bringToFront(windowId);
 
-		this.stateUpdater = this.ow.getMainWindow().outOfCardsAuthUpdater;
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.stateUpdater = mainWindow.outOfCardsAuthUpdater;
 		if (!this.stateUpdater) {
 			setTimeout(() => this.ngAfterViewInit(), 100);
 			return;

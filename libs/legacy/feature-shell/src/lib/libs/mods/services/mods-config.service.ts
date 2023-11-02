@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { LocalStorageService, OverwolfService } from '@firestone/shared/framework/core';
+import { LocalStorageService, WindowManagerService } from '@firestone/shared/framework/core';
 import { BehaviorSubject } from 'rxjs';
 import { ModsConfig } from '../model/mods-config';
 
@@ -11,7 +11,10 @@ export class ModsConfigService {
 	// To avoid the boilerplate of using a facade, but maybe there is no choiced
 	private mainNode: ModsConfigService;
 
-	constructor(private readonly localStorage: LocalStorageService, private readonly ow: OverwolfService) {
+	constructor(
+		private readonly localStorage: LocalStorageService,
+		private readonly windowManager: WindowManagerService,
+	) {
 		this.init();
 	}
 
@@ -33,13 +36,13 @@ export class ModsConfigService {
 	}
 
 	private async init() {
-		const currentWindow = await this.ow?.getCurrentWindow();
-		if (currentWindow?.name === OverwolfService.MAIN_WINDOW) {
+		const isMainWindow = await this.windowManager.isMainWindow();
+		if (isMainWindow) {
 			this.isMainNode = true;
 			window['modsConfig'] = this.conf$$;
 			window['internalModsConfig'] = this;
 		} else {
-			this.mainNode = this.ow.getMainWindow()['internalModsConfig'];
+			this.mainNode = (await this.windowManager.getMainWindow())['internalModsConfig'];
 		}
 		const modsConfig = this.getConfig();
 		this.updateConf(modsConfig);

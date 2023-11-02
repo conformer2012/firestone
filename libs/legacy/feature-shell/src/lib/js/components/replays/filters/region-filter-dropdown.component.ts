@@ -1,20 +1,11 @@
-import {
-	AfterContentInit,
-	AfterViewInit,
-	ChangeDetectionStrategy,
-	ChangeDetectorRef,
-	Component,
-	EventEmitter,
-	ViewRef,
-} from '@angular/core';
+import { AfterContentInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewRef } from '@angular/core';
 import { IOption } from '@firestone-hs/ng-select';
 import { BnetRegion } from '@firestone-hs/reference-data';
-import { OverwolfService } from '@firestone/shared/framework/core';
-import { MainWindowStoreEvent } from '@services/mainwindow/store/events/main-window-store-event';
 import { Observable, combineLatest } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { Preferences } from '../../../models/preferences';
 import { LocalizationFacadeService } from '../../../services/localization-facade.service';
-import { GenericPreferencesUpdateEvent } from '../../../services/mainwindow/store/events/generic-preferences-update-event';
+import { PreferencesService } from '../../../services/preferences.service';
 import { GameStatsLoaderService } from '../../../services/stats/game/game-stats-loader.service';
 import { AppUiStoreFacadeService } from '../../../services/ui-store/app-ui-store-facade.service';
 import { AbstractSubscriptionStoreComponent } from '../../abstract-subscription-store.component';
@@ -35,10 +26,7 @@ import { AbstractSubscriptionStoreComponent } from '../../abstract-subscription-
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RegionFilterDropdownComponent
-	extends AbstractSubscriptionStoreComponent
-	implements AfterContentInit, AfterViewInit
-{
+export class RegionFilterDropdownComponent extends AbstractSubscriptionStoreComponent implements AfterContentInit {
 	filter$: Observable<{
 		filter: string;
 		placeholder: string;
@@ -46,20 +34,19 @@ export class RegionFilterDropdownComponent
 		visible: boolean;
 	}>;
 
-	private stateUpdater: EventEmitter<MainWindowStoreEvent>;
-
 	constructor(
 		protected readonly store: AppUiStoreFacadeService,
 		protected readonly cdr: ChangeDetectorRef,
-		private readonly ow: OverwolfService,
 		private readonly i18n: LocalizationFacadeService,
 		private readonly gamesLoader: GameStatsLoaderService,
+		private readonly prefs: PreferencesService,
 	) {
 		super(store, cdr);
 	}
 
 	async ngAfterContentInit() {
 		await this.gamesLoader.isReady();
+		await this.prefs.isReady();
 
 		this.filter$ = combineLatest([
 			this.store.listen$(([main, nav]) => nav.navigationDecktracker.currentView),
@@ -104,17 +91,13 @@ export class RegionFilterDropdownComponent
 		}
 	}
 
-	ngAfterViewInit() {
-		this.stateUpdater = this.ow.getMainWindow().mainWindowStoreUpdater;
-	}
-
-	onSelected(option: FilterOption) {
-		this.stateUpdater.next(
-			new GenericPreferencesUpdateEvent((prefs) => ({
-				...prefs,
-				regionFilter: !option?.value || option.value === 'all' ? 'all' : BnetRegion[option.value.toUpperCase()],
-			})),
-		);
+	async onSelected(option: FilterOption) {
+		const prefs = await this.prefs.getPreferences();
+		const newPrefs: Preferences = {
+			...prefs,
+			regionFilter: !option?.value || option.value === 'all' ? 'all' : BnetRegion[option.value.toUpperCase()],
+		};
+		await this.prefs.savePreferences(newPrefs);
 	}
 }
 

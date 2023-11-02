@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { AbstractSubscriptionStoreComponent } from '@components/abstract-subscription-store.component';
 import { Entity } from '@firestone-hs/replay-parser';
-import { CardsFacadeService, OverwolfService } from '@firestone/shared/framework/core';
+import { CardsFacadeService, OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { Observable } from 'rxjs';
 import { BgsFaceOffWithSimulation } from '../../../models/battlegrounds/bgs-face-off-with-simulation';
 import { BgsGame } from '../../../models/battlegrounds/bgs-game';
@@ -197,6 +197,7 @@ export class BgsPostMatchStatsComponent
 		private readonly allCards: CardsFacadeService,
 		private readonly owUtils: OwUtilsService,
 		private readonly i18n: LocalizationFacadeService,
+		private readonly windowManager: WindowManagerService,
 	) {
 		super(store, cdr);
 	}
@@ -206,10 +207,8 @@ export class BgsPostMatchStatsComponent
 	}
 
 	async ngAfterViewInit() {
-		this.battlegroundsUpdater = (await this.ow.getMainWindow()).battlegroundsUpdater;
-		if (!(this.cdr as ViewRef)?.destroyed) {
-			this.cdr.detectChanges();
-		}
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.battlegroundsUpdater = mainWindow.battlegroundsUpdater;
 	}
 
 	takeScreenshot(): (copyToCliboard: boolean) => Promise<[string, any]> {

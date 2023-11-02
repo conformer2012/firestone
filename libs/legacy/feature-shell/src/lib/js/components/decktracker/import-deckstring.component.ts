@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input, Optional } from '@angular/core';
 import { decode } from '@firestone-hs/deckstrings';
 import { CardTooltipPositionType } from '@firestone/shared/common/view';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { GameStateEvent } from '../../models/decktracker/game-state-event';
 import { GameEvent } from '../../models/game-event';
 import { DeckstringOverrideEvent } from '../../services/decktracker/event/deckstring-override-event';
@@ -50,10 +50,15 @@ export class ImportDeckstringComponent implements AfterViewInit {
 
 	private deckUpdater: EventEmitter<GameEvent | GameStateEvent>;
 
-	constructor(private readonly i18n: LocalizationFacadeService, @Optional() private readonly ow: OverwolfService) {}
+	constructor(
+		private readonly i18n: LocalizationFacadeService,
+		@Optional() private readonly ow: OverwolfService,
+		private readonly windowManager: WindowManagerService,
+	) {}
 
-	ngAfterViewInit() {
-		this.deckUpdater = this.ow.getMainWindow().deckUpdater;
+	async ngAfterViewInit() {
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.deckUpdater = mainWindow.deckUpdater;
 	}
 
 	async importDeckstring() {

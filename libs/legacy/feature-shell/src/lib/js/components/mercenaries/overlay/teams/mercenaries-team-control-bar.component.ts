@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { WindowManagerService } from '@firestone/shared/framework/core';
 import { BehaviorSubject } from 'rxjs';
 import { GameEvent } from '../../../../models/game-event';
 
@@ -28,8 +28,13 @@ export class MercenariesTeamControlBarComponent {
 
 	private battleStateUpdater: BehaviorSubject<GameEvent>;
 
-	constructor(private readonly ow: OverwolfService) {
-		this.battleStateUpdater = this.ow.getMainWindow().battleStateUpdater;
+	constructor(private readonly windowManager: WindowManagerService) {
+		this.init();
+	}
+
+	private async init() {
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.battleStateUpdater = mainWindow.battleStateUpdater;
 		this.closeHandler = () => {
 			if (this.side !== 'out-of-combat-player') {
 				this.battleStateUpdater.next(

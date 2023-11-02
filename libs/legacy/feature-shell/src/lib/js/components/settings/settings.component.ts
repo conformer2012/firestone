@@ -8,10 +8,9 @@ import {
 	OnDestroy,
 	ViewRef,
 } from '@angular/core';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { Subscription } from 'rxjs';
 import { DebugService } from '../../services/debug.service';
-import { LocalizationFacadeService } from '../../services/localization-facade.service';
 
 @Component({
 	selector: 'settings',
@@ -72,35 +71,18 @@ export class SettingsComponent implements AfterViewInit, OnDestroy {
 		private debugService: DebugService,
 		private ow: OverwolfService,
 		private cdr: ChangeDetectorRef,
-		private readonly i18n: LocalizationFacadeService,
-	) {
-		// this.init();
-	}
-
-	// private async init() {
-	// 	await this.i18n.init();
-	// 	this.initReady = true;
-	// 	if (!(this.cdr as ViewRef)?.destroyed) {
-	// 		this.cdr.detectChanges();
-	// 	}
-	// }
+		private readonly windowManager: WindowManagerService,
+	) {}
 
 	async ngAfterViewInit() {
 		this.thisWindowId = (await this.ow.getCurrentWindow()).id;
 		window['selectApp'] = this.onAppSelected;
-		this.settingsEventBus = this.ow.getMainWindow().settingsEventBus;
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.settingsEventBus = mainWindow.settingsEventBus;
 		this.settingsSubscription = this.settingsEventBus.subscribe(([selectedApp, selectedMenu]) => {
 			this.selectApp(selectedApp ?? 'general', selectedMenu);
 		});
 		console.log('ngAfterViewInit complete');
-		// this.messageReceivedListener = this.ow.addMessageReceivedListener(async (message) => {
-		// 	if (message.id === 'move') {
-		// 		const window = await this.ow.getCurrentWindow();
-		// 		const newX = message.content.x - window.width / 2;
-		// 		const newY = message.content.y - window.height / 2;
-		// 		this.ow.changeWindowPosition(this.thisWindowId, newX, newY);
-		// 	}
-		// });
 	}
 
 	@HostListener('window:beforeunload')

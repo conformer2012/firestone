@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { WindowManagerService } from '@firestone/shared/framework/core';
 import { GameEvent } from '../../../models/game-event';
 
 @Component({
@@ -44,8 +44,13 @@ export class DeckTrackerControlBarComponent {
 
 	private deckUpdater: EventEmitter<GameEvent>;
 
-	constructor(private readonly ow: OverwolfService) {
-		this.deckUpdater = this.ow.getMainWindow().deckUpdater;
+	constructor(private readonly windowManager: WindowManagerService) {
+		this.init();
+	}
+
+	private async init() {
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.deckUpdater = mainWindow.deckUpdater;
 		this.closeHandler = () =>
 			this.deckUpdater.next(
 				Object.assign(new GameEvent(), {

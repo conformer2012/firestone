@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { GameTag, Race, ReferenceCard } from '@firestone-hs/reference-data';
 import { AbstractSubscriptionComponent, arraysEqual } from '@firestone/shared/framework/common';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { BehaviorSubject, Observable, combineLatest, debounceTime, distinctUntilChanged, filter } from 'rxjs';
 import { compareTribes } from '../../../services/battlegrounds/bgs-utils';
 import { BattlegroundsStoreEvent } from '../../../services/battlegrounds/store/events/_battlegrounds-store-event';
@@ -93,6 +93,7 @@ export class BattlegroundsMinionsListComponent
 		protected readonly cdr: ChangeDetectorRef,
 		private readonly ow: OverwolfService,
 		private readonly i18n: LocalizationFacadeService,
+		private readonly windowManager: WindowManagerService,
 	) {
 		super(cdr);
 	}
@@ -133,7 +134,8 @@ export class BattlegroundsMinionsListComponent
 	}
 
 	async ngAfterViewInit() {
-		this.battlegroundsUpdater = (await this.ow.getMainWindow())?.battlegroundsUpdater;
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.battlegroundsUpdater = mainWindow.battlegroundsUpdater;
 	}
 
 	resetHighlights() {

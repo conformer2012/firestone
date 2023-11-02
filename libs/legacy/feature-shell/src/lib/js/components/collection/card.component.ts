@@ -10,7 +10,7 @@ import {
 	ViewRef,
 } from '@angular/core';
 import { AbstractSubscriptionStoreComponent } from '@components/abstract-subscription-store.component';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { WindowManagerService } from '@firestone/shared/framework/core';
 import { AppUiStoreFacadeService } from '@services/ui-store/app-ui-store-facade.service';
 import { Observable } from 'rxjs';
 import { CollectionCardType } from '../../models/collection/collection-card-type.type';
@@ -148,8 +148,8 @@ export class CardComponent extends AbstractSubscriptionStoreComponent implements
 	constructor(
 		protected readonly cdr: ChangeDetectorRef,
 		protected readonly store: AppUiStoreFacadeService,
-		private readonly ow: OverwolfService,
 		private readonly i18n: LocalizationFacadeService,
+		private readonly windowManager: WindowManagerService,
 	) {
 		super(store, cdr);
 	}
@@ -158,8 +158,9 @@ export class CardComponent extends AbstractSubscriptionStoreComponent implements
 		this.showRelatedCards$ = this.listenForBasicPref$((prefs) => prefs.collectionShowRelatedCards);
 	}
 
-	ngAfterViewInit() {
-		this.stateUpdater = this.ow.getMainWindow().mainWindowStoreUpdater;
+	async ngAfterViewInit() {
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.stateUpdater = mainWindow.mainWindowStoreUpdater;
 	}
 
 	@HostListener('mousedown')

@@ -1,5 +1,5 @@
 import { EventEmitter, Injectable } from '@angular/core';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { LocalizationService } from './localization.service';
 import { PreferencesService } from './preferences.service';
 
@@ -11,6 +11,7 @@ export class SystemTrayService {
 		private readonly ow: OverwolfService,
 		private readonly i18n: LocalizationService,
 		private readonly prefs: PreferencesService,
+		private readonly windowManager: WindowManagerService,
 	) {
 		this.init();
 	}
@@ -43,7 +44,6 @@ export class SystemTrayService {
 			],
 		};
 
-		await this.ow.setTrayMenu(menu);
 		this.ow.onTrayMenuClicked((event) => {
 			switch (event?.item) {
 				case 'main-window':
@@ -63,7 +63,8 @@ export class SystemTrayService {
 					return;
 			}
 		});
-		this.settingsEventBus = this.ow.getMainWindow().settingsEventBus;
+		await this.ow.setTrayMenu(menu);
+		this.settingsEventBus = (await this.windowManager.getMainWindow()).settingsEventBus;
 	}
 
 	private async resetWindowPositions() {

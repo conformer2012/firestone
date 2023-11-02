@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { WindowManagerService } from '@firestone/shared/framework/core';
 import { CardsHighlightService } from '@services/decktracker/card-highlight/cards-highlight.service';
 import { DeckCard } from '../../../models/decktracker/deck-card';
 import { Handler, SelectorOptions } from './cards-highlight-common.service';
@@ -8,15 +8,15 @@ import { Handler, SelectorOptions } from './cards-highlight-common.service';
 export class CardsHighlightFacadeService {
 	private service: CardsHighlightService;
 
-	constructor(private readonly ow: OverwolfService) {
-		this.service = ow.getMainWindow().cardsHighlightService;
-	}
+	constructor(private readonly windowManager: WindowManagerService) {}
 
 	public async init(options?: SelectorOptions) {
+		this.service = (await this.windowManager.getMainWindow()).cardsHighlightService;
 		this.service.init(options);
 	}
 
 	public async initForDuels() {
+		this.service = (await this.windowManager.getMainWindow()).cardsHighlightService;
 		this.service.init({
 			skipGameState: true,
 			skipPrefs: true,

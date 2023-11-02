@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, ViewRef } from '@angular/core';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { BattlegroundsStoreEvent } from '../../../services/battlegrounds/store/events/_battlegrounds-store-event';
 import { BgsToggleOverlayWindowEvent } from '../../../services/battlegrounds/store/events/bgs-toggle-overlay-window-event';
 import { DebugService } from '../../../services/debug.service';
@@ -39,10 +39,12 @@ export class BattlegroundsOverlayButtonComponent {
 		private cdr: ChangeDetectorRef,
 		private ow: OverwolfService,
 		private init_DebugService: DebugService,
+		private readonly windowManager: WindowManagerService,
 	) {}
 
 	async ngAfterViewInit() {
-		this.battlegroundsUpdater = (await this.ow.getMainWindow()).battlegroundsUpdater;
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.battlegroundsUpdater = mainWindow.battlegroundsUpdater;
 	}
 
 	private mouseDownStart: number;

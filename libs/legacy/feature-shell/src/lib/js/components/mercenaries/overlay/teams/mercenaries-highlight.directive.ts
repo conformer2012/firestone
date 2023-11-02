@@ -8,8 +8,9 @@ import {
 	Input,
 	OnDestroy,
 	Renderer2,
+	ViewRef,
 } from '@angular/core';
-import { CardsFacadeService, OverwolfService } from '@firestone/shared/framework/core';
+import { CardsFacadeService, OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { Subscription } from 'rxjs';
 import { distinctUntilChanged, filter, map, takeUntil } from 'rxjs/operators';
 import { Preferences } from '../../../../models/preferences';
@@ -36,18 +37,20 @@ export class MercenariesHighlightDirective
 	private subscription$$: Subscription;
 
 	constructor(
+		protected readonly store: AppUiStoreFacadeService,
+		protected readonly cdr: ChangeDetectorRef,
 		private readonly ow: OverwolfService,
 		private readonly allCards: CardsFacadeService,
 		private readonly el: ElementRef,
 		private readonly renderer: Renderer2,
-		protected readonly store: AppUiStoreFacadeService,
-		protected readonly cdr: ChangeDetectorRef,
+		private readonly windowManager: WindowManagerService,
 	) {
 		super(store, cdr);
-		this.highlightService = this.ow.getMainWindow().mercenariesSynergiesHighlightService;
 	}
 
-	ngAfterContentInit() {
+	async ngAfterContentInit() {
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.highlightService = mainWindow.mercenariesSynergiesHighlightService;
 		this.subscription$$ = this.store
 			.listenMercenariesHighlights$(([selector, prefs]) => [selector, prefs] as [HighlightSelector, Preferences])
 			.pipe(
@@ -60,6 +63,10 @@ export class MercenariesHighlightDirective
 				takeUntil(this.destroyed$),
 			)
 			.subscribe((highlighted) => this.highlight(highlighted));
+
+		if (!(this.cdr as ViewRef)?.destroyed) {
+			this.cdr.detectChanges();
+		}
 	}
 
 	ngAfterViewInit() {

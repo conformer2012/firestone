@@ -7,7 +7,7 @@ import {
 	HostListener,
 	ViewEncapsulation,
 } from '@angular/core';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { DebugService } from '../../services/debug.service';
 import { PreferencesService } from '../../services/preferences.service';
 import { AppUiStoreFacadeService } from '../../services/ui-store/app-ui-store-facade.service';
@@ -65,6 +65,7 @@ export class BattlegroundsComponent extends AbstractSubscriptionStoreComponent i
 		private readonly ow: OverwolfService,
 		protected readonly store: AppUiStoreFacadeService,
 		protected readonly cdr: ChangeDetectorRef,
+		private readonly windowManager: WindowManagerService,
 	) {
 		super(store, cdr);
 		this.init();
@@ -78,7 +79,8 @@ export class BattlegroundsComponent extends AbstractSubscriptionStoreComponent i
 	async ngAfterViewInit() {
 		// this.cdr.detach();
 		this.windowId = (await this.ow.getCurrentWindow()).id;
-		this.hotkeyPressedHandler = this.ow.getMainWindow().bgsHotkeyPressed;
+		const mainWindow = await this.windowManager.getMainWindow();
+		this.hotkeyPressedHandler = mainWindow.bgsHotkeyPressed;
 		this.hotkey = await this.ow.getHotKey('battlegrounds');
 		this.positionWindowOnSecondScreen();
 	}

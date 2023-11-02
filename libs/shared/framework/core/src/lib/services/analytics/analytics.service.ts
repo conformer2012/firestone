@@ -1,7 +1,7 @@
-import { Inject, Injectable, InjectionToken, Optional } from '@angular/core';
+import { Inject, Injectable, InjectionToken } from '@angular/core';
 import { sleep, uuid } from '@firestone/shared/framework/common';
 import Plausible from 'plausible-tracker';
-import { OverwolfService } from '../overwolf.service';
+import { WindowManagerService } from '../window-manager.service';
 
 export const PLAUSIBLE_DOMAIN = new InjectionToken<string>('plausible.domain');
 @Injectable()
@@ -9,15 +9,15 @@ export class AnalyticsService {
 	private plausible: ReturnType<typeof Plausible>;
 
 	constructor(
-		@Optional() private readonly ow: OverwolfService,
+		private readonly windowManager: WindowManagerService,
 		@Inject(PLAUSIBLE_DOMAIN) private readonly domain: string,
 	) {
 		this.init();
 	}
 
 	private async init() {
-		const currentWindow = await this.ow?.getCurrentWindow();
-		if (!currentWindow || currentWindow?.name === OverwolfService.MAIN_WINDOW) {
+		const isMainWindow = await this.windowManager.isMainWindow();
+		if (isMainWindow) {
 			this.plausible = Plausible({
 				domain: this.domain,
 				trackLocalhost: true,
@@ -26,9 +26,9 @@ export class AnalyticsService {
 			window['plausibleInstance'] = this.plausible;
 			this.plausible['debugId'] = uuid();
 			this.plausible.trackEvent('app-started');
-			console.log('[analytics] created new Plausible instance', currentWindow?.name);
+			console.log('[analytics] created new Plausible instance');
 		} else {
-			this.plausible = this.ow.getMainWindow()['plausibleInstance'];
+			this.plausible = (await this.windowManager.getMainWindow())['plausibleInstance'];
 			console.log('[analytics] reusing Plausible instance');
 		}
 		console.debug('[analytics] initialized', this.plausible);
