@@ -59,14 +59,14 @@ export class AppUiStoreFacadeService {
 	}
 
 	private async init(attempts = 0) {
-		const mainWindow = await this.windowManager.getMainWindow();
-		this.store = mainWindow.appStore;
+		this.store = await this.windowManager.getGlobalService('appStore');
+		console.debug('got store', this.store, this.windowManager);
 		while (!this.store) {
 			if (attempts > 0 && attempts % 50 === 0) {
 				console.warn('could not retrieve store from main window');
 			}
 			await sleep(200);
-			this.store = mainWindow.appStore;
+			this.store = await this.windowManager.getGlobalService('appStore');
 			attempts++;
 		}
 		this.eventBus$$ = this.store.eventBus$$;

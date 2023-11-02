@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { arraysEqual } from '@firestone/shared/framework/common';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { BehaviorSubject, combineLatest, debounceTime, distinctUntilChanged, filter, map, startWith } from 'rxjs';
 import { Preferences } from '../../models/preferences';
 import { OwNotificationsService } from '../notifications.service';
@@ -19,9 +19,10 @@ export class LotteryWidgetControllerService {
 		private readonly ow: OverwolfService,
 		private readonly notifications: OwNotificationsService,
 		private readonly prefs: PreferencesService,
+		windowManager: WindowManagerService,
 	) {
+		windowManager.registerGlobalService('lotteryWidgetController', this);
 		this.init();
-		window['lotteryWidgetController'] = this;
 	}
 
 	private async init() {

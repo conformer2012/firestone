@@ -51,17 +51,15 @@ export class MercenariesStoreService {
 		private readonly referenceData: MercenariesReferenceDataService,
 		private readonly windowManager: WindowManagerService,
 	) {
-		window['battleStateUpdater'] = this.internalEventSubject$;
-		window['mercenariesStore'] = this.store$;
+		windowManager.registerGlobalService('battleStateUpdater', this.internalEventSubject$);
+		windowManager.registerGlobalService('mercenariesStore', this.store$);
 
 		// TODO: add a general option to disable Mercs stuff?
 		this.init();
 
 		// So that we're sure that all services have been initialized
 		setTimeout(async () => {
-			this.mainWindowState$ = (await this.windowManager.getMainWindow()).mainWindowStoreMerged as BehaviorSubject<
-				[MainWindowState, NavigationState]
-			>;
+			this.mainWindowState$ = await this.windowManager.getGlobalService('mainWindowStoreMerged');
 
 			combineLatest([this.internalEventSubject$, this.mainWindowState$])
 				.pipe(

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { DuelsStat } from '@firestone-hs/duels-global-stats/dist/stat';
 import { DuelsMetaHeroStatsAccessService } from '@firestone/duels/data-access';
 import { SubscriberAwareBehaviorSubject } from '@firestone/shared/framework/common';
+import { WindowManagerService } from '@firestone/shared/framework/core';
 import { distinctUntilChanged } from 'rxjs';
 import { AppUiStoreFacadeService } from '../ui-store/app-ui-store-facade.service';
 
@@ -12,8 +13,9 @@ export class DuelsMetaStatsService {
 	constructor(
 		private readonly duelsAccess: DuelsMetaHeroStatsAccessService,
 		private readonly store: AppUiStoreFacadeService,
+		windowManager: WindowManagerService,
 	) {
-		window['duelsMetaStats'] = this;
+		windowManager.registerGlobalService('duelsMetaStats', this);
 		this.init();
 	}
 

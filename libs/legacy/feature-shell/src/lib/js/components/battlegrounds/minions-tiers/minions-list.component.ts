@@ -134,8 +134,7 @@ export class BattlegroundsMinionsListComponent
 	}
 
 	async ngAfterViewInit() {
-		const mainWindow = await this.windowManager.getMainWindow();
-		this.battlegroundsUpdater = mainWindow.battlegroundsUpdater;
+		this.battlegroundsUpdater = await this.windowManager.getGlobalService('battlegroundsUpdater');
 	}
 
 	resetHighlights() {

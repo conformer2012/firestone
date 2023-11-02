@@ -78,7 +78,7 @@ export class DuelsStateBuilderService {
 		});
 
 		setTimeout(async () => {
-			this.mainWindowStateUpdater = (await this.windowManager.getMainWindow()).mainWindowStoreUpdater;
+			this.mainWindowStateUpdater = await this.windowManager.getGlobalService('mainWindowStoreUpdater');
 
 			// Don't emit the initial value
 			this.duelsInfo$$.pipe(skipWhile((info) => info == null)).subscribe((duelsInfo) => {

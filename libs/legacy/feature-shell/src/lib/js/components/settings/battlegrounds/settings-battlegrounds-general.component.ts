@@ -201,8 +201,7 @@ export class SettingsBattlegroundsGeneralComponent
 	}
 
 	async ngAfterViewInit() {
-		const mainWindow = await this.windowManager.getMainWindow();
-		this.reloadBgWindows = mainWindow.reloadBgWindows;
+		this.reloadBgWindows = await this.windowManager.getGlobalService('reloadBgWindows');
 	}
 
 	toggleOverlay = () => {

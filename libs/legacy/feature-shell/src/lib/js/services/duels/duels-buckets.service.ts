@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CardIds } from '@firestone-hs/reference-data';
 import { SubscriberAwareBehaviorSubject } from '@firestone/shared/framework/common';
-import { ApiRunner } from '@firestone/shared/framework/core';
+import { ApiRunner, WindowManagerService } from '@firestone/shared/framework/core';
 import { DuelsBucketsData } from '../../models/duels/duels-state';
 
 const DUELS_BUCKETS_URL = 'https://static.zerotoheroes.com/api/duels/duels-buckets.gz.json';
@@ -10,8 +10,8 @@ const DUELS_BUCKETS_URL = 'https://static.zerotoheroes.com/api/duels/duels-bucke
 export class DuelsBucketsService {
 	public duelsBuckets$$ = new SubscriberAwareBehaviorSubject<readonly DuelsBucketsData[]>(null);
 
-	constructor(private readonly api: ApiRunner) {
-		window['duelsBuckets'] = this;
+	constructor(private readonly api: ApiRunner, windowManager: WindowManagerService) {
+		windowManager.registerGlobalService('duelsBuckets', this);
 		this.init();
 	}
 

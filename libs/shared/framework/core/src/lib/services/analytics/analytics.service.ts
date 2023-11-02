@@ -16,19 +16,21 @@ export class AnalyticsService {
 	}
 
 	private async init() {
-		const isMainWindow = await this.windowManager.isMainWindow();
-		if (isMainWindow) {
+		const existingService = await this.windowManager.getGlobalService<ReturnType<typeof Plausible>>(
+			'plausibleInstance',
+		);
+		if (!existingService) {
 			this.plausible = Plausible({
 				domain: this.domain,
 				trackLocalhost: true,
 				apiHost: 'https://apps.zerotoheroes.com',
 			});
-			window['plausibleInstance'] = this.plausible;
+			this.windowManager.registerGlobalService('plausibleInstance', this.plausible);
 			this.plausible['debugId'] = uuid();
 			this.plausible.trackEvent('app-started');
 			console.log('[analytics] created new Plausible instance');
 		} else {
-			this.plausible = (await this.windowManager.getMainWindow())['plausibleInstance'];
+			this.plausible = await this.windowManager.getGlobalService('plausibleInstance');
 			console.log('[analytics] reusing Plausible instance');
 		}
 		console.debug('[analytics] initialized', this.plausible);

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { PackResult } from '@firestone-hs/user-packs';
-import { ApiRunner, CardsFacadeService } from '@firestone/shared/framework/core';
+import { ApiRunner, CardsFacadeService, WindowManagerService } from '@firestone/shared/framework/core';
 
 import { PackInfo } from '@firestone/collection/view';
 import { SubscriberAwareBehaviorSubject } from '@firestone/shared/framework/common';
@@ -42,7 +42,9 @@ export class CollectionManager {
 		readonly db: CollectionStorageService,
 		// private readonly setsService: SetsService,
 		private readonly packStatsService: PackStatsService,
+		windowManager: WindowManagerService,
 	) {
+		windowManager.registerGlobalService('collectionManager', this);
 		this.cardsIS = new CardsInternalService(events, memoryReading, db);
 		this.cardBacksIS = new CardBacksInternalService(events, memoryReading, db, api);
 		this.bgHeroSkinsIS = new BgHeroSkinsInternalService(events, memoryReading, db);
@@ -54,7 +56,6 @@ export class CollectionManager {
 		this.bgHeroSkins$$ = this.bgHeroSkinsIS.collection$$;
 		this.allTimeBoosters$$ = this.allTimeBoostersIS.collection$$;
 		this.coins$$ = this.coinsIS.collection$$;
-		window['collectionManager'] = this;
 	}
 
 	public async getPackStats(): Promise<readonly PackResult[]> {

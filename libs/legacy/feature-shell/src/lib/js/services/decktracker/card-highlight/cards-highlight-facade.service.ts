@@ -11,12 +11,12 @@ export class CardsHighlightFacadeService {
 	constructor(private readonly windowManager: WindowManagerService) {}
 
 	public async init(options?: SelectorOptions) {
-		this.service = (await this.windowManager.getMainWindow()).cardsHighlightService;
+		this.service = await this.windowManager.getGlobalService('cardsHighlightService');
 		this.service.init(options);
 	}
 
 	public async initForDuels() {
-		this.service = (await this.windowManager.getMainWindow()).cardsHighlightService;
+		this.service = await this.windowManager.getGlobalService('cardsHighlightService');
 		this.service.init({
 			skipGameState: true,
 			skipPrefs: true,

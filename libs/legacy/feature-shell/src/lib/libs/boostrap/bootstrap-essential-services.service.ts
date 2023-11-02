@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { WindowManagerService } from '@firestone/shared/framework/core';
 import { TranslateService } from '@ngx-translate/core';
 import { CardsInitService } from '../../js/services/cards-init.service';
 import { DebugService } from '../../js/services/debug.service';
@@ -22,12 +23,13 @@ export class BootstrapEssentialServicesService {
 		private readonly localizationService: LocalizationService,
 		private readonly localizationFacadeService: LocalizationFacadeService,
 		private readonly translate: TranslateService,
+		private readonly windowManager: WindowManagerService,
 	) {}
 
 	public async bootstrapServices(): Promise<void> {
 		// First initialize the cards DB, as some of the dependencies injected in
 		// app-bootstrap won't be able to start without the cards DB in place
-		window['translateService'] = this.translate;
+		this.windowManager.registerGlobalService('translateService', this.translate);
 		await this.initLocalization();
 		// Init is started in the constructor, but we make sure that all cards are properly retrieved before moving forward
 		await this.initCardsService.init();

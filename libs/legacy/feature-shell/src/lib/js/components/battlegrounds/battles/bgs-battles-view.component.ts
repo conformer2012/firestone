@@ -113,8 +113,7 @@ export class BgsBattlesViewComponent extends AbstractSubscriptionStoreComponent 
 	}
 
 	async ngAfterViewInit() {
-		const mainWindow = await this.windowManager.getMainWindow();
-		this.battlegroundsUpdater = mainWindow.battlegroundsUpdater;
+		this.battlegroundsUpdater = await this.windowManager.getGlobalService('battlegroundsUpdater');
 		this.simulationUpdater = (currentFaceOff, partialUpdate) => {
 			this.battlegroundsUpdater.next(new BgsBattleSimulationUpdateEvent(currentFaceOff, partialUpdate));
 		};

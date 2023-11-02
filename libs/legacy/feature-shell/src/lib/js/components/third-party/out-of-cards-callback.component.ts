@@ -24,8 +24,7 @@ export class OutOfCardsCallbackComponent implements AfterViewInit {
 		const windowId = (await this.ow.getCurrentWindow()).id;
 		await this.ow.bringToFront(windowId);
 
-		const mainWindow = await this.windowManager.getMainWindow();
-		this.stateUpdater = mainWindow.outOfCardsAuthUpdater;
+		this.stateUpdater = await this.windowManager.getGlobalService('outOfCardsAuthUpdater');
 		if (!this.stateUpdater) {
 			setTimeout(() => this.ngAfterViewInit(), 100);
 			return;

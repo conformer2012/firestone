@@ -14,14 +14,13 @@ export class OwUtilsService {
 	}
 
 	private async initFacade() {
-		const isMainWindow = await this.windowManager.isMainWindow();
-		if (isMainWindow) {
+		const existingService = await this.windowManager.getGlobalService<OwUtilsServiceInternal>(this.serviceName);
+		if (!existingService) {
 			this.internalService = new OwUtilsServiceInternal();
 			this.internalService.initialize();
-			window[this.serviceName] = this.internalService;
+			this.windowManager.registerGlobalService(this.serviceName, this.internalService);
 		} else {
-			const mainWindow = await this.windowManager.getMainWindow();
-			this.internalService = mainWindow[this.serviceName];
+			this.internalService = existingService;
 		}
 	}
 

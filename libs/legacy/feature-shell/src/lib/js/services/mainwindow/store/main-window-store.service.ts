@@ -1,7 +1,7 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { AchievementsRefLoaderService } from '@firestone/achievements/data-access';
 import { DuelsMetaHeroStatsAccessService } from '@firestone/duels/data-access';
-import { CardsFacadeService, OverwolfService } from '@firestone/shared/framework/core';
+import { CardsFacadeService, OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { DuelsAdventureInfoService } from '@legacy-import/src/lib/js/services/duels/duels-adventure-info.service';
 import { TranslateService } from '@ngx-translate/core';
 import { LocalizationService } from '@services/localization.service';
@@ -403,9 +403,10 @@ export class MainWindowStoreService {
 		private readonly achievementsRefLoader: AchievementsRefLoaderService,
 		private readonly gameStats: GameStatsLoaderService,
 		private readonly arenaRewards: ArenaRewardsService,
+		windowManager: WindowManagerService,
 	) {
-		window['mainWindowStoreMerged'] = this.mergedEmitter;
-		window['mainWindowStoreUpdater'] = this.stateUpdater;
+		windowManager.registerGlobalService('mainWindowStoreMerged', this.mergedEmitter);
+		windowManager.registerGlobalService('mainWindowStoreUpdater', this.stateUpdater);
 		this.gameStatsUpdater.stateUpdater = this.stateUpdater;
 
 		this.processors = this.buildProcessors();

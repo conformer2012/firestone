@@ -1,5 +1,10 @@
 import { Injectable } from '@angular/core';
-import { CardsFacadeService, ImageLocalizationOptions, OverwolfService } from '@firestone/shared/framework/core';
+import {
+	CardsFacadeService,
+	ImageLocalizationOptions,
+	OverwolfService,
+	WindowManagerService,
+} from '@firestone/shared/framework/core';
 import { TranslateService } from '@ngx-translate/core';
 import { distinctUntilChanged, map } from 'rxjs/operators';
 import { CollectionCardType } from '../models/collection/collection-card-type.type';
@@ -20,6 +25,7 @@ export class LocalizationService {
 		private readonly prefs: PreferencesService,
 		private readonly allCards: CardsFacadeService,
 		private readonly ow: OverwolfService,
+		private readonly windowManager: WindowManagerService,
 	) {}
 
 	// FIXME: should handle all the init logic here (or create a facade?), instead of having it be in app-bootstrap
@@ -39,7 +45,7 @@ export class LocalizationService {
 
 	public async start(translateService: TranslateService) {
 		this.translate = translateService;
-		window['localizationService'] = this;
+		this.windowManager.registerGlobalService('localizationService', this);
 
 		console.log('[localization] store is ready, starting localization service pref updates init');
 		this.prefs.preferences$$

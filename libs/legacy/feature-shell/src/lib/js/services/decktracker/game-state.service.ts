@@ -186,13 +186,12 @@ export class GameStateService {
 		private readonly duelsRunService: DuelsDecksProviderService,
 		private readonly windowManager: WindowManagerService,
 	) {
+		windowManager.registerGlobalService('deckEventBus', this.deckEventBus);
+		windowManager.registerGlobalService('deckUpdater', this.deckUpdater);
 		this.init();
 	}
 
 	private async init() {
-		window['deckEventBus'] = this.deckEventBus;
-		window['deckUpdater'] = this.deckUpdater;
-
 		this.eventParsers = this.buildEventParsers();
 		this.registerGameEvents();
 		this.buildEventEmitters();
@@ -213,8 +212,9 @@ export class GameStateService {
 		this.deckUpdater.subscribe((event: GameEvent | GameStateEvent) => {
 			this.processingQueue.enqueue(event);
 		});
-		const decktrackerDisplayEventBus: BehaviorSubject<boolean> = (await this.windowManager.getMainWindow())
-			.decktrackerDisplayEventBus;
+		const decktrackerDisplayEventBus: BehaviorSubject<boolean> = await this.windowManager.getGlobalService(
+			'decktrackerDisplayEventBus',
+		);
 		decktrackerDisplayEventBus.subscribe((event) => {
 			if (this.showDecktrackerFromGameMode === event) {
 				return;

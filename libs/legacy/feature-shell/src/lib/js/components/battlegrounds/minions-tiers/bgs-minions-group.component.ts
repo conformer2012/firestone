@@ -223,8 +223,7 @@ export class BattlegroundsMinionsGroupComponent
 	}
 
 	async ngAfterViewInit() {
-		const mainWindow = await this.windowManager.getMainWindow();
-		this.battlegroundsUpdater = mainWindow.battlegroundsUpdater;
+		this.battlegroundsUpdater = await this.windowManager.getGlobalService('battlegroundsUpdater');
 	}
 
 	ngAfterContentInit(): void {

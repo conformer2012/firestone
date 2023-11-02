@@ -9,7 +9,7 @@ import {
 	TimePeriod,
 } from '@firestone-hs/constructed-deck-stats';
 import { SubscriberAwareBehaviorSubject } from '@firestone/shared/framework/common';
-import { ApiRunner } from '@firestone/shared/framework/core';
+import { ApiRunner, WindowManagerService } from '@firestone/shared/framework/core';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { AppUiStoreFacadeService } from '../ui-store/app-ui-store-facade.service';
@@ -28,8 +28,12 @@ export class ConstructedMetaDecksStateService {
 	private triggerLoadDecks$$ = new BehaviorSubject<boolean>(false);
 	private triggerLoadArchetypes$$ = new BehaviorSubject<boolean>(false);
 
-	constructor(private readonly api: ApiRunner, private readonly store: AppUiStoreFacadeService) {
-		window['constructedMetaDecks'] = this;
+	constructor(
+		private readonly api: ApiRunner,
+		private readonly store: AppUiStoreFacadeService,
+		windowManager: WindowManagerService,
+	) {
+		windowManager.registerGlobalService('constructedMetaDecks', this);
 		this.init();
 	}
 

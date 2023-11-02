@@ -1,5 +1,5 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input } from '@angular/core';
-import { OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
+import { WindowManagerService } from '@firestone/shared/framework/core';
 import { CurrentAppType } from '../../../models/mainwindow/current-app.type';
 import { LocalizationFacadeService } from '../../../services/localization-facade.service';
 import { NextFtueEvent } from '../../../services/mainwindow/store/events/ftue/next-ftue-event';
@@ -134,14 +134,12 @@ export class FtueComponent implements AfterViewInit {
 	private stateUpdater: EventEmitter<MainWindowStoreEvent>;
 
 	constructor(
-		private readonly ow: OverwolfService,
 		private readonly i18n: LocalizationFacadeService,
 		private readonly windowManager: WindowManagerService,
 	) {}
 
 	async ngAfterViewInit() {
-		const mainWindow = await this.windowManager.getMainWindow();
-		this.stateUpdater = mainWindow.mainWindowStoreUpdater;
+		this.stateUpdater = await this.windowManager.getGlobalService('mainWindowStoreUpdater');
 	}
 
 	next() {

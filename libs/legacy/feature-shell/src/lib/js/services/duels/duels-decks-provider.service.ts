@@ -4,7 +4,7 @@ import { decode, encode } from '@firestone-hs/deckstrings';
 import { DuelsRewardsInfo } from '@firestone-hs/retrieve-users-duels-runs/dist/duels-rewards-info';
 import { DuelsRunInfo } from '@firestone-hs/retrieve-users-duels-runs/dist/duels-run-info';
 import { SubscriberAwareBehaviorSubject } from '@firestone/shared/framework/common';
-import { CardsFacadeService } from '@firestone/shared/framework/core';
+import { CardsFacadeService, WindowManagerService } from '@firestone/shared/framework/core';
 import { GameStat } from '@firestone/stats/data-access';
 import { getDuelsModeName, isDuels } from '@services/duels/duels-utils';
 import { combineLatest, concat } from 'rxjs';
@@ -36,8 +36,9 @@ export class DuelsDecksProviderService {
 		private readonly i18n: LocalizationFacadeService,
 		private readonly store: AppUiStoreFacadeService,
 		private readonly duelsUserRuns: DuelsUserRunsService,
+		windowManager: WindowManagerService,
 	) {
-		window['duelsDecksProvider'] = this;
+		windowManager.registerGlobalService('duelsDecksProvider', this);
 		this.init();
 	}
 

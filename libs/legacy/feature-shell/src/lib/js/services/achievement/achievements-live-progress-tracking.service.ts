@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AchievementsRefLoaderService, HsRefAchievement } from '@firestone/achievements/data-access';
 import { SubscriberAwareBehaviorSubject } from '@firestone/shared/framework/common';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { BehaviorSubject, combineLatest, distinctUntilChanged, filter, skipWhile, take, tap } from 'rxjs';
 import { GameEvent } from '../../models/game-event';
 import { GameEventsEmitterService } from '../game-events-emitter.service';
@@ -37,8 +37,9 @@ export class AchievementsLiveProgressTrackingService {
 		private readonly memory: MemoryInspectionService,
 		private readonly ow: OverwolfService,
 		private readonly gameStatus: GameStatusService,
+		windowManager: WindowManagerService,
 	) {
-		window['achievementsMonitor'] = this;
+		windowManager.registerGlobalService('achievementsMonitor', this);
 		this.init();
 	}
 

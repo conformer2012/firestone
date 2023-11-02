@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { Injectable } from '@angular/core';
 import { SubscriberAwareBehaviorSubject } from '@firestone/shared/framework/common';
-import { LocalStorageService } from '@firestone/shared/framework/core';
+import { LocalStorageService, WindowManagerService } from '@firestone/shared/framework/core';
 import { AdventuresInfo } from '@models/memory/memory-duels';
 import { MemoryInspectionService } from '@services/plugins/memory-inspection.service';
 import { distinctUntilChanged, filter } from 'rxjs';
@@ -16,8 +16,9 @@ export class DuelsAdventureInfoService {
 		private readonly memory: MemoryInspectionService,
 		private readonly localStorage: LocalStorageService,
 		private readonly gameStatus: GameStatusService,
+		windowManager: WindowManagerService,
 	) {
-		window['duelsAdventureInfo'] = this;
+		windowManager.registerGlobalService('duelsAdventureInfo', this);
 		this.init();
 	}
 

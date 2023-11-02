@@ -64,7 +64,7 @@ export class SystemTrayService {
 			}
 		});
 		await this.ow.setTrayMenu(menu);
-		this.settingsEventBus = (await this.windowManager.getMainWindow()).settingsEventBus;
+		this.settingsEventBus = await this.windowManager.getGlobalService('settingsEventBus');
 	}
 
 	private async resetWindowPositions() {

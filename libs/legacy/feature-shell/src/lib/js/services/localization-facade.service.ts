@@ -3,14 +3,13 @@ import { sleep } from '@firestone/shared/framework/common';
 import { ILocalizationService, ImageLocalizationOptions, WindowManagerService } from '@firestone/shared/framework/core';
 import { TranslateService } from '@ngx-translate/core';
 import { LocalizationService } from './localization.service';
+import { uuid } from './utils';
 
 @Injectable()
 export class LocalizationFacadeService implements ILocalizationService {
 	private service: LocalizationService;
 
-	constructor(private readonly windowManager: WindowManagerService) {
-		this.init();
-	}
+	constructor(private readonly windowManager: WindowManagerService) {}
 
 	public getTranslateService(): TranslateService {
 		return this.service.getTranslateService();
@@ -24,19 +23,26 @@ export class LocalizationFacadeService implements ILocalizationService {
 		return this.service.locale;
 	}
 
+	public async isReady(): Promise<void> {
+		// Wait until this.service is not null
+		while (!this.service) {
+			await sleep(50);
+		}
+	}
+
 	public async init(attempts = 0) {
 		if (this.service) {
 			return;
 		}
 
-		const mainWindow = await this.windowManager.getMainWindow();
-		this.service = mainWindow.localizationService;
+		this['uuid'] = uuid();
+		this.service = await this.windowManager.getGlobalService('localizationService');
 		while (!this.service) {
 			if (attempts > 0 && attempts % 50 === 0) {
 				console.warn('localization init failed, retrying');
 			}
 			await sleep(200);
-			this.service = mainWindow.localizationService;
+			this.service = await this.windowManager.getGlobalService('localizationService');
 			attempts++;
 		}
 	}

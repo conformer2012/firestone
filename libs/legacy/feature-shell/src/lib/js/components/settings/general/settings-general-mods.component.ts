@@ -183,8 +183,7 @@ export class SettingsGeneralModsComponent
 	}
 
 	async ngAfterContentInit() {
-		const mainWindow = await this.windowManager.getMainWindow();
-		this.modsManager = mainWindow.modsManager;
+		this.modsManager = await this.windowManager.getGlobalService('modsManager');
 
 		this.inGame$ = this.gameStatus.inGame$$.asObservable().pipe(this.mapData((info) => info));
 		this.modsManager.modsData$$

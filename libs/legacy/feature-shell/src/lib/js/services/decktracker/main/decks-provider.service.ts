@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { DeckDefinition, DeckList, decode } from '@firestone-hs/deckstrings';
 import { GameFormat } from '@firestone-hs/reference-data';
 import { SubscriberAwareBehaviorSubject } from '@firestone/shared/framework/common';
-import { CardsFacadeService } from '@firestone/shared/framework/core';
+import { CardsFacadeService, WindowManagerService } from '@firestone/shared/framework/core';
 import { GameStat, StatGameFormatType, StatGameModeType } from '@firestone/stats/data-access';
 import { combineLatest } from 'rxjs';
 import { distinctUntilChanged, filter, map } from 'rxjs/operators';
@@ -27,8 +27,9 @@ export class DecksProviderService {
 		private readonly allCards: CardsFacadeService,
 		private readonly store: AppUiStoreFacadeService,
 		private readonly patchesConfig: PatchesConfigService,
+		windowManager: WindowManagerService,
 	) {
-		window['decksProvider'] = this;
+		windowManager.registerGlobalService('decksProvider', this);
 		this.init();
 	}
 

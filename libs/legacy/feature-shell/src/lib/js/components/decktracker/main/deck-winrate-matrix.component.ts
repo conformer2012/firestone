@@ -129,8 +129,7 @@ export class DeckWinrateMatrixComponent implements AfterViewInit {
 	) {}
 
 	async ngAfterViewInit() {
-		const mainWindow = await this.windowManager.getMainWindow();
-		this.stateUpdater = mainWindow.mainWindowStoreUpdater;
+		this.stateUpdater = await this.windowManager.getGlobalService('mainWindowStoreUpdater');
 	}
 
 	async reset() {

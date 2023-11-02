@@ -48,9 +48,8 @@ export class CardsMonitorService {
 
 	private async init() {
 		await sleep(1);
-		const mainWindow = await this.windowManager.getMainWindow();
-		this.stateUpdater = mainWindow.mainWindowStoreUpdater;
-		this.mainWindowStore = mainWindow.mainWindowStoreMerged;
+		this.stateUpdater = await this.windowManager.getGlobalService('mainWindowStoreUpdater');
+		this.mainWindowStore = await this.windowManager.getGlobalService('mainWindowStoreMerged');
 		this.events.on(Events.MEMORY_UPDATE).subscribe((event) => {
 			const changes: MemoryUpdate = event.data[0];
 			if (changes.IsOpeningPack) {

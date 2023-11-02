@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { LegacyFeatureShellModule } from '@firestone/legacy/feature-shell';
-import { SharedFrameworkCoreModule } from '@firestone/shared/framework/core';
+import { ILocalizationService, SharedFrameworkCoreModule } from '@firestone/shared/framework/core';
+import { LocalizationFacadeService } from '@legacy-import/src/lib/js/services/localization-facade.service';
 import { BgsBattlePositioningExecutorService } from '../../../../libs/legacy/feature-shell/src/lib/js/services/battlegrounds/bgs-battle-positioning-executor.service';
 import { BgsBattleSimulationExecutorService } from '../../../../libs/legacy/feature-shell/src/lib/js/services/battlegrounds/bgs-battle-simulation-executor.service';
 import { AppBoostrapperComponent } from './app-bootstrap.component';
@@ -14,6 +15,7 @@ import { BgsBattleSimulationWorkerService } from './impl/bgs-battle-simulation-w
 	providers: [
 		{ provide: BgsBattleSimulationExecutorService, useClass: BgsBattleSimulationWorkerService },
 		{ provide: BgsBattlePositioningExecutorService, useClass: BgsBattlePositioningWorkerService },
+		{ provide: ILocalizationService, useExisting: LocalizationFacadeService },
 	],
 	bootstrap: [AppBoostrapperComponent],
 })

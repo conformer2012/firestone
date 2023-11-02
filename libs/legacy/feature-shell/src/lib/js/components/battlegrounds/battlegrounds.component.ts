@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { DebugService } from '../../services/debug.service';
+import { LocalizationFacadeService } from '../../services/localization-facade.service';
 import { PreferencesService } from '../../services/preferences.service';
 import { AppUiStoreFacadeService } from '../../services/ui-store/app-ui-store-facade.service';
 import { AbstractSubscriptionStoreComponent } from '../abstract-subscription-store.component';
@@ -66,6 +67,7 @@ export class BattlegroundsComponent extends AbstractSubscriptionStoreComponent i
 		protected readonly store: AppUiStoreFacadeService,
 		protected readonly cdr: ChangeDetectorRef,
 		private readonly windowManager: WindowManagerService,
+		private readonly i18n: LocalizationFacadeService,
 	) {
 		super(store, cdr);
 		this.init();
@@ -77,10 +79,10 @@ export class BattlegroundsComponent extends AbstractSubscriptionStoreComponent i
 	}
 
 	async ngAfterViewInit() {
-		// this.cdr.detach();
+		await this.i18n.init();
+
 		this.windowId = (await this.ow.getCurrentWindow()).id;
-		const mainWindow = await this.windowManager.getMainWindow();
-		this.hotkeyPressedHandler = mainWindow.bgsHotkeyPressed;
+		this.hotkeyPressedHandler = await this.windowManager.getGlobalService('bgsHotkeyPressed');
 		this.hotkey = await this.ow.getHotKey('battlegrounds');
 		this.positionWindowOnSecondScreen();
 	}

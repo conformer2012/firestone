@@ -56,8 +56,7 @@ export class ControlMaximizeComponent implements AfterViewInit, OnDestroy {
 	) {}
 
 	async ngAfterViewInit() {
-		const mainWindow = await this.windowManager.getMainWindow();
-		this.stateUpdater = mainWindow.mainWindowStoreUpdater;
+		this.stateUpdater = await this.windowManager.getGlobalService('mainWindowStoreUpdater');
 
 		const currentWindow = await this.ow.getCurrentWindow();
 		const windowName = currentWindow.name;

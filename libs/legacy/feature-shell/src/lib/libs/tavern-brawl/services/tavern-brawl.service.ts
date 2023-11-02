@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { Injectable } from '@angular/core';
 import { TavernBrawlStats } from '@firestone-hs/tavern-brawl-stats';
-import { ApiRunner, LocalStorageService } from '@firestone/shared/framework/core';
+import { ApiRunner, LocalStorageService, WindowManagerService } from '@firestone/shared/framework/core';
 import { AppUiStoreFacadeService } from '@services/ui-store/app-ui-store-facade.service';
 import { BehaviorSubject } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -19,8 +19,9 @@ export class TavernBrawlService {
 		private readonly store: AppUiStoreFacadeService,
 		private readonly api: ApiRunner,
 		private readonly localStorage: LocalStorageService,
+		windowManager: WindowManagerService,
 	) {
-		window['tavernBrawlProvider'] = this;
+		windowManager.registerGlobalService('tavernBrawlProvider', this);
 		this.init();
 	}
 

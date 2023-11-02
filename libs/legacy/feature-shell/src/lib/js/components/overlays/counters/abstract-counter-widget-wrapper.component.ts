@@ -83,8 +83,9 @@ export class AbstractCounterWidgetWrapperComponent extends AbstractWidgetWrapper
 	async ngAfterContentInit() {
 		await this.scene.isReady();
 
-		const mainWindow = await this.windowManager.getMainWindow();
-		const displayFromGameModeSubject: BehaviorSubject<boolean> = mainWindow.decktrackerDisplayEventBus;
+		const displayFromGameModeSubject: BehaviorSubject<boolean> = await this.windowManager.getGlobalService(
+			'decktrackerDisplayEventBus',
+		);
 		const displayFromGameMode$ = displayFromGameModeSubject.asObservable();
 		this.showWidget$ = combineLatest([
 			this.scene.currentScene$$,

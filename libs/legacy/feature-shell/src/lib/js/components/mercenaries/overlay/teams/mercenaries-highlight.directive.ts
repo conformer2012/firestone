@@ -49,8 +49,7 @@ export class MercenariesHighlightDirective
 	}
 
 	async ngAfterContentInit() {
-		const mainWindow = await this.windowManager.getMainWindow();
-		this.highlightService = mainWindow.mercenariesSynergiesHighlightService;
+		this.highlightService = await this.windowManager.getGlobalService('mercenariesSynergiesHighlightService');
 		this.subscription$$ = this.store
 			.listenMercenariesHighlights$(([selector, prefs]) => [selector, prefs] as [HighlightSelector, Preferences])
 			.pipe(

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { WindowManagerService } from '@firestone/shared/framework/core';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { concatMap, distinctUntilChanged, filter } from 'rxjs/operators';
 import { MemoryUpdate } from '../../models/memory/memory-update';
@@ -11,9 +12,9 @@ export class GameNativeStateStoreService {
 
 	private events$: Observable<BroadcastEvent>;
 
-	constructor(private readonly events: Events) {
+	constructor(private readonly events: Events, windowManager: WindowManagerService) {
+		windowManager.registerGlobalService('gameNativeStateStore', this.store$);
 		this.init();
-		window['gameNativeStateStore'] = this.store$;
 	}
 
 	private async processEvent(event: BroadcastEvent): Promise<void> {

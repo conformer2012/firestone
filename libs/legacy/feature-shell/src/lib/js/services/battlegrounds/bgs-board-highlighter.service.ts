@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CardIds, GameTag, Race } from '@firestone-hs/reference-data';
 import { SubscriberAwareBehaviorSubject, arraysEqual } from '@firestone/shared/framework/common';
-import { CardsFacadeService } from '@firestone/shared/framework/core';
+import { CardsFacadeService, WindowManagerService } from '@firestone/shared/framework/core';
 import { combineLatest, debounceTime, distinctUntilChanged, filter, map } from 'rxjs';
 import { DeckCard } from '../../models/decktracker/deck-card';
 import { AppUiStoreFacadeService } from '../ui-store/app-ui-store-facade.service';
@@ -19,8 +19,9 @@ export class BgsBoardHighlighterService {
 		private readonly store: AppUiStoreFacadeService,
 		private readonly bgsStore: BattlegroundsStoreService,
 		private readonly allCards: CardsFacadeService,
+		windowManager: WindowManagerService,
 	) {
-		window['bgsBoardHighlighter'] = this;
+		windowManager.registerGlobalService('bgsBoardHighlighter', this);
 		this.init();
 	}
 

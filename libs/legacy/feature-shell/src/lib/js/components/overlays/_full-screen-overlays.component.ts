@@ -19,6 +19,7 @@ import { Observable, combineLatest } from 'rxjs';
 import { CurrentAppType } from '../../models/mainwindow/current-app.type';
 import { DebugService } from '../../services/debug.service';
 import { SceneService } from '../../services/game/scene.service';
+import { LocalizationFacadeService } from '../../services/localization-facade.service';
 import { AppUiStoreFacadeService } from '../../services/ui-store/app-ui-store-facade.service';
 import { AbstractSubscriptionStoreComponent } from '../abstract-subscription-store.component';
 
@@ -170,6 +171,7 @@ export class FullScreenOverlaysComponent
 		private readonly renderer: Renderer2,
 		private readonly el: ElementRef,
 		private readonly scene: SceneService,
+		private readonly i18n: LocalizationFacadeService,
 	) {
 		super(store, cdr);
 	}
@@ -177,6 +179,7 @@ export class FullScreenOverlaysComponent
 	async ngAfterContentInit() {
 		console.debug('full screen getting ready');
 		await this.scene.isReady();
+		await this.i18n.isReady();
 		console.debug('full screen ready');
 
 		this.activeTheme$ = combineLatest([

@@ -34,8 +34,7 @@ export class ControlSettingsComponent implements AfterViewInit {
 	) {}
 
 	async ngAfterViewInit() {
-		const mainWindow = await this.windowManager.getMainWindow();
-		this.settingsEventBus = mainWindow.settingsEventBus;
+		this.settingsEventBus = await this.windowManager.getGlobalService('settingsEventBus');
 	}
 
 	async showSettings() {

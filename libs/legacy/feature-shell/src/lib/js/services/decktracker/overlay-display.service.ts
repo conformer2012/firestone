@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { GameType } from '@firestone-hs/reference-data';
+import { WindowManagerService } from '@firestone/shared/framework/core';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map } from 'rxjs/operators';
 import { Preferences } from '../../models/preferences';
@@ -10,8 +11,12 @@ import { AppUiStoreFacadeService } from '../ui-store/app-ui-store-facade.service
 export class OverlayDisplayService {
 	private decktrackerDisplayEventBus: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
-	constructor(private readonly store: AppUiStoreFacadeService, private readonly gameStatus: GameStatusService) {
-		window['decktrackerDisplayEventBus'] = this.decktrackerDisplayEventBus;
+	constructor(
+		private readonly store: AppUiStoreFacadeService,
+		private readonly gameStatus: GameStatusService,
+		windowManager: WindowManagerService,
+	) {
+		windowManager.registerGlobalService('decktrackerDisplayEventBus', this.decktrackerDisplayEventBus);
 		this.init();
 	}
 

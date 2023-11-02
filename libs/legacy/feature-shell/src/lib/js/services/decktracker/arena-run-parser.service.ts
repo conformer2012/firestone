@@ -108,7 +108,7 @@ export class ArenaRunParserService {
 				});
 
 				setTimeout(async () => {
-					this.stateUpdater = (await this.windowManager.getMainWindow()).mainWindowStoreUpdater;
+					this.stateUpdater = await this.windowManager.getGlobalService('mainWindowStoreUpdater');
 				});
 			});
 	}

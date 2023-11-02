@@ -1,5 +1,5 @@
 import { EventEmitter, Injectable } from '@angular/core';
-import { ApiRunner, CardsFacadeService } from '@firestone/shared/framework/core';
+import { ApiRunner, CardsFacadeService, WindowManagerService } from '@firestone/shared/framework/core';
 import { LocalizationFacadeService } from '@services/localization-facade.service';
 import { combineLatest, filter, take } from 'rxjs';
 import { Card } from '../../models/card';
@@ -25,8 +25,9 @@ export class OutOfCardsService {
 		private collectionManager: CollectionManager,
 		private readonly store: AppUiStoreFacadeService,
 		private readonly gameStatus: GameStatusService,
+		windowManager: WindowManagerService,
 	) {
-		window['outOfCardsAuthUpdater'] = this.stateUpdater;
+		windowManager.registerGlobalService('outOfCardsAuthUpdater', this.stateUpdater);
 		this.init();
 	}
 

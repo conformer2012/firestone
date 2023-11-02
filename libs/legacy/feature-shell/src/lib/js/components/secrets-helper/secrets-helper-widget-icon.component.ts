@@ -26,8 +26,7 @@ export class SecretsHelperWidgetIconComponent implements AfterViewInit {
 	constructor(private ow: OverwolfService, private readonly windowManager: WindowManagerService) {}
 
 	async ngAfterViewInit() {
-		const mainWindow = await this.windowManager.getMainWindow();
-		this.deckUpdater = mainWindow.deckUpdater;
+		this.deckUpdater = await this.windowManager.getGlobalService('deckUpdater');
 	}
 
 	toggleSecretsHelper(event: MouseEvent) {

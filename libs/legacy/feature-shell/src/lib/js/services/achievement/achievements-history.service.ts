@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SubscriberAwareBehaviorSubject, sortByProperties } from '@firestone/shared/framework/common';
+import { WindowManagerService } from '@firestone/shared/framework/core';
 import { Achievement } from '../../models/achievement';
 import { AchievementHistory } from '../../models/achievement/achievement-history';
 import { AchievementHistoryStorageService } from './achievement-history-storage.service';
@@ -12,9 +13,10 @@ export class AchievementHistoryService {
 	constructor(
 		private readonly achievementHistoryStorage: AchievementHistoryStorageService,
 		private readonly achievementsLoader: RawAchievementsLoaderService,
+		windowManager: WindowManagerService,
 	) {
 		this.init();
-		window['achievementsHistory'] = this;
+		windowManager.registerGlobalService('achievementsHistory', this);
 	}
 
 	public async addHistoryItem(achievement: Achievement) {

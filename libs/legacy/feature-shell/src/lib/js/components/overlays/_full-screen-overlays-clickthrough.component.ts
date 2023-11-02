@@ -7,6 +7,7 @@ import {
 	HostListener,
 	OnDestroy,
 	ViewEncapsulation,
+	ViewRef,
 } from '@angular/core';
 import { GameType } from '@firestone-hs/reference-data';
 import { OverwolfService } from '@firestone/shared/framework/core';
@@ -14,6 +15,7 @@ import { sleep } from '@services/utils';
 import { Observable } from 'rxjs';
 import { CurrentAppType } from '../../models/mainwindow/current-app.type';
 import { DebugService } from '../../services/debug.service';
+import { LocalizationFacadeService } from '../../services/localization-facade.service';
 import { AppUiStoreFacadeService } from '../../services/ui-store/app-ui-store-facade.service';
 import { AbstractSubscriptionStoreComponent } from '../abstract-subscription-store.component';
 
@@ -68,11 +70,15 @@ export class FullScreenOverlaysClickthroughComponent
 		private readonly init_DebugService: DebugService,
 		protected readonly store: AppUiStoreFacadeService,
 		protected readonly cdr: ChangeDetectorRef,
+		private readonly i18n: LocalizationFacadeService,
 	) {
 		super(store, cdr);
 	}
 
-	ngAfterContentInit() {
+	async ngAfterContentInit() {
+		await this.store.initComplete();
+		await this.i18n.isReady();
+
 		this.activeTheme$ = this.store
 			.listenDeckState$((deckState) => deckState.metadata?.gameType)
 			.pipe(
@@ -88,6 +94,10 @@ export class FullScreenOverlaysClickthroughComponent
 					}
 				}),
 			);
+
+		if (!(this.cdr as ViewRef)?.destroyed) {
+			this.cdr.detectChanges();
+		}
 	}
 
 	async ngAfterViewInit() {

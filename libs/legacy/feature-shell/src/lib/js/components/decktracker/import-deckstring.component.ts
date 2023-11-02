@@ -57,8 +57,7 @@ export class ImportDeckstringComponent implements AfterViewInit {
 	) {}
 
 	async ngAfterViewInit() {
-		const mainWindow = await this.windowManager.getMainWindow();
-		this.deckUpdater = mainWindow.deckUpdater;
+		this.deckUpdater = await this.windowManager.getGlobalService('deckUpdater');
 	}
 
 	async importDeckstring() {

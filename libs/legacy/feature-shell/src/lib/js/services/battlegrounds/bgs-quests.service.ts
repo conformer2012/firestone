@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { BgsQuestStats } from '@firestone-hs/bgs-global-stats';
 import { BgsActiveTimeFilterType } from '@firestone/battlegrounds/data-access';
 import { SubscriberAwareBehaviorSubject } from '@firestone/shared/framework/common';
-import { ApiRunner } from '@firestone/shared/framework/core';
+import { ApiRunner, WindowManagerService } from '@firestone/shared/framework/core';
 import { filter } from 'rxjs/operators';
 import { AppUiStoreFacadeService } from '../ui-store/app-ui-store-facade.service';
 import { fixInvalidTimeSuffix } from './bgs-global-stats.service';
@@ -14,8 +14,12 @@ const BGS_QUESTS_URL = 'https://static.zerotoheroes.com/api/bgs/quests/bgs-quest
 export class BattlegroundsQuestsService {
 	public questStats$$ = new SubscriberAwareBehaviorSubject<BgsQuestStats>(null);
 
-	constructor(private readonly api: ApiRunner, private readonly store: AppUiStoreFacadeService) {
-		window['bgsQuests'] = this;
+	constructor(
+		private readonly api: ApiRunner,
+		private readonly store: AppUiStoreFacadeService,
+		windowManager: WindowManagerService,
+	) {
+		windowManager.registerGlobalService('bgsQuests', this);
 		this.init();
 	}
 

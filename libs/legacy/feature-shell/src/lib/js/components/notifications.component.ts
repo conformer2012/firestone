@@ -69,8 +69,7 @@ export class NotificationsComponent implements AfterViewInit, OnDestroy {
 	}
 
 	private async init() {
-		const mainWindow = await this.windowManager.getMainWindow();
-		this.notifications$ = mainWindow.notificationsEmitterBus;
+		this.notifications$ = await this.windowManager.getGlobalService('notificationsEmitterBus');
 		this.windowId = (await this.ow.getCurrentWindow()).id;
 		await this.ow.restoreWindow(this.windowId);
 		await this.ow.bringToFront(this.windowId);

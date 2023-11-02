@@ -23,8 +23,7 @@ export class SecretsHelperControlBarComponent {
 	}
 
 	private async init() {
-		const mainWindow = await this.windowManager.getMainWindow();
-		this.deckUpdater = mainWindow.deckUpdater;
+		this.deckUpdater = await this.windowManager.getGlobalService('deckUpdater');
 		this.minimizeHandler = () =>
 			this.deckUpdater.next(
 				Object.assign(new GameEvent(), {

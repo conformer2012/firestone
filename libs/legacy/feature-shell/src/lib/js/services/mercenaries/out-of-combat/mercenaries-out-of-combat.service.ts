@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SceneMode } from '@firestone-hs/reference-data';
-import { CardsFacadeService, OverwolfService } from '@firestone/shared/framework/core';
+import { CardsFacadeService, WindowManagerService } from '@firestone/shared/framework/core';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
 import { concatMap, distinctUntilChanged, filter } from 'rxjs/operators';
 import { MercenariesOutOfCombatState } from '../../../models/mercenaries/out-of-combat/mercenaries-out-of-combat-state';
@@ -27,13 +27,13 @@ export class MercenariesOutOfCombatService {
 	constructor(
 		private readonly events: Events,
 		private readonly allCards: CardsFacadeService,
-		private readonly ow: OverwolfService,
 		private readonly store: AppUiStoreFacadeService,
 		private readonly scene: SceneService,
 		private readonly prefs: PreferencesService,
+		windowManager: WindowManagerService,
 	) {
+		windowManager.registerGlobalService('mercenariesOutOfCombatStore', this.store$);
 		this.init();
-		window['mercenariesOutOfCombatStore'] = this.store$;
 	}
 
 	private async processEvent(event: BroadcastEvent, currentScene: SceneMode): Promise<void> {

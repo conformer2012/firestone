@@ -19,14 +19,13 @@ export abstract class AbstractFacadeService<T extends AbstractFacadeService<T>> 
 	}
 
 	private async initFacade() {
-		const isMainWindow = await this.windowManager.isMainWindow();
-		if (isMainWindow) {
-			window[this.serviceName] = this;
+		const existingService = await this.windowManager.getGlobalService<T>(this.serviceName);
+		if (!existingService) {
+			this.windowManager.registerGlobalService(this.serviceName, this);
 			this.mainInstance = this as unknown as T;
 			this.init();
 		} else {
-			const mainWindow = await this.windowManager.getMainWindow();
-			this.mainInstance = mainWindow[this.serviceName];
+			this.mainInstance = existingService;
 			this.assignSubjects();
 		}
 	}

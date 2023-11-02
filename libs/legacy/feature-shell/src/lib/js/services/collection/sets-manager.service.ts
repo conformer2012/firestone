@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SubscriberAwareBehaviorSubject } from '@firestone/shared/framework/common';
+import { WindowManagerService } from '@firestone/shared/framework/core';
 import { debounceTime } from 'rxjs';
 import { Card } from '../../models/card';
 import { Set, SetCard } from '../../models/set';
@@ -12,9 +13,13 @@ export class SetsManagerService {
 
 	private allSets: readonly Set[];
 
-	constructor(private readonly collectionManager: CollectionManager, private readonly setsService: SetsService) {
+	constructor(
+		private readonly collectionManager: CollectionManager,
+		private readonly setsService: SetsService,
+		windowManager: WindowManagerService,
+	) {
+		windowManager.registerGlobalService('setsManager', this);
 		this.init();
-		window['setsManager'] = this;
 	}
 
 	private async init() {

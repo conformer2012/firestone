@@ -88,6 +88,8 @@ export class LoadingComponent implements AfterViewInit, OnDestroy {
 	) {}
 
 	async ngAfterViewInit() {
+		await this.i18n.init();
+
 		// this.cdr.detach();
 		this.thisWindowId = (await this.ow.getCurrentWindow()).id;
 		this.positionWindow();

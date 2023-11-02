@@ -77,8 +77,7 @@ export class MercenariesOutOfCombatTreasureSelectionComponent
 	}
 
 	async ngAfterViewInit() {
-		const mainWindow = await this.windowManager.getMainWindow();
-		this.highlightService = mainWindow.mercenariesSynergiesHighlightService;
+		this.highlightService = await this.windowManager.getGlobalService('mercenariesSynergiesHighlightService');
 	}
 
 	@HostListener('mouseenter')

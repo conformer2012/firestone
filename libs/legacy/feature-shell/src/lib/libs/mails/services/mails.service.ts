@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { Injectable } from '@angular/core';
 import { MailboxMessagesInfo } from '@firestone-hs/mailbox';
-import { ApiRunner } from '@firestone/shared/framework/core';
+import { ApiRunner, WindowManagerService } from '@firestone/shared/framework/core';
 import { AppUiStoreFacadeService } from '@services/ui-store/app-ui-store-facade.service';
 import { deepEqual } from '@services/utils';
 import { BehaviorSubject, combineLatest } from 'rxjs';
@@ -16,8 +16,12 @@ export class MailsService {
 
 	private mailsInfo$$ = new BehaviorSubject<MailboxMessagesInfo>(null);
 
-	constructor(private readonly store: AppUiStoreFacadeService, private readonly api: ApiRunner) {
-		window['mailsProvider'] = this;
+	constructor(
+		private readonly store: AppUiStoreFacadeService,
+		private readonly api: ApiRunner,
+		windowManager: WindowManagerService,
+	) {
+		windowManager.registerGlobalService('mailsProvider', this);
 		// Disabled until further notice
 		// this.init();
 	}

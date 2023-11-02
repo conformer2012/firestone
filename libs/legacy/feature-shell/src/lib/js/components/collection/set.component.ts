@@ -40,8 +40,7 @@ export class SetComponent implements AfterViewInit {
 	constructor(private readonly windowManager: WindowManagerService) {}
 
 	async ngAfterViewInit() {
-		const mainWindow = await this.windowManager.getMainWindow();
-		this.stateUpdater = mainWindow.mainWindowStoreUpdater;
+		this.stateUpdater = await this.windowManager.getGlobalService('mainWindowStoreUpdater');
 	}
 
 	browseSet(setId: string) {

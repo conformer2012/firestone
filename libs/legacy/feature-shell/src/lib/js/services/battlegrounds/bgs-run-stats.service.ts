@@ -37,9 +37,8 @@ export class BgsRunStatsService {
 			this.computeHeroDetailsForBg(event.data[0]);
 		});
 		setTimeout(async () => {
-			const mainWindow = await this.windowManager.getMainWindow();
-			this.bgsStateUpdater = mainWindow.battlegroundsUpdater;
-			this.stateUpdater = mainWindow.mainWindowStoreUpdater;
+			this.bgsStateUpdater = await this.windowManager.getGlobalService('battlegroundsUpdater');
+			this.stateUpdater = await this.windowManager.getGlobalService('mainWindowStoreUpdater');
 		});
 	}
 

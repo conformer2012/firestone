@@ -57,8 +57,7 @@ export class FilterComponent implements AfterViewInit {
 	) {}
 
 	async ngAfterViewInit() {
-		const mainWindow = await this.windowManager.getMainWindow();
-		this.stateUpdater = mainWindow.mainWindowStoreUpdater;
+		this.stateUpdater = await this.windowManager.getGlobalService('mainWindowStoreUpdater');
 		const singleEls: HTMLElement[] = this.el.nativeElement.querySelectorAll('.single');
 		singleEls.forEach((singleEl) => {
 			const caretEl = singleEl.appendChild(document.createElement('i'));

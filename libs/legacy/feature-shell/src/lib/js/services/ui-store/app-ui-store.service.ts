@@ -150,7 +150,7 @@ export class AppUiStoreService extends Store<Preferences> {
 		private readonly windowManager: WindowManagerService,
 	) {
 		super();
-		window['appStore'] = this;
+		windowManager.registerGlobalService('appStore', this);
 	}
 
 	// WARNING: All services used here should be called in BootstrapStoreServicesService to make sure they are booted up
@@ -158,17 +158,16 @@ export class AppUiStoreService extends Store<Preferences> {
 	public async start() {
 		await this.prefsService.isReady();
 
-		const mainWindow = await this.windowManager.getMainWindow();
-		this.mainStore = mainWindow.mainWindowStoreMerged;
+		this.mainStore = await this.windowManager.getGlobalService('mainWindowStoreMerged');
 		this.prefs = this.prefsService.preferences$$;
-		this.modsConfig = mainWindow.modsConfig;
-		this.deckStore = mainWindow.deckEventBus;
-		this.gameNativeState = mainWindow.gameNativeStateStore;
-		this.battlegroundsStore = mainWindow.battlegroundsStore;
-		this.mercenariesStore = mainWindow.mercenariesStore;
-		this.mercenariesOutOfCombatStore = mainWindow.mercenariesOutOfCombatStore;
-		this.mercenariesSynergiesStore = mainWindow.mercenariesSynergiesStore;
-		this.stateUpdater = mainWindow.mainWindowStoreUpdater;
+		this.modsConfig = await this.windowManager.getGlobalService('modsConfig');
+		this.deckStore = await this.windowManager.getGlobalService('deckEventBus');
+		this.gameNativeState = await this.windowManager.getGlobalService('gameNativeStateStore');
+		this.battlegroundsStore = await this.windowManager.getGlobalService('battlegroundsStore');
+		this.mercenariesStore = await this.windowManager.getGlobalService('mercenariesStore');
+		this.mercenariesOutOfCombatStore = await this.windowManager.getGlobalService('mercenariesOutOfCombatStore');
+		this.mercenariesSynergiesStore = await this.windowManager.getGlobalService('mercenariesSynergiesStore');
+		this.stateUpdater = await this.windowManager.getGlobalService('mainWindowStoreUpdater');
 		this.init();
 	}
 
@@ -455,97 +454,99 @@ export class AppUiStoreService extends Store<Preferences> {
 		await this.patchesConfig.isReady();
 		// Has to be first, since other observables depend on it
 		this.gameStats = (
-			(await this.windowManager.getMainWindow()).gameStatsProvider as GameStatsProviderService
+			await this.windowManager.getGlobalService<GameStatsProviderService>('gameStatsProvider')
 		).gameStats$;
 		// Needs to be before duels stuff
 		this.duelsRuns = (
-			(await this.windowManager.getMainWindow()).duelsDecksProvider as DuelsDecksProviderService
+			await this.windowManager.getGlobalService<DuelsDecksProviderService>('duelsDecksProvider')
 		).duelsRuns$$;
 		// The rest
 		this.initBgsMetaStatsHero();
 		this.initDuelsHeroStats();
-		this.decks = ((await this.windowManager.getMainWindow()).decksProvider as DecksProviderService).decks$;
+		this.decks = (await this.windowManager.getGlobalService<DecksProviderService>('decksProvider')).decks$;
 		this.duelsDecks = (
-			(await this.windowManager.getMainWindow()).duelsDecksProvider as DuelsDecksProviderService
+			await this.windowManager.getGlobalService<DuelsDecksProviderService>('duelsDecksProvider')
 		).duelsDecks$$;
 		this.duelsAdventureInfo = (
-			(await this.windowManager.getMainWindow()).duelsAdventureInfo as DuelsAdventureInfoService
+			await this.windowManager.getGlobalService<DuelsAdventureInfoService>('duelsAdventureInfo')
 		).duelsAdventureInfo$$;
 		this.duelsBuckets = (
-			(await this.windowManager.getMainWindow()).duelsBuckets as DuelsBucketsService
+			await this.windowManager.getGlobalService<DuelsBucketsService>('duelsBuckets')
 		).duelsBuckets$$;
 		this.duelsMetaStats = (
-			(await this.windowManager.getMainWindow()).duelsMetaStats as DuelsMetaStatsService
+			await this.windowManager.getGlobalService<DuelsMetaStatsService>('duelsMetaStats')
 		).duelsMetaStats$$;
 		this.duelsLeaderboard = (
-			(await this.windowManager.getMainWindow()).duelsLeaderboard as DuelsLeaderboardService
+			await this.windowManager.getGlobalService<DuelsLeaderboardService>('duelsLeaderboard')
 		).duelsLeaderboard$$;
-		this.mails = ((await this.windowManager.getMainWindow()).mailsProvider as MailsService).mails$;
+		this.mails = (await this.windowManager.getGlobalService<MailsService>('mailsProvider')).mails$;
 		this.cardBacks = (
-			(await this.windowManager.getMainWindow()).collectionManager as CollectionManager
+			await this.windowManager.getGlobalService<CollectionManager>('collectionManager')
 		).cardBacks$$;
-		this.coins = ((await this.windowManager.getMainWindow()).collectionManager as CollectionManager).coins$$;
+		this.coins = (await this.windowManager.getGlobalService<CollectionManager>('collectionManager')).coins$$;
 		this.collection = (
-			(await this.windowManager.getMainWindow()).collectionManager as CollectionManager
+			await this.windowManager.getGlobalService<CollectionManager>('collectionManager')
 		).collection$$;
 		this.bgHeroSkins = (
-			(await this.windowManager.getMainWindow()).collectionManager as CollectionManager
+			await this.windowManager.getGlobalService<CollectionManager>('collectionManager')
 		).bgHeroSkins$$;
-		this.sets = ((await this.windowManager.getMainWindow()).setsManager as SetsManagerService).sets$$;
+		this.sets = (await this.windowManager.getGlobalService<SetsManagerService>('setsManager')).sets$$;
 		this.allTimeBoosters = (
-			(await this.windowManager.getMainWindow()).collectionManager as CollectionManager
+			await this.windowManager.getGlobalService<CollectionManager>('collectionManager')
 		).allTimeBoosters$$;
 		this.tavernBrawl = (
-			(await this.windowManager.getMainWindow()).tavernBrawlProvider as TavernBrawlService
+			await this.windowManager.getGlobalService<TavernBrawlService>('tavernBrawlProvider')
 		).tavernBrawl$;
 		this.shouldTrackLottery = (
-			(await this.windowManager.getMainWindow()).lotteryWidgetController as LotteryWidgetControllerService
+			await this.windowManager.getGlobalService<LotteryWidgetControllerService>('lotteryWidgetController')
 		).shouldTrack$$;
 		this.shouldShowLotteryOverlay = (
-			(await this.windowManager.getMainWindow()).lotteryWidgetController as LotteryWidgetControllerService
+			await this.windowManager.getGlobalService<LotteryWidgetControllerService>('lotteryWidgetController')
 		).shouldShowOverlay$$;
-		this.lottery = ((await this.windowManager.getMainWindow()).lotteryProvider as LotteryService).lottery$$;
+		this.lottery = (await this.windowManager.getGlobalService<LotteryService>('lotteryProvider')).lottery$$;
 		this.achievementsProgressTracking = (
-			(await this.windowManager.getMainWindow()).achievementsMonitor as AchievementsLiveProgressTrackingService
+			await this.windowManager.getGlobalService<AchievementsLiveProgressTrackingService>('achievementsMonitor')
 		).achievementsProgressTracking$$;
-		this.profileClassesProgress = (await this.windowManager.getMainWindow())
-			.profileClassesProgress as BehaviorSubject<readonly ProfileClassProgress[]>;
-		this.profileDuelsHeroStats = (await this.windowManager.getMainWindow())
-			.profileDuelsHeroStats as BehaviorSubject<readonly ProfileDuelsHeroStat[]>;
-		this.profileBgHeroStat = (await this.windowManager.getMainWindow()).profileBgHeroStat as BehaviorSubject<
-			readonly ProfileBgHeroStat[]
-		>;
+		this.profileClassesProgress = await this.windowManager.getGlobalService<
+			BehaviorSubject<readonly ProfileClassProgress[]>
+		>('profileClassesProgress');
+		this.profileDuelsHeroStats = await this.windowManager.getGlobalService<
+			BehaviorSubject<readonly ProfileDuelsHeroStat[]>
+		>('profileDuelsHeroStats');
+		this.profileBgHeroStat = await this.windowManager.getGlobalService<
+			BehaviorSubject<readonly ProfileBgHeroStat[]>
+		>('profileBgHeroStat');
 		this.bgsQuests = (
-			(await this.windowManager.getMainWindow()).bgsQuests as BattlegroundsQuestsService
+			await this.windowManager.getGlobalService<BattlegroundsQuestsService>('bgsQuests')
 		).questStats$$;
 		this.achievementCategories = (
-			(await this.windowManager.getMainWindow()).achievementsStateManager as AchievementsStateManagerService
+			await this.windowManager.getGlobalService<AchievementsStateManagerService>('achievementsStateManager')
 		).groupedAchievements$$;
 		this.achievementsHistory = (
-			(await this.windowManager.getMainWindow()).achievementsHistory as AchievementHistoryService
+			await this.windowManager.getGlobalService<AchievementHistoryService>('achievementsHistory')
 		).achievementsHistory$$;
 		this.packStats = (
-			(await this.windowManager.getMainWindow()).collectionBootstrap as CollectionBootstrapService
+			await this.windowManager.getGlobalService<CollectionBootstrapService>('collectionBootstrap')
 		).packStats$$;
 		this.cardHistory = (
-			(await this.windowManager.getMainWindow()).collectionBootstrap as CollectionBootstrapService
+			await this.windowManager.getGlobalService<CollectionBootstrapService>('collectionBootstrap')
 		).cardHistory$$;
 		this.highlightedBgsMinions = (
-			(await this.windowManager.getMainWindow()).bgsBoardHighlighter as BgsBoardHighlighterService
+			await this.windowManager.getGlobalService<BgsBoardHighlighterService>('bgsBoardHighlighter')
 		).shopMinions$$;
 		this.constructedMetaDecks = (
-			(await this.windowManager.getMainWindow()).constructedMetaDecks as ConstructedMetaDecksStateService
+			await this.windowManager.getGlobalService<ConstructedMetaDecksStateService>('constructedMetaDecks')
 		).constructedMetaDecks$$;
 		this.currentConstructedMetaDeck = (
-			(await this.windowManager.getMainWindow()).constructedMetaDecks as ConstructedMetaDecksStateService
+			await this.windowManager.getGlobalService<ConstructedMetaDecksStateService>('constructedMetaDecks')
 		).currentConstructedMetaDeck$$;
 		this.constructedMetaArchetypes = (
-			(await this.windowManager.getMainWindow()).constructedMetaDecks as ConstructedMetaDecksStateService
+			await this.windowManager.getGlobalService<ConstructedMetaDecksStateService>('constructedMetaDecks')
 		).constructedMetaArchetypes$$;
 		this.currentConstructedMetaArchetype = (
-			(await this.windowManager.getMainWindow()).constructedMetaDecks as ConstructedMetaDecksStateService
+			await this.windowManager.getGlobalService<ConstructedMetaDecksStateService>('constructedMetaDecks')
 		).currentConstructedMetaArchetype$$;
-		// this.duelsTopDecks = ((await this.windowManager.getMainWindow()).duelsTopDeckService as DuelsTopDeckService).topDeck$$;
+		// this.duelsTopDecks = ((await this.windowManager.getGlobalService()).duelsTopDeckService as DuelsTopDeckService).topDeck$$;
 		this.initialized = true;
 	}
 

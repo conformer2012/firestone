@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CardsFacadeService } from '@firestone/shared/framework/core';
+import { CardsFacadeService, WindowManagerService } from '@firestone/shared/framework/core';
 import { Observable } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
 import { GameState } from '../../../models/decktracker/game-state';
@@ -13,10 +13,11 @@ export class CardsHighlightService extends CardsHighlightCommonService {
 		protected readonly allCards: CardsFacadeService,
 		private readonly prefs: PreferencesService,
 		private readonly store: AppUiStoreFacadeService,
+		windowManager: WindowManagerService,
 	) {
 		super(allCards);
+		windowManager.registerGlobalService('cardsHighlightService', this);
 		this.setup();
-		window['cardsHighlightService'] = this;
 	}
 
 	protected async setup() {

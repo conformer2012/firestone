@@ -92,8 +92,7 @@ export class MercenariesDesktopComponent
 	}
 
 	async ngAfterViewInit() {
-		const mainWindow = await this.windowManager.getMainWindow();
-		this.stateUpdater = mainWindow.mainWindowStoreUpdater;
+		this.stateUpdater = await this.windowManager.getGlobalService('mainWindowStoreUpdater');
 	}
 
 	getCatName(categoryId: MercenariesCategoryId) {

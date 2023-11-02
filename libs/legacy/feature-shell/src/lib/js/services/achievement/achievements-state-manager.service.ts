@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SubscriberAwareBehaviorSubject } from '@firestone/shared/framework/common';
-import { ApiRunner } from '@firestone/shared/framework/core';
+import { ApiRunner, WindowManagerService } from '@firestone/shared/framework/core';
 import { BehaviorSubject, combineLatest, debounceTime, distinctUntilChanged, filter } from 'rxjs';
 import { Achievement } from '../../models/achievement';
 import { CompletedAchievement } from '../../models/completed-achievement';
@@ -34,9 +34,10 @@ export class AchievementsStateManagerService {
 		private readonly memoryMonitor: AchievementsMemoryMonitor,
 		private readonly api: ApiRunner,
 		private readonly prefs: PreferencesService,
+		windowManager: WindowManagerService,
 	) {
+		windowManager.registerGlobalService('achievementsStateManager', this);
 		this.init();
-		window['achievementsStateManager'] = this;
 	}
 
 	private async init() {

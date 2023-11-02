@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AllCardsService } from '@firestone-hs/reference-data';
+import { WindowManagerService } from '@firestone/shared/framework/core';
 import { distinctUntilChanged, map, skip } from 'rxjs';
 import { CARDS_VERSION } from './hs-utils';
 import { PreferencesService } from './preferences.service';
@@ -8,7 +9,11 @@ import { PreferencesService } from './preferences.service';
 export class CardsInitService {
 	private inInit = false;
 
-	constructor(private readonly cards: AllCardsService, private readonly prefs: PreferencesService) {}
+	constructor(
+		private readonly cards: AllCardsService,
+		private readonly prefs: PreferencesService,
+		private readonly windowManager: WindowManagerService,
+	) {}
 
 	public async init() {
 		if (this.inInit) {
@@ -19,7 +24,7 @@ export class CardsInitService {
 		this.inInit = true;
 		const prefs = await this.prefs.getPreferences();
 		await this.initCards(prefs.locale);
-		window['cards'] = this.cards;
+		this.windowManager.registerGlobalService('cards', this.cards);
 		this.startListeningToChanges();
 	}
 

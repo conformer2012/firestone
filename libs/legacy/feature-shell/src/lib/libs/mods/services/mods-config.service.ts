@@ -36,13 +36,13 @@ export class ModsConfigService {
 	}
 
 	private async init() {
-		const isMainWindow = await this.windowManager.isMainWindow();
-		if (isMainWindow) {
+		const existingService = await this.windowManager.getGlobalService<ModsConfigService>('internalModsConfig');
+		if (!existingService) {
 			this.isMainNode = true;
-			window['modsConfig'] = this.conf$$;
-			window['internalModsConfig'] = this;
+			this.windowManager.registerGlobalService('modsConfig', this.conf$$);
+			this.windowManager.registerGlobalService('internalModsConfig', this);
 		} else {
-			this.mainNode = (await this.windowManager.getMainWindow())['internalModsConfig'];
+			this.mainNode = existingService;
 		}
 		const modsConfig = this.getConfig();
 		this.updateConf(modsConfig);

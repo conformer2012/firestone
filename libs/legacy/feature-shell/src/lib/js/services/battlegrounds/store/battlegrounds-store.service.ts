@@ -1,5 +1,5 @@
 import { EventEmitter, Injectable } from '@angular/core';
-import { CardsFacadeService, OverwolfService } from '@firestone/shared/framework/core';
+import { CardsFacadeService, OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { BgsBuddyGainedParser } from '@services/battlegrounds/store/event-parsers/bgs-buddy-gained-parser';
 import { BgsBuddyGainedEvent } from '@services/battlegrounds/store/events/bgs-buddy-gained-event';
 import { LocalizationFacadeService } from '@services/localization-facade.service';
@@ -145,10 +145,11 @@ export class BattlegroundsStoreService {
 		private readonly i18n: LocalizationFacadeService,
 		private readonly bgsUserStatsService: BgsBestUserStatsService,
 		private readonly gameStatus: GameStatusService,
+		private readonly windowManager: WindowManagerService,
 	) {
-		window['battlegroundsStore'] = this.battlegroundsStoreEventBus;
-		window['battlegroundsUpdater'] = this.battlegroundsUpdater;
-		window['bgsHotkeyPressed'] = this.battlegroundsWindowsListener;
+		windowManager.registerGlobalService('battlegroundsStore', this.battlegroundsStoreEventBus);
+		windowManager.registerGlobalService('battlegroundsUpdater', this.battlegroundsUpdater);
+		windowManager.registerGlobalService('bgsHotkeyPressed', this.battlegroundsWindowsListener);
 		this.init();
 	}
 
@@ -208,12 +209,12 @@ export class BattlegroundsStoreService {
 
 		await sleep(1);
 		const mainWindowStoreEmitter: BehaviorSubject<[MainWindowState, NavigationState]> =
-			window['mainWindowStoreMerged'];
+			this.windowManager.getGlobalService('mainWindowStoreMerged');
 		mainWindowStoreEmitter.subscribe((newState) => {
 			this.mainWindowState = newState[0];
 		});
-		this.stateUpdater = window['mainWindowStoreUpdater'];
-		const deckEventBus: BehaviorSubject<any> = window['deckEventBus'];
+		this.stateUpdater = this.windowManager.getGlobalService('mainWindowStoreUpdater');
+		const deckEventBus: BehaviorSubject<any> = this.windowManager.getGlobalService('deckEventBus');
 		deckEventBus.subscribe((event) => {
 			this.deckState = event?.state as GameState;
 		});

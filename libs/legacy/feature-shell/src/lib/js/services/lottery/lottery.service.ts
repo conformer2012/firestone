@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
 import { SubscriberAwareBehaviorSubject } from '@firestone/shared/framework/common';
-import { ApiRunner, CardsFacadeService, LocalStorageService } from '@firestone/shared/framework/core';
+import {
+	ApiRunner,
+	CardsFacadeService,
+	LocalStorageService,
+	WindowManagerService,
+} from '@firestone/shared/framework/core';
 import { BehaviorSubject } from 'rxjs';
 import { GameEvent } from '../../models/game-event';
 import { GameEventsEmitterService } from '../game-events-emitter.service';
-import { PreferencesService } from '../preferences.service';
-import { AppUiStoreFacadeService } from '../ui-store/app-ui-store-facade.service';
 import { LotteryProcessor } from './events/_processor';
 import { LotteryCardPlayedProcessor } from './events/lottery-card-played-processor';
 import { LotteryDamageWithSpellsProcessor } from './events/lottery-damage-with-spells-processor';
@@ -39,13 +42,12 @@ export class LotteryService {
 	constructor(
 		private readonly localStorage: LocalStorageService,
 		private readonly gameEvents: GameEventsEmitterService,
-		private readonly prefs: PreferencesService,
-		private readonly store: AppUiStoreFacadeService,
 		private readonly api: ApiRunner,
 		private readonly allCards: CardsFacadeService,
 		private readonly widgetController: LotteryWidgetControllerService,
+		windowManager: WindowManagerService,
 	) {
-		window['lotteryProvider'] = this;
+		windowManager.registerGlobalService('lotteryProvider', this);
 		this.init();
 	}
 

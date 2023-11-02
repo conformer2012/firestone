@@ -33,8 +33,7 @@ export class MercenariesTeamControlBarComponent {
 	}
 
 	private async init() {
-		const mainWindow = await this.windowManager.getMainWindow();
-		this.battleStateUpdater = mainWindow.battleStateUpdater;
+		this.battleStateUpdater = await this.windowManager.getGlobalService('battleStateUpdater');
 		this.closeHandler = () => {
 			if (this.side !== 'out-of-combat-player') {
 				this.battleStateUpdater.next(

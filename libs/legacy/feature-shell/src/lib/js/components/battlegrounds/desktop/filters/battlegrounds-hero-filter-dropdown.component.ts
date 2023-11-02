@@ -88,8 +88,7 @@ export class BattlegroundsHeroFilterDropdownComponent
 	}
 
 	async ngAfterViewInit() {
-		const mainWindow = await this.windowManager.getMainWindow();
-		this.stateUpdater = mainWindow.mainWindowStoreUpdater;
+		this.stateUpdater = await this.windowManager.getGlobalService('mainWindowStoreUpdater');
 	}
 
 	onSelected(option: HeroFilterOption) {

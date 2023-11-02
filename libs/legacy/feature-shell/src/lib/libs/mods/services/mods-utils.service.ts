@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { Preferences } from '@legacy-import/src/lib/js/models/preferences';
 import { GameStatusService } from '@legacy-import/src/lib/js/services/game-status.service';
 import { OwUtilsService } from '@legacy-import/src/lib/js/services/plugins/ow-utils.service';
@@ -34,9 +34,10 @@ export class ModsUtilsService {
 		private readonly gameStatus: GameStatusService,
 		private readonly prefs: PreferencesService,
 		private readonly modsConfig: ModsConfigService,
+		windowManager: WindowManagerService,
 	) {
 		setTimeout(() => {
-			this.modsManager = window['modsManager'];
+			this.modsManager = windowManager.getGlobalService('modsManager');
 		}, 1000);
 	}
 
@@ -196,7 +197,7 @@ export class ModsUtilsService {
 
 	public async disableMods(
 		installPath: string,
-		keepData: boolean = true,
+		keepData = true,
 	): Promise<'game-running' | 'wrong-path' | 'installed' | 'not-installed'> {
 		const isGameRunning = await this.gameStatus.inGame();
 		if (isGameRunning) {

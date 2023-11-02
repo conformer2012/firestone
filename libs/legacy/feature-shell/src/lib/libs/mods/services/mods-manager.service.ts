@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ApiRunner } from '@firestone/shared/framework/core';
+import { ApiRunner, WindowManagerService } from '@firestone/shared/framework/core';
 import { GameStatusService } from '@legacy-import/src/lib/js/services/game-status.service';
 import { AppUiStoreFacadeService } from '@legacy-import/src/lib/js/services/ui-store/app-ui-store-facade.service';
 import { isVersionBefore, sleep, sortByProperties } from '@legacy-import/src/lib/js/services/utils';
@@ -24,8 +24,9 @@ export class ModsManagerService {
 		private readonly modsConfigService: ModsConfigService,
 		private readonly modsUtils: ModsUtilsService,
 		private readonly api: ApiRunner,
+		windowManager: WindowManagerService,
 	) {
-		window['modsManager'] = this;
+		windowManager.registerGlobalService('modsManager', this);
 	}
 
 	public async init() {

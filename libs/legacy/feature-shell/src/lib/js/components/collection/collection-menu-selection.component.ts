@@ -40,8 +40,7 @@ export class CollectionMenuSelectionComponent implements AfterViewInit {
 	constructor(private readonly windowManager: WindowManagerService) {}
 
 	async ngAfterViewInit() {
-		const mainWindow = await this.windowManager.getMainWindow();
-		this.stateUpdater = mainWindow.mainWindowStoreUpdater;
+		this.stateUpdater = await this.windowManager.getGlobalService('mainWindowStoreUpdater');
 	}
 
 	selectTab(stage: CurrentView) {

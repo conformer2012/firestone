@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { sleep } from '@services/utils';
 import { BehaviorSubject } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
@@ -17,13 +17,19 @@ export class OwNotificationsService {
 
 	private stateEmitter = new BehaviorSubject<Message>(undefined);
 
-	constructor(private readonly ow: OverwolfService, private readonly prefs: PreferencesService) {
+	constructor(
+		private readonly ow: OverwolfService,
+		private readonly prefs: PreferencesService,
+		private readonly windowManager: WindowManagerService,
+	) {
 		// Give it time to boot
 		this.startNotificationsWindow();
-
-		window['notificationsEmitterBus'] = this.stateEmitter.pipe(
-			filter((message) => !!message),
-			tap((message) => console.debug('[notifications] emitting new message', message)),
+		this.windowManager.registerGlobalService(
+			'notificationsEmitterBus',
+			this.stateEmitter.pipe(
+				filter((message) => !!message),
+				tap((message) => console.debug('[notifications] emitting new message', message)),
+			),
 		);
 
 		this.init();

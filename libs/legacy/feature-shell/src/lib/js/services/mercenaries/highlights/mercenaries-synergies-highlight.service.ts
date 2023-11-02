@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
 import { ReferenceCard } from '@firestone-hs/reference-data';
+import { CardsFacadeService, WindowManagerService } from '@firestone/shared/framework/core';
 import { BehaviorSubject } from 'rxjs';
-import { CardsFacadeService } from '@firestone/shared/framework/core';
 import { buildSelector } from './mercenaries-synergies-highlight-processor';
 
 @Injectable()
 export class MercenariesSynergiesHighlightService {
 	private highlightSubject = new BehaviorSubject<HighlightSelector>(null);
 
-	constructor(private readonly allCards: CardsFacadeService) {
-		window['mercenariesSynergiesStore'] = this.highlightSubject;
-		window['mercenariesSynergiesHighlightService'] = this;
+	constructor(private readonly allCards: CardsFacadeService, windowManager: WindowManagerService) {
+		windowManager.registerGlobalService('mercenariesSynergiesStore', this.highlightSubject);
+		windowManager.registerGlobalService('mercenariesSynergiesHighlightService', this);
 	}
 
 	public selectCardId(cardId: string) {

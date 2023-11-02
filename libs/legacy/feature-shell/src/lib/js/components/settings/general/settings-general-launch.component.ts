@@ -164,8 +164,7 @@ export class SettingsGeneralLaunchComponent
 	}
 
 	async ngAfterViewInit() {
-		const mainWindow = await this.windowManager.getMainWindow();
-		this.reloadWindows = mainWindow.reloadWindows;
+		this.reloadWindows = await this.windowManager.getGlobalService('reloadWindows');
 	}
 
 	toggleOverlay = () => {

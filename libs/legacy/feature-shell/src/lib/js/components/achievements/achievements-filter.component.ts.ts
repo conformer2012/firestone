@@ -42,8 +42,7 @@ export class AchievementsFilterComponent implements AfterViewInit, OnDestroy {
 	constructor(private readonly windowManager: WindowManagerService) {}
 
 	async ngAfterViewInit() {
-		const mainWindow = await this.windowManager.getMainWindow();
-		this.stateUpdater = mainWindow.mainWindowStoreUpdater;
+		this.stateUpdater = await this.windowManager.getGlobalService('mainWindowStoreUpdater');
 		this.subscription = this.searchForm.valueChanges
 			.pipe(debounceTime(400))
 			.pipe(distinctUntilChanged())

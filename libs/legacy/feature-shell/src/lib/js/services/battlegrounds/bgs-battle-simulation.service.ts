@@ -31,7 +31,7 @@ export class BgsBattleSimulationService {
 		@Optional() private readonly prefs: PreferencesService,
 	) {
 		setTimeout(async () => {
-			this.stateUpdater = (await this.windowManager.getMainWindow()).battlegroundsUpdater;
+			this.stateUpdater = await this.windowManager.getGlobalService('battlegroundsUpdater');
 		});
 		this.init();
 	}

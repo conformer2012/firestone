@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Profile } from '@firestone-hs/api-user-profile';
 import { SubscriberAwareBehaviorSubject } from '@firestone/shared/framework/common';
-import { ApiRunner, DiskCacheService } from '@firestone/shared/framework/core';
+import { ApiRunner, DiskCacheService, WindowManagerService } from '@firestone/shared/framework/core';
 import { combineLatest, distinctUntilChanged, filter, map, skip, take } from 'rxjs';
 import { GameStatusService } from '../game-status.service';
 import { AppUiStoreFacadeService } from '../ui-store/app-ui-store-facade.service';
@@ -26,10 +26,11 @@ export class ProfileUploaderService {
 		private readonly gameStatus: GameStatusService,
 		private readonly store: AppUiStoreFacadeService,
 		private readonly diskCache: DiskCacheService,
+		windowManager: WindowManagerService,
 	) {
-		window['profileClassesProgress'] = this.internalProfileInfo.classesProgress$$;
-		window['profileBgHeroStat'] = this.internalBattlegrounds.bgFullTimeStatsByHero$$;
-		window['profileDuelsHeroStats'] = this.internalProfileInfo.duelsHeroStats$$;
+		windowManager.registerGlobalService('profileClassesProgress', this.internalProfileInfo.classesProgress$$);
+		windowManager.registerGlobalService('profileBgHeroStat', this.internalBattlegrounds.bgFullTimeStatsByHero$$);
+		windowManager.registerGlobalService('profileDuelsHeroStats', this.internalProfileInfo.duelsHeroStats$$);
 		this.init();
 	}
 

@@ -11,6 +11,7 @@ import {
 import { OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { Subscription } from 'rxjs';
 import { DebugService } from '../../services/debug.service';
+import { LocalizationFacadeService } from '../../services/localization-facade.service';
 
 @Component({
 	selector: 'settings',
@@ -72,13 +73,15 @@ export class SettingsComponent implements AfterViewInit, OnDestroy {
 		private ow: OverwolfService,
 		private cdr: ChangeDetectorRef,
 		private readonly windowManager: WindowManagerService,
+		private readonly i18n: LocalizationFacadeService,
 	) {}
 
 	async ngAfterViewInit() {
+		await this.i18n.init();
+
 		this.thisWindowId = (await this.ow.getCurrentWindow()).id;
-		window['selectApp'] = this.onAppSelected;
-		const mainWindow = await this.windowManager.getMainWindow();
-		this.settingsEventBus = mainWindow.settingsEventBus;
+		this.windowManager.registerGlobalService('selectApp', this.onAppSelected.bind(this));
+		this.settingsEventBus = await this.windowManager.getGlobalService('settingsEventBus');
 		this.settingsSubscription = this.settingsEventBus.subscribe(([selectedApp, selectedMenu]) => {
 			this.selectApp(selectedApp ?? 'general', selectedMenu);
 		});

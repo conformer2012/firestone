@@ -60,9 +60,9 @@ export class AppStartupService {
 		}
 
 		console.log('[startup] app init starting');
-		window['mainWindowHotkeyPressed'] = () => this.onHotkeyPress();
-		window['reloadWindows'] = () => this.reloadWindows();
-		window['reloadBgWindows'] = () => this.reloadBgWindows();
+		this.windowManager.registerGlobalService('mainWindowHotkeyPressed', () => this.onHotkeyPress());
+		this.windowManager.registerGlobalService('reloadWindows', () => this.reloadWindows());
+		this.windowManager.registerGlobalService('reloadBgWindows', () => this.reloadBgWindows());
 
 		if (!this.collectionHotkeyListener) {
 			this.collectionHotkeyListener = this.ow.addHotKeyPressedListener('collection', async (hotkeyResult) => {
@@ -132,7 +132,7 @@ export class AppStartupService {
 			}
 		});
 
-		this.stateUpdater = (await this.windowManager.getMainWindow()).mainWindowStoreUpdater;
+		this.stateUpdater = await this.windowManager.getGlobalService('mainWindowStoreUpdater');
 		const settingsWindow = await this.ow.getSettingsWindow(prefs);
 		await this.ow.hideWindow(settingsWindow.id);
 		setTimeout(() => this.addAnalytics());

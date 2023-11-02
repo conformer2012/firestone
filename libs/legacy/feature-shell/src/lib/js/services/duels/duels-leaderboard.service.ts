@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { DuelsLeaderboard } from '@firestone-hs/duels-leaderboard';
 import { Input } from '@firestone-hs/retrieve-users-duels-runs/dist/input';
 import { SubscriberAwareBehaviorSubject } from '@firestone/shared/framework/common';
-import { ApiRunner } from '@firestone/shared/framework/core';
+import { ApiRunner, WindowManagerService } from '@firestone/shared/framework/core';
 import { UserService } from '../user.service';
 
 const DUELS_LEADERBOARD_URL = 'https://hj7zgbe3esjkltgsbu3pznjq4q0edrhn.lambda-url.us-west-2.on.aws/';
@@ -11,8 +11,12 @@ const DUELS_LEADERBOARD_URL = 'https://hj7zgbe3esjkltgsbu3pznjq4q0edrhn.lambda-u
 export class DuelsLeaderboardService {
 	public duelsLeaderboard$$ = new SubscriberAwareBehaviorSubject<DuelsLeaderboard>(null);
 
-	constructor(private readonly api: ApiRunner, private readonly userService: UserService) {
-		window['duelsLeaderboard'] = this;
+	constructor(
+		private readonly api: ApiRunner,
+		private readonly userService: UserService,
+		windowManager: WindowManagerService,
+	) {
+		windowManager.registerGlobalService('duelsLeaderboard', this);
 		this.init();
 	}
 

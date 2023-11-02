@@ -54,9 +54,6 @@ export class GameReplayComponent {
 	}
 
 	private async getReplayXml(reviewId: string): Promise<string> {
-		// window['coliseum'].zone.run(() => {
-		// 	window['coliseum'].component.updateStatus('Downloading replay file');
-		// });
 		const review: any = await this.api.callGetApi<any>(`${RETRIEVE_REVIEW_URL}/${reviewId}`);
 		if (!review) {
 			return null;

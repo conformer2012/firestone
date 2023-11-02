@@ -65,8 +65,7 @@ export class DuelsTreasureSearchComponent
 	}
 
 	async ngAfterViewInit() {
-		const mainWindow = await this.windowManager.getMainWindow();
-		this.stateUpdater = mainWindow.mainWindowStoreUpdater;
+		this.stateUpdater = await this.windowManager.getGlobalService('mainWindowStoreUpdater');
 		this.searchFormSub$$ = this.searchForm.valueChanges
 			.pipe(debounceTime(200))
 			.pipe(distinctUntilChanged())

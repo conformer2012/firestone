@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CardPackResult, PackResult } from '@firestone-hs/user-packs';
 import { SubscriberAwareBehaviorSubject } from '@firestone/shared/framework/common';
+import { WindowManagerService } from '@firestone/shared/framework/core';
 import { BehaviorSubject, filter } from 'rxjs';
 import { CardHistory } from '../../../models/card-history';
 import { MemoryUpdate } from '../../../models/memory/memory-update';
@@ -13,8 +14,12 @@ export class CollectionBootstrapService {
 	public packStats$$ = new SubscriberAwareBehaviorSubject<readonly PackResult[]>([]);
 	public cardHistory$$ = new BehaviorSubject<readonly CardHistory[]>([]);
 
-	constructor(private readonly events: Events, private readonly collectionManager: CollectionManager) {
-		window['collectionBootstrap'] = this;
+	constructor(
+		private readonly events: Events,
+		private readonly collectionManager: CollectionManager,
+		windowManager: WindowManagerService,
+	) {
+		windowManager.registerGlobalService('collectionBootstrap', this);
 		this.init();
 	}
 
