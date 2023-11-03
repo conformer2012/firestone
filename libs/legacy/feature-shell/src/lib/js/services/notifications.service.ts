@@ -7,11 +7,7 @@ import { PreferencesService } from './preferences.service';
 
 @Injectable()
 export class OwNotificationsService {
-	private windowId: string;
-	private messageId = 0;
-	// Because if we start the app during a game, it might take some time for the notif window to
-	// be created
-	private retriesLeft = 30;
+	private windowReady = false;
 	private isDev: boolean;
 	private isBeta: boolean;
 
@@ -56,17 +52,7 @@ export class OwNotificationsService {
 			console.log('not showing any notification');
 			return;
 		}
-		if (!this.windowId) {
-			if (this.retriesLeft <= 0) {
-				throw new Error('NotificationsWindow was not identified at app start');
-			} else {
-				this.retriesLeft--;
-				setTimeout(() => {
-					this.emitNewNotification(htmlMessage);
-				}, 500);
-				return;
-			}
-		}
+		await this.isReady();
 		console.debug('emitting new notification', htmlMessage);
 		this.stateEmitter.next(htmlMessage);
 	}
@@ -155,19 +141,14 @@ export class OwNotificationsService {
 	}
 
 	private async startNotificationsWindow() {
-		while (!this.windowId) {
-			console.log('[notifs] waiting for notifications window to be created');
-			this.detectNotificationsWindow();
-			await sleep(2000);
-		}
+		await this.windowManager.showWindow(OverwolfService.NOTIFICATIONS_WINDOW);
+		this.windowReady = true;
 	}
 
-	private async detectNotificationsWindow() {
-		const window = await this.ow.obtainDeclaredWindow(OverwolfService.NOTIFICATIONS_WINDOW);
-		const windowId = window.id;
-		// await this.ow.restoreWindow(windowId);
-		await this.ow.hideWindow(windowId);
-		this.windowId = windowId;
+	private async isReady() {
+		while (!this.windowReady) {
+			await sleep(500);
+		}
 	}
 }
 

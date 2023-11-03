@@ -1,4 +1,4 @@
-import { CardsFacadeService, OverwolfService } from '@firestone/shared/framework/core';
+import { CardsFacadeService, OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { GameState } from '../../../models/decktracker/game-state';
 import { GameStateEvent } from '../../../models/decktracker/game-state-event';
 import { GameEvent } from '../../../models/game-event';
@@ -23,6 +23,7 @@ export abstract class AbstractOverlayHandler implements OverlayHandler {
 		private readonly ow: OverwolfService,
 		private readonly prefs: PreferencesService,
 		private readonly allCards: CardsFacadeService,
+		private readonly windowManager: WindowManagerService,
 		private readonly forceLogs = false,
 	) {}
 
@@ -47,11 +48,9 @@ export abstract class AbstractOverlayHandler implements OverlayHandler {
 		const shouldShowFromState = this.shouldShowFromState(state, prefs, showDecktrackerFromGameMode);
 		const shouldShow = this.showOverlayPref && this.shouldShow(canShow, shouldShowFromState, prefs, state);
 		if (shouldShow && isWindowClosed(theWindow.window_state_ex)) {
-			await this.ow.obtainDeclaredWindow(this.windowName);
-			await this.ow.restoreWindow(this.windowName);
+			this.windowManager.showWindow(this.windowName, { bringToFront: true });
 		} else if (!shouldShow && !isWindowClosed(theWindow.window_state_ex)) {
-			await this.ow.closeWindow(this.windowName);
-		} else if (this.forceLogs && forceLogs && !shouldShow && isWindowClosed(theWindow.window_state_ex)) {
+			this.windowManager.closeWindow(this.windowName);
 		}
 	}
 

@@ -535,15 +535,11 @@ export class BattlegroundsStoreService {
 			} as BattlegroundsState);
 			this.updateOverlay();
 		} else if (gameEvent.type === BgsToggleOverlayWindowEvent.NAME) {
-			const window = await this.ow.obtainDeclaredWindow(OverwolfService.BATTLEGROUNDS_WINDOW_OVERLAY);
-			if (window.stateEx === 'normal' || window.stateEx === 'maximized') {
-				await this.ow.minimizeWindow(OverwolfService.BATTLEGROUNDS_WINDOW_OVERLAY);
-			} else {
+			const toggleStatus = await this.windowManager.toggleWindow(OverwolfService.BATTLEGROUNDS_WINDOW_OVERLAY);
+			if (!toggleStatus?.isNowClosed) {
 				this.state = this.state.update({
 					forceOpen: true,
 				} as BattlegroundsState);
-				// await this.ow.obtainDeclaredWindow(OverwolfService.BATTLEGROUNDS_WINDOW_OVERLAY);
-				await this.ow.restoreWindow(OverwolfService.BATTLEGROUNDS_WINDOW_OVERLAY);
 			}
 		}
 		let newState = this.state;
@@ -657,6 +653,6 @@ export class BattlegroundsStoreService {
 	}
 
 	private buildOverlayHandlers() {
-		this.overlayHandlers = [new BgsMainWindowOverlay(this.prefs, this.ow)];
+		this.overlayHandlers = [new BgsMainWindowOverlay(this.prefs, this.ow, this.windowManager)];
 	}
 }

@@ -1,5 +1,5 @@
 import { AfterContentInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { LocalizationFacadeService } from '@services/localization-facade.service';
 import { Observable } from 'rxjs';
 import { PreferencesService } from '../../../services/preferences.service';
@@ -163,6 +163,7 @@ export class SettingsGeneralThirdPartyComponent
 		private readonly prefs: PreferencesService,
 		private readonly ow: OverwolfService,
 		private readonly i18n: LocalizationFacadeService,
+		private readonly windowManager: WindowManagerService,
 	) {
 		super(store, cdr);
 	}
@@ -174,9 +175,7 @@ export class SettingsGeneralThirdPartyComponent
 	}
 
 	async oocConnect() {
-		await this.ow.obtainDeclaredWindow('OutOfCardsAuthWindow');
-		await this.ow.restoreWindow('OutOfCardsAuthWindow');
-		await this.ow.bringToFront('OutOfCardsAuthWindow');
+		await this.windowManager.showWindow('OutOfCardsAuthWindow', { bringToFront: true });
 	}
 
 	oocDisconnect() {

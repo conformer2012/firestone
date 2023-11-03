@@ -42,19 +42,7 @@ export class ControlSettingsComponent implements AfterViewInit {
 			this.settingsEventBus.next([this.settingsApp, this.settingsSection]);
 		}
 		const prefs = await this.prefs.getPreferences();
-		const windowName = await this.ow.getSettingsWindowName(prefs);
-		const settingsWindow = await this.ow.obtainDeclaredWindow(windowName);
-		// Window hidden, we show it
-		if (settingsWindow.stateEx !== 'normal') {
-			// Avoid flickering
-			setTimeout(async () => {
-				await this.ow.restoreWindow(settingsWindow.id);
-				this.ow.bringToFront(settingsWindow.id);
-			}, 10);
-		}
-		// Otherwise we hide it
-		else {
-			this.ow.hideWindow(settingsWindow.id);
-		}
+		const windowName = this.ow.getSettingsWindowName(prefs);
+		await this.windowManager.toggleWindow(windowName, { hideInsteadOfClose: true });
 	}
 }

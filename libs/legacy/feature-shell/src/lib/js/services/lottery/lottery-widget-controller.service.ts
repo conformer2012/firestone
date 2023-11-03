@@ -19,7 +19,7 @@ export class LotteryWidgetControllerService {
 		private readonly ow: OverwolfService,
 		private readonly notifications: OwNotificationsService,
 		private readonly prefs: PreferencesService,
-		windowManager: WindowManagerService,
+		private readonly windowManager: WindowManagerService,
 	) {
 		windowManager.registerGlobalService('lotteryWidgetController', this);
 		this.init();
@@ -52,18 +52,15 @@ export class LotteryWidgetControllerService {
 		combineLatest([this.store.listenPrefs$((prefs) => prefs.lotteryOverlay), displayWidgetFromData$])
 			.pipe(distinctUntilChanged((a, b) => arraysEqual(a, b)))
 			.subscribe(async ([[lotteryOverlay], visible]) => {
-				// console.debug('[lottery-widget] setting visibility', visible);
-				const lotteryWindow = await this.ow.obtainDeclaredWindow(OverwolfService.LOTTERY_WINDOW);
 				if (lotteryOverlay) {
-					this.ow.closeWindow(lotteryWindow.id);
+					this.windowManager.closeWindow(OverwolfService.LOTTERY_WINDOW);
 					return;
 				}
 
 				if (visible) {
-					this.ow.restoreWindow(lotteryWindow.id);
-					this.ow.bringToFront(lotteryWindow.id);
+					this.windowManager.showWindow(OverwolfService.LOTTERY_WINDOW, { bringToFront: true });
 				} else {
-					this.ow.closeWindow(lotteryWindow.id);
+					this.windowManager.closeWindow(OverwolfService.LOTTERY_WINDOW);
 				}
 			});
 

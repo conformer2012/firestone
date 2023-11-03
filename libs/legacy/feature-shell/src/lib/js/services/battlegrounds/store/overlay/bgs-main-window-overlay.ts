@@ -1,4 +1,4 @@
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { BattlegroundsState } from '../../../../models/battlegrounds/battlegrounds-state';
 import { PreferencesService } from '../../../preferences.service';
 import { isWindowClosed } from '../../../utils';
@@ -8,7 +8,11 @@ import { BattlegroundsOverlay } from './battlegrounds-overlay';
 export class BgsMainWindowOverlay implements BattlegroundsOverlay {
 	private closedByUser: boolean;
 
-	constructor(private readonly prefs: PreferencesService, private readonly ow: OverwolfService) {}
+	constructor(
+		private readonly prefs: PreferencesService,
+		private readonly ow: OverwolfService,
+		private readonly windowManager: WindowManagerService,
+	) {}
 
 	public async processEvent(gameEvent: BattlegroundsStoreEvent) {
 		if (gameEvent.type === 'BgsMatchStartEvent') {
@@ -21,10 +25,10 @@ export class BgsMainWindowOverlay implements BattlegroundsOverlay {
 	public async updateOverlay(state: BattlegroundsState) {
 		const prefs = await this.prefs.getPreferences();
 		const bgsActive = prefs.bgsEnableApp && prefs.bgsFullToggle;
-		const windowId = prefs.bgsUseOverlay
+		const windowName = prefs.bgsUseOverlay
 			? OverwolfService.BATTLEGROUNDS_WINDOW_OVERLAY
 			: OverwolfService.BATTLEGROUNDS_WINDOW;
-		const battlegroundsWindow = await this.ow.getWindowState(windowId);
+		const battlegroundsWindow = await this.ow.getWindowState(windowName);
 		// Minimize is only triggered by a user action, so if they minimize it we don't touch it
 		if (battlegroundsWindow.window_state_ex === 'minimized' && !state.forceOpen) {
 			return;
@@ -34,15 +38,10 @@ export class BgsMainWindowOverlay implements BattlegroundsOverlay {
 			this.closedByUser = false;
 		}
 		if (bgsActive && state?.forceOpen) {
-			await this.ow.obtainDeclaredWindow(windowId);
-			if (battlegroundsWindow.window_state_ex !== 'maximized' && battlegroundsWindow.stateEx !== 'maximized') {
-				// 	'[bgs-main-window] restoring window',
-				// 	inGame && this.bgsActive && state.forceOpen,
-				// 	battlegroundsWindow,
-				// );
-				await this.ow.restoreWindow(windowId);
-				await this.ow.bringToFront(windowId);
-			}
+			await this.windowManager.showWindow(windowName, {
+				onlyIfNotMaximized: true,
+				bringToFront: true,
+			});
 		}
 		// In fact we don't want to close the window when the game ends
 		else if (
@@ -50,30 +49,23 @@ export class BgsMainWindowOverlay implements BattlegroundsOverlay {
 			!isWindowClosed(battlegroundsWindow.stateEx) &&
 			this.closedByUser
 		) {
-			await this.ow.closeWindow(windowId);
+			await this.windowManager.closeWindow(windowName);
 		}
 	}
 
 	public async handleHotkeyPressed(state: BattlegroundsState, force = false) {
-		const prefs = await this.prefs.getPreferences();
-		const windowId = prefs.bgsUseOverlay
-			? OverwolfService.BATTLEGROUNDS_WINDOW_OVERLAY
-			: OverwolfService.BATTLEGROUNDS_WINDOW;
-		const window = await this.ow.obtainDeclaredWindow(windowId);
-		//console.warn('hotkey pressed', window);
 		const inGame = state && state.inGame;
 		if (!force && !inGame) {
 			return;
 		}
 
-		if (isWindowClosed(window.stateEx) || window.stateEx === 'minimized') {
-			this.closedByUser = false;
-			await this.ow.obtainDeclaredWindow(windowId);
-			await this.ow.restoreWindow(windowId);
-			await this.ow.bringToFront(windowId);
-		} else if (!isWindowClosed(window.stateEx)) {
-			this.closedByUser = true;
-			await this.ow.hideWindow(windowId);
+		const prefs = await this.prefs.getPreferences();
+		const windowName = prefs.bgsUseOverlay
+			? OverwolfService.BATTLEGROUNDS_WINDOW_OVERLAY
+			: OverwolfService.BATTLEGROUNDS_WINDOW;
+		const toggled = await this.windowManager.toggleWindow(windowName);
+		if (toggled != null) {
+			this.closedByUser = toggled.isNowClosed;
 		}
 	}
 }

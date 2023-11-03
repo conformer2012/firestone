@@ -40,28 +40,58 @@ export class WindowManagerService {
 		return;
 	}
 
-	// public async isMainWindow() {
-	// 	const currentWindow = this.ow?.isOwEnabled() ? await this.ow.getCurrentWindow() : null;
-	// 	return !currentWindow || currentWindow?.name === OverwolfService.MAIN_WINDOW;
-	// }
+	public async showWindow(
+		windowName: string,
+		options?: {
+			bringToFront?: boolean;
+			onlyIfNotMaximized?: boolean;
+		},
+	) {
+		const window = await this.ow.obtainDeclaredWindow(windowName);
+		await this.ow.restoreWindow(window.id);
+		if (!options?.onlyIfNotMaximized || window.stateEx !== 'maximized') {
+			if (options?.bringToFront) {
+				await this.ow.bringToFront(window.id);
+			}
+		}
+	}
 
-	// public async getMainWindow() {
-	// 	if (!this.mainWindow) {
-	// 		await this.init();
-	// 	}
-	// 	return this.mainWindow;
-	// }
+	public async closeWindow(windowName: string) {
+		const window = await this.ow.obtainDeclaredWindow(windowName);
+		await this.ow.closeWindow(window.id);
+	}
 
-	// public getMainWindowSyncWithPossibleNull() {
-	// 	return this.mainWindow;
-	// }
+	public async toggleWindow(
+		windowName: string,
+		options?: { hideInsteadOfClose: boolean },
+	): Promise<{ isNowClosed: boolean } | null> {
+		const window = await this.ow.obtainDeclaredWindow(windowName);
+		if (this.isWindowClosed(window.stateEx) || window.stateEx === 'minimized') {
+			await this.ow.obtainDeclaredWindow(windowName);
+			await this.ow.restoreWindow(windowName);
+			await this.ow.bringToFront(windowName);
+			return { isNowClosed: false };
+		} else if (!this.isWindowClosed(window.stateEx)) {
+			if (options?.hideInsteadOfClose) {
+				await this.ow.hideWindow(windowName);
+			} else {
+				await this.ow.closeWindow(windowName);
+			}
+			return { isNowClosed: true };
+		}
+		return null;
+	}
 
-	// private async init() {
-	// 	const currentWindow = await this.ow?.getCurrentWindow();
-	// 	if (!this.ow || !currentWindow || currentWindow?.name === OverwolfService.MAIN_WINDOW) {
-	// 		this.mainWindow = window;
-	// 	} else {
-	// 		this.mainWindow = this.ow.getMainWindow();
-	// 	}
-	// }
+	public async resetWindowPosition(windowName: string) {
+		const cWindow = await this.ow.obtainDeclaredWindow(windowName);
+		const wasVisible = cWindow.isVisible;
+		await this.ow.changeWindowPosition(cWindow.id, 0, 0);
+		if (!wasVisible) {
+			await this.ow.closeWindow(cWindow.id);
+		}
+	}
+
+	private isWindowClosed(state: string): boolean {
+		return state === 'closed' || state === 'hidden';
+	}
 }

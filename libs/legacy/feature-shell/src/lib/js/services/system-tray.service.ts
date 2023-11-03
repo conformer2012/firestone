@@ -79,12 +79,7 @@ export class SystemTrayService {
 			OverwolfService.LOTTERY_WINDOW,
 		];
 		for (const w of windows) {
-			const cWindow = await this.ow.obtainDeclaredWindow(w);
-			const wasVisible = cWindow.isVisible;
-			await this.ow.changeWindowPosition(cWindow.id, 0, 0);
-			if (!wasVisible) {
-				await this.ow.closeWindow(cWindow.id);
-			}
+			await this.windowManager.resetWindowPosition(w);
 		}
 	}
 
@@ -93,9 +88,7 @@ export class SystemTrayService {
 
 		const prefs = await this.prefs.getPreferences();
 		const windowName = this.ow.getSettingsWindowName(prefs);
-		const settingsWindow = await this.ow.obtainDeclaredWindow(windowName);
-		await this.ow.restoreWindow(settingsWindow.id);
-		this.ow.bringToFront(settingsWindow.id);
+		this.windowManager.showWindow(windowName, { bringToFront: true });
 	}
 
 	private async showMainWindow() {

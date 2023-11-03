@@ -1,4 +1,5 @@
 import { EventEmitter, Injectable } from '@angular/core';
+import { LOADING_SCREEN_DURATION } from '@components/loading/loading.component';
 import { generateToken } from '@components/third-party/out-of-cards-callback.component';
 import { ApiRunner, OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { GameStatusService } from '@legacy-import/src/lib/js/services/game-status.service';
@@ -18,12 +19,8 @@ import { PreferencesService } from '../../js/services/preferences.service';
 
 @Injectable()
 export class AppStartupService {
-	private static readonly STATES = ['INIT', 'READY'];
-	private static readonly LOADING_SCREEN_DURATION = 20000;
-
 	private stateUpdater: EventEmitter<MainWindowStoreEvent>;
 	private currentState = 'INIT';
-	private loadingWindowId: string;
 	private loadingWindowShown = false;
 	private collectionHotkeyListener;
 
@@ -49,10 +46,6 @@ export class AppStartupService {
 
 		if (!this.loadingWindowShown) {
 			console.debug('[startup] initializing loading window');
-			const window = await this.ow.obtainDeclaredWindow('LoadingWindow');
-			this.loadingWindowId = window.id;
-			// await this.ow.restoreWindow(this.loadingWindowId);
-			// await this.ow.hideWindow(this.loadingWindowId);
 			const isRunning = await this.ow.inGame();
 			if (isRunning) {
 				this.showLoadingScreen();
@@ -185,20 +178,18 @@ export class AppStartupService {
 			return;
 		}
 		this.loadingWindowShown = true;
-		console.log('[startup] showing loading screen?', this.currentState, this.loadingWindowId);
+		console.log('[startup] showing loading screen?', this.currentState);
 
 		// Don't open the loading window if the main window is open
 		const prefs = await this.prefs.getPreferences();
 		const collectionWindow = await this.ow.getCollectionWindow(prefs);
 		const shouldShowAds = await this.ads.shouldDisplayAds();
-		const isDev = !!process.env.NODE_ENV && process.env.NODE_ENV !== 'production';
 		if (shouldShowAds && !collectionWindow.isVisible) {
-			await this.ow.obtainDeclaredWindow(OverwolfService.LOADING_WINDOW);
-			const result = await this.ow.restoreWindow(OverwolfService.LOADING_WINDOW);
-			console.log('[startup] final restore for loadingwindow done', result);
+			await this.windowManager.showWindow(OverwolfService.LOADING_WINDOW, { bringToFront: true });
+			console.log('[startup] final restore for loadingwindow done');
 			setTimeout(() => {
-				this.notifyAbilitiesReady();
-			}, AppStartupService.LOADING_SCREEN_DURATION);
+				this.currentState = 'READY';
+			}, LOADING_SCREEN_DURATION);
 		} else {
 			this.currentState = 'READY';
 			if (!shouldShowAds) {
@@ -230,11 +221,6 @@ export class AppStartupService {
 		}
 	}
 
-	private notifyAbilitiesReady() {
-		this.currentState = 'READY';
-		this.ow.sendMessage(this.loadingWindowId, 'ready', 'ready');
-	}
-
 	private async startApp(showMainWindow: boolean) {
 		const isRunning = await this.ow.inGame();
 		console.log('[startup] are we in game?', isRunning);
@@ -248,16 +234,8 @@ export class AppStartupService {
 	}
 
 	private async closeLoadingScreen() {
-		const window = await this.ow.obtainDeclaredWindow(OverwolfService.LOADING_WINDOW);
-		// await this.ow.hideWindow(window.id);
-		await this.ow.closeWindow(window.id);
+		await this.windowManager.closeWindow(OverwolfService.LOADING_WINDOW);
 	}
-
-	// private async closeCollectionWindow() {
-	// 	const window = await this.ow.obtainDeclaredWindow(OverwolfService.COLLECTION_WINDOW);
-	// 	// this.ow.hideWindow(window.id);
-	// 	await this.ow.closeWindow(window.id);
-	// }
 
 	private async showCollectionWindow() {
 		// console.log('showing collection window');
@@ -272,12 +250,8 @@ export class AppStartupService {
 
 	private async showFullScreenOverlaysWindow() {
 		// console.log('[startup] ready to show full screen overlays window');
-		const overlaysWindow = await this.ow.obtainDeclaredWindow(OverwolfService.FULL_SCREEN_OVERLAYS_WINDOW);
-		this.ow.restoreWindow(overlaysWindow.id);
-		const overlaysClickthroughWindow = await this.ow.obtainDeclaredWindow(
-			OverwolfService.FULL_SCREEN_OVERLAYS_CLICKTHROUGH_WINDOW,
-		);
-		this.ow.restoreWindow(overlaysClickthroughWindow.id);
+		this.windowManager.showWindow(OverwolfService.FULL_SCREEN_OVERLAYS_WINDOW);
+		this.windowManager.showWindow(OverwolfService.FULL_SCREEN_OVERLAYS_CLICKTHROUGH_WINDOW);
 	}
 
 	private async handleExitGame() {

@@ -12,6 +12,8 @@ import { OverwolfService } from '@firestone/shared/framework/core';
 import { DebugService } from '../../services/debug.service';
 import { LocalizationFacadeService } from '../../services/localization-facade.service';
 
+export const LOADING_SCREEN_DURATION = 20000;
+
 @Component({
 	selector: 'loading',
 	styleUrls: [`../../../css/component/loading/loading.component.scss`],
@@ -82,7 +84,6 @@ export class LoadingComponent implements AfterViewInit, OnDestroy {
 	thisWindowId: string;
 
 	private stateChangedListener: (message: any) => void;
-	private messageReceivedListener: (message: any) => void;
 
 	constructor(
 		private readonly debugService: DebugService,
@@ -97,15 +98,13 @@ export class LoadingComponent implements AfterViewInit, OnDestroy {
 		// this.cdr.detach();
 		this.thisWindowId = (await this.ow.getCurrentWindow()).id;
 		this.positionWindow();
-		this.messageReceivedListener = this.ow.addMessageReceivedListener((message) => {
-			if (message.id === 'ready') {
-				this.title = this.i18n.translateString('loading.ready');
-				this.loading = false;
-				if (!(this.cdr as ViewRef)?.destroyed) {
-					this.cdr.detectChanges();
-				}
+		setTimeout(() => {
+			this.title = this.i18n.translateString('loading.ready');
+			this.loading = false;
+			if (!(this.cdr as ViewRef)?.destroyed) {
+				this.cdr.detectChanges();
 			}
-		});
+		}, LOADING_SCREEN_DURATION);
 		if (!(this.cdr as ViewRef)?.destroyed) {
 			this.cdr.detectChanges();
 		}
@@ -114,7 +113,6 @@ export class LoadingComponent implements AfterViewInit, OnDestroy {
 	@HostListener('window:beforeunload')
 	ngOnDestroy(): void {
 		this.ow.removeStateChangedListener(this.stateChangedListener);
-		this.ow.removeMessageReceivedListener(this.messageReceivedListener);
 	}
 
 	@HostListener('mousedown', ['$event'])
