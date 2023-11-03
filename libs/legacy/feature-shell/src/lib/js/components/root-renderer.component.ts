@@ -13,7 +13,7 @@ import { LocalizationFacadeService } from '../services/localization-facade.servi
 // https://stackoverflow.com/questions/44929726/angular4-ng-content-gets-built-when-ngif-is-false
 @Component({
 	selector: 'root-renderer',
-	styleUrls: [],
+	styleUrls: [`../../css/component/root-renderer.component.scss`],
 	template: `
 		<div *ngIf="ready">
 			<ng-container *ngTemplateOutlet="contentOutlet"></ng-container>
