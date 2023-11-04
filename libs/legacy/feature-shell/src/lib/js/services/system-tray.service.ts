@@ -93,13 +93,12 @@ export class SystemTrayService {
 
 	private async showMainWindow() {
 		const prefs = await this.prefs.getPreferences();
-		const window = await this.ow.getCollectionWindow(prefs);
-		this.ow.restoreWindow(window.id);
-		this.ow.bringToFront(window.id);
+		const mainWindowName = this.ow.getCollectionWindowName(prefs);
+		await this.windowManager.showWindow(mainWindowName, { bringToFront: true });
 	}
 
 	private exitApp() {
 		console.log('exiting app');
-		this.ow.closeWindow(OverwolfService.MAIN_WINDOW);
+		this.windowManager.closeWindow(OverwolfService.MAIN_WINDOW);
 	}
 }

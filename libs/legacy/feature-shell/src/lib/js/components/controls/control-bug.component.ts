@@ -42,9 +42,8 @@ export class ControlBugComponent implements AfterViewInit {
 		// Avoid flickering
 		setTimeout(async () => {
 			const prefs = await this.prefs.getPreferences();
-			const settingsWindow = await this.ow.getSettingsWindow(prefs);
-			this.ow.restoreWindow(settingsWindow.id);
-			this.ow.bringToFront(settingsWindow.id);
+			const windowName = this.ow.getSettingsWindowName(prefs);
+			await this.windowManager.showWindow(windowName);
 		}, 10);
 	}
 }

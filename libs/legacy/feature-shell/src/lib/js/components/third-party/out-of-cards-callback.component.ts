@@ -21,8 +21,9 @@ export class OutOfCardsCallbackComponent implements AfterViewInit {
 	) {}
 
 	async ngAfterViewInit() {
-		const windowId = (await this.ow.getCurrentWindow()).id;
-		await this.ow.bringToFront(windowId);
+		const currentWindow = await this.ow.getCurrentWindow();
+		const windowId = currentWindow.id;
+		await this.windowManager.bringToFront(windowId);
 
 		this.stateUpdater = await this.windowManager.getGlobalService('outOfCardsAuthUpdater');
 		if (!this.stateUpdater) {
@@ -44,10 +45,7 @@ export class OutOfCardsCallbackComponent implements AfterViewInit {
 			this.ow.openUrlInDefaultBrowser(
 				`https://outof.games/oauth/authorize/?client_id=oqEn7ONIAOmugFTjFQGe1lFSujGxf3erhNDDTvkC&response_type=code&scope=hearthcollection&redirect_uri=https://www.firestoneapp.com/oog-login.html`,
 			);
-			this.ow.closeWindow(windowId);
-			// window.location.replace(
-			// 	`https://outof.games/oauth/authorize/?client_id=oqEn7ONIAOmugFTjFQGe1lFSujGxf3erhNDDTvkC&response_type=code&scope=hearthcollection&redirect_uri=https://www.firestoneapp.com/oog-login.html`,
-			// );
+			this.windowManager.closeWindow(currentWindow.name);
 		}
 	}
 }

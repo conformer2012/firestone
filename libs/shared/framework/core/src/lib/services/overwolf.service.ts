@@ -46,22 +46,6 @@ export class OverwolfService {
 		return this.isOwEnabled() ? overwolf.windows.getMainWindow() : window;
 	}
 
-	// TODO: move preferences to a common module
-	public getCollectionWindow(prefs: Preferences) {
-		const windowName = this.getCollectionWindowName(prefs);
-		return this.obtainDeclaredWindow(windowName);
-	}
-
-	public getBattlegroundsWindow(prefs: Preferences) {
-		const windowName = this.getBattlegroundsWindowName(prefs);
-		return this.obtainDeclaredWindow(windowName);
-	}
-
-	public getSettingsWindow(prefs: Preferences) {
-		const windowName = this.getSettingsWindowName(prefs);
-		return this.obtainDeclaredWindow(windowName);
-	}
-
 	public getCollectionWindowName(prefs: Preferences) {
 		return prefs.collectionUseOverlay
 			? OverwolfService.COLLECTION_WINDOW_OVERLAY
@@ -275,6 +259,19 @@ export class OverwolfService {
 		});
 	}
 
+	public async getCurrentWindow(): Promise<ExtendedWindowInfo> {
+		return new Promise<ExtendedWindowInfo>((resolve) => {
+			try {
+				overwolf.windows.getCurrentWindow((res: overwolf.windows.WindowResult) => {
+					resolve(res.window as ExtendedWindowInfo);
+				});
+			} catch (e) {
+				console.warn('Exception while getting current window window');
+				resolve(null as any);
+			}
+		});
+	}
+
 	public async generateSessionToken(): Promise<string> {
 		return new Promise<string>((resolve) => {
 			overwolf.profile.generateUserSessionToken((result) => {
@@ -293,116 +290,6 @@ export class OverwolfService {
 
 	public addLoginStateChangedListener(callback) {
 		overwolf.profile.onLoginStateChanged.addListener(callback);
-	}
-
-	public async closeWindow(windowId: string) {
-		return new Promise<any>((resolve) => {
-			overwolf.windows.close(windowId, (result) => {
-				resolve(result);
-			});
-		});
-	}
-
-	/** @deprecated Use closeWindow instead */
-	public async closeWindowFromName(windowName: string) {
-		const window = await this.obtainDeclaredWindow(windowName);
-		return new Promise<any>((resolve) => {
-			overwolf.windows.close(window.id, (result) => {
-				resolve(result);
-			});
-		});
-	}
-
-	public async restoreWindow(windowId: string): Promise<overwolf.windows.WindowIdResult | null> {
-		return new Promise<overwolf.windows.WindowIdResult | null>((resolve) => {
-			try {
-				overwolf.windows.restore(windowId, async (result) => {
-					resolve(result);
-				});
-			} catch (e) {
-				// This doesn't seem to prevent the window from being restored, so let's ignore it
-				console.warn('Exception while restoring window', e);
-				resolve(null);
-			}
-		});
-	}
-
-	public async setTopmost(windowId: string) {
-		return new Promise<any>((resolve) => {
-			try {
-				overwolf.windows.setTopmost(windowId, true, (result) => {
-					resolve(result);
-				});
-			} catch (e) {
-				console.warn('exception when setting topmost', windowId, e);
-				resolve(null);
-			}
-		});
-	}
-
-	public async bringToFront(windowId: string, grabFocus = false): Promise<overwolf.windows.WindowIdResult | null> {
-		return new Promise<overwolf.windows.WindowIdResult | null>((resolve) => {
-			// https://overwolf.github.io/docs/api/overwolf-windows#setdesktoponlywindowid-shouldbedesktoponly-callback
-			try {
-				overwolf.windows.bringToFront(windowId, grabFocus, (result) => {
-					resolve(result);
-				});
-			} catch (e) {
-				console.warn('exception when bringing to front', windowId, e);
-				resolve(null);
-			}
-		});
-	}
-
-	public async sendToBack(windowId: string) {
-		return new Promise<any>((resolve) => {
-			try {
-				overwolf.windows.sendToBack(windowId, (result) => resolve(result));
-			} catch (e) {
-				console.warn('exception when sending to back', windowId, e);
-				resolve(null);
-			}
-		});
-	}
-
-	public async hideWindow(windowId: string) {
-		return new Promise<any>((resolve) => {
-			try {
-				overwolf.windows.hide(windowId, (result) => {
-					resolve(result);
-				});
-			} catch (e) {
-				// This doesn't seem to prevent the window from being restored, so let's ignore it
-				console.warn('Exception while hiding window', e);
-				resolve(null);
-			}
-		});
-	}
-
-	public async hideCollectionWindow(prefs: Preferences): Promise<void> {
-		const collectionWindow = await this.getCollectionWindow(prefs);
-		const settingsWindow = await this.getSettingsWindow(prefs);
-		// eslint-disable-next-line no-async-promise-executor
-		return new Promise<void>(async (resolve) => {
-			await Promise.all([this.hideWindow(collectionWindow.id), this.hideWindow(settingsWindow.id)]);
-			resolve();
-		});
-	}
-
-	public minimizeWindow(windowId: string) {
-		return new Promise<any>((resolve) => {
-			overwolf.windows.minimize(windowId, (result) => {
-				resolve(result);
-			});
-		});
-	}
-
-	public maximizeWindow(windowId: string) {
-		return new Promise<any>((resolve) => {
-			overwolf.windows.maximize(windowId, (result) => {
-				resolve(result);
-			});
-		});
 	}
 
 	public async dragMove(windowId: string) {
@@ -530,46 +417,6 @@ export class OverwolfService {
 			overwolf.settings.getAudioCaptureSettings((res: any) => {
 				resolve(res);
 			});
-		});
-	}
-
-	public async sendMessageWithName(windowName: string, messageType: string, messageBody?: string): Promise<void> {
-		const window = await this.obtainDeclaredWindow(windowName);
-		return new Promise<void>((resolve) => {
-			overwolf.windows.sendMessage(window.id, messageType, messageBody, () => {
-				resolve();
-			});
-		});
-	}
-
-	public async sendMessage(windowId: string, messageType: string, messageBody?: any): Promise<void> {
-		return new Promise<void>((resolve) => {
-			overwolf.windows.sendMessage(windowId, messageType, messageBody, () => {
-				resolve();
-			});
-		});
-	}
-
-	public async obtainDeclaredWindow(windowName: string): Promise<overwolf.windows.WindowInfo> {
-		return new Promise<overwolf.windows.WindowInfo>((resolve, reject) => {
-			overwolf.windows.obtainDeclaredWindow(windowName, (res) => {
-				if (res.success) {
-					resolve(res.window);
-				}
-			});
-		});
-	}
-
-	public async getCurrentWindow(): Promise<ExtendedWindowInfo> {
-		return new Promise<ExtendedWindowInfo>((resolve) => {
-			try {
-				overwolf.windows.getCurrentWindow((res: overwolf.windows.WindowResult) => {
-					resolve(res.window as ExtendedWindowInfo);
-				});
-			} catch (e) {
-				console.warn('Exception while getting current window window');
-				resolve(null as any);
-			}
 		});
 	}
 

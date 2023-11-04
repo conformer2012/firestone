@@ -1,10 +1,9 @@
 import { Injectable, Optional } from '@angular/core';
 import { OverwolfService } from './overwolf.service';
+import { overwolf } from './overwolf/overwolf';
 
 @Injectable()
 export class WindowManagerService {
-	// private mainWindow;
-
 	constructor(@Optional() private readonly ow: OverwolfService) {
 		// this.init();
 	}
@@ -45,50 +44,80 @@ export class WindowManagerService {
 		options?: {
 			bringToFront?: boolean;
 			onlyIfNotMaximized?: boolean;
+			startHidden?: boolean;
 		},
 	) {
-		const window = await this.ow.obtainDeclaredWindow(windowName);
-		await this.ow.restoreWindow(window.id);
+		const window = await overwolf.windows.obtainDeclaredWindow(windowName);
+		await overwolf.windows.restoreWindow(window.id);
 		if (!options?.onlyIfNotMaximized || window.stateEx !== 'maximized') {
 			if (options?.bringToFront) {
-				await this.ow.bringToFront(window.id);
+				await overwolf.windows.bringToFront(window.id);
 			}
+		}
+		if (options?.startHidden) {
+			await overwolf.windows.hideWindow(window.id);
 		}
 	}
 
-	public async closeWindow(windowName: string) {
-		const window = await this.ow.obtainDeclaredWindow(windowName);
-		await this.ow.closeWindow(window.id);
+	public async hideWindow(windowName: string) {
+		return overwolf.windows.hideWindow(windowName);
+	}
+
+	public async closeWindow(windowName: string, options?: { hideInsteadOfClose: boolean }) {
+		if (options?.hideInsteadOfClose) {
+			await this.hideWindow(windowName);
+		} else {
+			await overwolf.windows.closeWindow(windowName);
+		}
 	}
 
 	public async toggleWindow(
 		windowName: string,
 		options?: { hideInsteadOfClose: boolean },
 	): Promise<{ isNowClosed: boolean } | null> {
-		const window = await this.ow.obtainDeclaredWindow(windowName);
+		const window = await overwolf.windows.obtainDeclaredWindow(windowName);
 		if (this.isWindowClosed(window.stateEx) || window.stateEx === 'minimized') {
-			await this.ow.obtainDeclaredWindow(windowName);
-			await this.ow.restoreWindow(windowName);
-			await this.ow.bringToFront(windowName);
+			await overwolf.windows.obtainDeclaredWindow(windowName);
+			await overwolf.windows.restoreWindow(windowName);
+			await overwolf.windows.bringToFront(windowName);
 			return { isNowClosed: false };
 		} else if (!this.isWindowClosed(window.stateEx)) {
-			if (options?.hideInsteadOfClose) {
-				await this.ow.hideWindow(windowName);
-			} else {
-				await this.ow.closeWindow(windowName);
-			}
+			await this.closeWindow(windowName, options);
 			return { isNowClosed: true };
 		}
 		return null;
 	}
 
+	public async getCurrentWindowName(): Promise<string> {
+		const window = await overwolf.windows.getCurrentWindow();
+		return window.name;
+	}
+
+	public async isWindowVisible(windowName: string) {
+		const window = await overwolf.windows.obtainDeclaredWindow(windowName);
+		return window.isVisible;
+	}
+
 	public async resetWindowPosition(windowName: string) {
-		const cWindow = await this.ow.obtainDeclaredWindow(windowName);
+		const cWindow = await overwolf.windows.obtainDeclaredWindow(windowName);
 		const wasVisible = cWindow.isVisible;
 		await this.ow.changeWindowPosition(cWindow.id, 0, 0);
 		if (!wasVisible) {
-			await this.ow.closeWindow(cWindow.id);
+			await overwolf.windows.closeWindow(cWindow.id);
 		}
+	}
+
+	public async minimizeWindow(windowName: string) {
+		return overwolf.windows.minimizeWindow(windowName);
+	}
+	public async maximizeWindow(windowName: string) {
+		return overwolf.windows.maximizeWindow(windowName);
+	}
+	public async unmaximizeWindow(windowName: string) {
+		return overwolf.windows.restoreWindow(windowName);
+	}
+	public async bringToFront(windowName: string) {
+		return overwolf.windows.restoreWindow(windowName);
 	}
 
 	private isWindowClosed(state: string): boolean {

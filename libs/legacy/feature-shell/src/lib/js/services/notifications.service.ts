@@ -141,7 +141,9 @@ export class OwNotificationsService {
 	}
 
 	private async startNotificationsWindow() {
-		await this.windowManager.showWindow(OverwolfService.NOTIFICATIONS_WINDOW);
+		await this.windowManager.showWindow(OverwolfService.NOTIFICATIONS_WINDOW, {
+			startHidden: true,
+		});
 		this.windowReady = true;
 	}
 

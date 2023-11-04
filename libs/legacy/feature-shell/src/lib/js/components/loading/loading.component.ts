@@ -8,7 +8,7 @@ import {
 	ViewEncapsulation,
 	ViewRef,
 } from '@angular/core';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { DebugService } from '../../services/debug.service';
 import { LocalizationFacadeService } from '../../services/localization-facade.service';
 
@@ -90,6 +90,7 @@ export class LoadingComponent implements AfterViewInit, OnDestroy {
 		private readonly i18n: LocalizationFacadeService,
 		private readonly ow: OverwolfService,
 		private readonly cdr: ChangeDetectorRef,
+		private readonly windowManager: WindowManagerService,
 	) {}
 
 	async ngAfterViewInit() {
@@ -120,12 +121,14 @@ export class LoadingComponent implements AfterViewInit, OnDestroy {
 		this.ow.dragMove(this.thisWindowId);
 	}
 
-	closeWindow() {
-		this.ow.closeWindow(this.thisWindowId);
+	async closeWindow() {
+		const currentWindow = await this.windowManager.getCurrentWindowName();
+		this.windowManager.closeWindow(currentWindow);
 	}
 
-	minimizeWindow() {
-		this.ow.minimizeWindow(this.thisWindowId);
+	async minimizeWindow() {
+		const windowName = (await this.ow.getCurrentWindow()).name;
+		this.windowManager.minimizeWindow(windowName);
 	}
 
 	private async positionWindow() {

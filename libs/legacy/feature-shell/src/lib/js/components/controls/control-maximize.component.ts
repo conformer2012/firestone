@@ -102,17 +102,13 @@ export class ControlMaximizeComponent implements AfterViewInit, OnDestroy {
 			return;
 		}
 		if (this.maximized) {
-			await this.ow.restoreWindow(this.windowId);
+			await this.windowManager.unmaximizeWindow(windowName);
 			this.maximized = false;
 			if (!(this.cdr as ViewRef)?.destroyed) {
 				this.cdr.detectChanges();
 			}
 		} else {
-			// const window = await this.ow.getCurrentWindow();
-			// this.previousWidth = window.width;
-			// this.previousHeight = window.height;
-
-			await this.ow.maximizeWindow(this.windowId);
+			await this.windowManager.maximizeWindow(windowName);
 			this.maximized = true;
 			if (!(this.cdr as ViewRef)?.destroyed) {
 				this.cdr.detectChanges();

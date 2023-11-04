@@ -49,6 +49,7 @@ export class ControlCloseComponent implements AfterViewInit {
 	}
 
 	async closeWindow() {
+		const windowName = await this.windowManager.getCurrentWindowName();
 		if (this.isMainWindow) {
 			this.stateUpdater.next(new CloseMainWindowEvent());
 		}
@@ -69,25 +70,30 @@ export class ControlCloseComponent implements AfterViewInit {
 			!isWindowClosed(bgsWindowOverlay.window_state_ex);
 		if (this.closeAll && !isRunning && !areBothMainAndBgWindowsOpen && this.windowId) {
 			console.log('[control-close] closing all app windows');
-			this.ow.hideWindow(this.windowId);
+			this.windowManager.hideWindow(windowName);
 			this.prefs.updateRemotePreferences();
 			const openWindows = await this.ow.getOpenWindows();
 			for (const [name] of Object.entries(openWindows)) {
-				this.ow.closeWindowFromName(name);
+				this.windowManager.closeWindow(name);
 			}
 		} else if (this.eventProvider) {
 			console.log('delegating closing logic');
 			this.eventProvider();
 			return;
 		} else {
-			console.log('[control-close] requested window close', this.windowId);
+			console.log('[control-close] requested window close', windowName);
 			if (this.shouldHide) {
-				this.ow.hideWindow(this.windowId);
+				this.windowManager.hideWindow(windowName);
 			} else if (this.isMainWindow) {
 				const prefs = await this.prefs.getPreferences();
-				this.ow.hideCollectionWindow(prefs);
+				const mainWindowName = this.ow.getCollectionWindowName(prefs);
+				const settingsWindowName = this.ow.getSettingsWindowName(prefs);
+				await Promise.all([
+					this.windowManager.closeWindow(mainWindowName, { hideInsteadOfClose: true }),
+					this.windowManager.closeWindow(settingsWindowName, { hideInsteadOfClose: true }),
+				]);
 			} else {
-				this.ow.closeWindow(this.windowId);
+				this.windowManager.closeWindow(windowName);
 			}
 		}
 	}

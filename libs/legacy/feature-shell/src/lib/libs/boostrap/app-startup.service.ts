@@ -71,24 +71,29 @@ export class AppStartupService {
 			this.showLoadingScreen();
 		});
 		this.gameStatus.onGameExit(async (res) => {
-			this.ow.closeWindow(OverwolfService.FULL_SCREEN_OVERLAYS_WINDOW);
-			this.ow.closeWindow(OverwolfService.FULL_SCREEN_OVERLAYS_CLICKTHROUGH_WINDOW);
+			this.windowManager.closeWindow(OverwolfService.FULL_SCREEN_OVERLAYS_WINDOW);
+			this.windowManager.closeWindow(OverwolfService.FULL_SCREEN_OVERLAYS_CLICKTHROUGH_WINDOW);
 			// This can happen when we're in another game, so we exit the app for good
 
 			if (this.ow.inAnotherGame(res)) {
-				this.ow.minimizeWindow(OverwolfService.COLLECTION_WINDOW);
-				this.ow.minimizeWindow(OverwolfService.COLLECTION_WINDOW_OVERLAY);
-				this.ow.closeWindow(OverwolfService.SETTINGS_WINDOW);
-				this.ow.closeWindow(OverwolfService.SETTINGS_WINDOW_OVERLAY);
+				this.windowManager.minimizeWindow(OverwolfService.COLLECTION_WINDOW);
+				this.windowManager.minimizeWindow(OverwolfService.COLLECTION_WINDOW_OVERLAY);
+				this.windowManager.closeWindow(OverwolfService.SETTINGS_WINDOW);
+				this.windowManager.closeWindow(OverwolfService.SETTINGS_WINDOW_OVERLAY);
 			} else if (res.runningChanged) {
 				this.loadingWindowShown = false;
-				this.closeLoadingScreen();
+				await this.windowManager.closeWindow(OverwolfService.LOADING_WINDOW);
 				this.handleExitGame();
 			}
 		});
 
 		const prefs = await this.prefs.getPreferences();
-		await this.ow.hideCollectionWindow(prefs);
+		const mainWindowName = this.ow.getCollectionWindowName(prefs);
+		const settingsWindowName = this.ow.getSettingsWindowName(prefs);
+		await Promise.all([
+			this.windowManager.closeWindow(mainWindowName, { hideInsteadOfClose: true }),
+			this.windowManager.closeWindow(settingsWindowName, { hideInsteadOfClose: true }),
+		]);
 
 		// this.store.stateUpdater.next(new CloseMainWindowEvent());
 		this.startApp(false);
@@ -126,50 +131,47 @@ export class AppStartupService {
 		});
 
 		this.stateUpdater = await this.windowManager.getGlobalService('mainWindowStoreUpdater');
-		const settingsWindow = await this.ow.getSettingsWindow(prefs);
-		await this.ow.hideWindow(settingsWindow.id);
+		await this.windowManager.hideWindow(settingsWindowName);
 		setTimeout(() => this.addAnalytics());
 	}
 
 	private async reloadWindows() {
 		console.log('reloading windows in app bootstrap');
 		const prefs: Preferences = await this.prefs.getPreferences();
-		this.ow.closeWindow(OverwolfService.COLLECTION_WINDOW);
-		this.ow.closeWindow(OverwolfService.COLLECTION_WINDOW_OVERLAY);
-		this.ow.closeWindow(OverwolfService.SETTINGS_WINDOW);
-		this.ow.closeWindow(OverwolfService.SETTINGS_WINDOW_OVERLAY);
-		const [mainWindow, settingsWindow] = await Promise.all([
-			this.ow.getCollectionWindow(prefs),
-			this.ow.getSettingsWindow(prefs),
+		await Promise.all([
+			this.windowManager.closeWindow(OverwolfService.COLLECTION_WINDOW),
+			this.windowManager.closeWindow(OverwolfService.COLLECTION_WINDOW_OVERLAY),
+			this.windowManager.closeWindow(OverwolfService.SETTINGS_WINDOW),
+			this.windowManager.closeWindow(OverwolfService.SETTINGS_WINDOW_OVERLAY),
 		]);
-		await this.ow.restoreWindow(mainWindow.id);
-		// this.ow.bringToFront(mainWindow.id);
-		await this.ow.restoreWindow(settingsWindow.id);
-		this.ow.bringToFront(settingsWindow.id);
+		const mainWindowName = this.ow.getCollectionWindowName(prefs);
+		const settingsWindowName = this.ow.getSettingsWindowName(prefs);
+		await Promise.all([
+			this.windowManager.showWindow(mainWindowName, { bringToFront: false }),
+			this.windowManager.showWindow(settingsWindowName, { bringToFront: true }),
+		]);
 	}
 
 	private async reloadBgWindows() {
 		console.log('reloading BG windows in app bootstrap');
 		const prefs: Preferences = await this.prefs.getPreferences();
-		this.ow.closeWindow(OverwolfService.BATTLEGROUNDS_WINDOW);
-		this.ow.closeWindow(OverwolfService.BATTLEGROUNDS_WINDOW_OVERLAY);
-		const bgWindows = await this.ow.getBattlegroundsWindow(prefs);
-		await this.ow.restoreWindow(bgWindows.id);
-		this.ow.bringToFront(bgWindows.id);
+		await Promise.all([
+			this.windowManager.closeWindow(OverwolfService.BATTLEGROUNDS_WINDOW),
+			this.windowManager.closeWindow(OverwolfService.BATTLEGROUNDS_WINDOW_OVERLAY),
+		]);
+		const windowName = this.ow.getBattlegroundsWindowName(prefs);
+		await this.windowManager.showWindow(windowName, { bringToFront: true });
 	}
 
 	private async onHotkeyPress() {
 		const prefs = await this.prefs.getPreferences();
-
-		const window = await this.ow.getCollectionWindow(prefs);
-
-		if (window.isVisible) {
-			console.log('[startup] closing main window');
+		const mainWindowName = this.ow.getCollectionWindowName(prefs);
+		const toggleResult = await this.windowManager.toggleWindow(mainWindowName, { hideInsteadOfClose: true });
+		if (toggleResult?.isNowClosed) {
 			this.store.stateUpdater.next(new CloseMainWindowEvent());
-			await this.ow.hideCollectionWindow(prefs);
-			// await this.ow.closeWindow(window.id);
 		} else {
-			this.showCollectionWindow();
+			this.windowManager.closeWindow(OverwolfService.LOADING_WINDOW);
+			this.store.stateUpdater.next(new ShowMainWindowEvent());
 		}
 	}
 
@@ -182,9 +184,10 @@ export class AppStartupService {
 
 		// Don't open the loading window if the main window is open
 		const prefs = await this.prefs.getPreferences();
-		const collectionWindow = await this.ow.getCollectionWindow(prefs);
+		const mainWindowName = this.ow.getCollectionWindowName(prefs);
+		const isMainWindowVisible = await this.windowManager.isWindowVisible(mainWindowName);
 		const shouldShowAds = await this.ads.shouldDisplayAds();
-		if (shouldShowAds && !collectionWindow.isVisible) {
+		if (shouldShowAds && !isMainWindowVisible) {
 			await this.windowManager.showWindow(OverwolfService.LOADING_WINDOW, { bringToFront: true });
 			console.log('[startup] final restore for loadingwindow done');
 			setTimeout(() => {
@@ -233,19 +236,13 @@ export class AppStartupService {
 		}
 	}
 
-	private async closeLoadingScreen() {
-		await this.windowManager.closeWindow(OverwolfService.LOADING_WINDOW);
-	}
-
 	private async showCollectionWindow() {
-		// console.log('showing collection window');
 		// We do both store and direct restore to keep things snappier
 		const prefs = await this.prefs.getPreferences();
-		const window = await this.ow.getCollectionWindow(prefs);
-		this.ow.restoreWindow(window.id);
-		this.ow.bringToFront(window.id);
+		const mainWindowName = this.ow.getCollectionWindowName(prefs);
+		this.windowManager.showWindow(mainWindowName, { bringToFront: true });
 		this.store.stateUpdater.next(new ShowMainWindowEvent());
-		this.ow.closeWindow(OverwolfService.LOADING_WINDOW);
+		this.windowManager.closeWindow(OverwolfService.LOADING_WINDOW);
 	}
 
 	private async showFullScreenOverlaysWindow() {

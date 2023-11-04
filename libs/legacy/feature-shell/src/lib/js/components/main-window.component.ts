@@ -186,16 +186,15 @@ export class MainWindowComponent extends AbstractSubscriptionStoreComponent impl
 			.listen$(([main, nav, prefs]) => nav.isVisible)
 			.pipe(this.mapData(([visible]) => visible))
 			.subscribe(async (visible) => {
-				const window = await this.ow.getCurrentWindow();
-				const currentlyVisible = window.isVisible;
+				const currentWindowName = await this.windowManager.getCurrentWindowName();
+				const currentlyVisible = await this.windowManager.isWindowVisible(currentWindowName);
 				if (visible && !currentlyVisible) {
-					await this.ow.restoreWindow(this.windowId);
-					this.ow.bringToFront(this.windowId);
+					await this.windowManager.showWindow(currentWindowName, { bringToFront: true });
 					if (this.isMaximized) {
-						await this.ow.maximizeWindow(this.windowId);
+						await this.windowManager.maximizeWindow(currentWindowName);
 					}
 				} else if (!visible && currentlyVisible) {
-					await this.ow.hideWindow(this.windowId);
+					await this.windowManager.hideWindow(currentWindowName);
 				}
 			});
 

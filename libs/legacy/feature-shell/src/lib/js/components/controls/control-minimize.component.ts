@@ -41,6 +41,6 @@ export class ControlMinimizeComponent implements AfterViewInit {
 			this.eventProvider();
 			return;
 		}
-		this.ow.minimizeWindow(this.windowId);
+		this.windowManager.minimizeWindow(windowName);
 	}
 }
