@@ -200,13 +200,14 @@ export class MainWindowComponent extends AbstractSubscriptionStoreComponent impl
 
 		const currentWindow = await this.ow.getCurrentWindow();
 		this.windowId = currentWindow.id;
+		const mainWindowName = await this.windowManager.getCurrentWindowName();
 
 		this.messageReceivedListener = this.ow.addMessageReceivedListener(async (message) => {
 			if (message.id === 'move') {
 				const window = await this.ow.getCurrentWindow();
 				const newX = message.content.x - window.width / 2;
 				const newY = message.content.y - window.height / 2;
-				this.ow.changeWindowPosition(this.windowId, newX, newY);
+				await this.windowManager.changeWindowPosition(mainWindowName, newX, newY);
 			}
 		});
 		const prefs = await this.preferencesService.getPreferences();

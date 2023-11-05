@@ -146,6 +146,7 @@ export class LoadingComponent implements AfterViewInit, OnDestroy {
 		const gameHeight = gameInfo.logicalHeight;
 		const newLeft = ~~(gameWidth * 0.4) - 440;
 		const newTop = ~~(gameHeight * 0.1);
-		this.ow.changeWindowPosition(this.thisWindowId, newLeft, newTop);
+		const mainWindowName = await this.windowManager.getCurrentWindowName();
+		await this.windowManager.changeWindowPosition(mainWindowName, newLeft, newTop);
 	}
 }

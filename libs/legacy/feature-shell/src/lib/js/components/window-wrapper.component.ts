@@ -10,11 +10,10 @@ import {
 	ViewEncapsulation,
 	ViewRef,
 } from '@angular/core';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { BehaviorSubject, Subscription, combineLatest } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { Events } from '../services/events.service';
-import { GameStatusService } from '../services/game-status.service';
 import { AppUiStoreFacadeService } from '../services/ui-store/app-ui-store-facade.service';
 import { AbstractSubscriptionStoreComponent } from './abstract-subscription-store.component';
 
@@ -93,13 +92,14 @@ export class WindowWrapperComponent extends AbstractSubscriptionStoreComponent i
 		protected readonly cdr: ChangeDetectorRef,
 		private readonly ow: OverwolfService,
 		private readonly events: Events,
-		private readonly gameStatus: GameStatusService,
+		private readonly windowManager: WindowManagerService,
 	) {
 		super(store, cdr);
 	}
 
 	async ngAfterContentInit() {
 		const currentWindow = await this.ow.getCurrentWindow();
+		const windowName = await this.windowManager.getCurrentWindowName();
 		this.windowId.next(currentWindow.id);
 		console.log('windowId', this.windowId.value);
 
@@ -154,11 +154,11 @@ export class WindowWrapperComponent extends AbstractSubscriptionStoreComponent i
 					const newX = Math.max(this.originalTop, monitor.y);
 					const newY = Math.max(this.originalLeft, monitor.x);
 					console.log('changing window position', newX, newY, monitors);
-					await this.ow.changeWindowPosition(currentWindow.id, newX, newY);
+					await this.windowManager.changeWindowPosition(windowName, newX, newY);
 				}
 			});
 
-		this.stateChangedListener = this.ow.addStateChangedListener(currentWindow.name, (message) => {
+		this.stateChangedListener = this.ow.addStateChangedListener(windowName, (message) => {
 			if (message.window_state_ex === 'maximized') {
 				this.maximized = true;
 				if (!(this.cdr as ViewRef)?.destroyed) {

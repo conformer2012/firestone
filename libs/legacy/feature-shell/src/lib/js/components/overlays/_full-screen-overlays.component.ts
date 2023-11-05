@@ -7,13 +7,12 @@ import {
 	ElementRef,
 	HostListener,
 	OnDestroy,
-	Renderer2,
 	ViewChild,
 	ViewEncapsulation,
 	ViewRef,
 } from '@angular/core';
 import { GameType } from '@firestone-hs/reference-data';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { isBattlegroundsScene } from '@services/battlegrounds/bgs-utils';
 import { Observable, combineLatest } from 'rxjs';
 import { CurrentAppType } from '../../models/mainwindow/current-app.type';
@@ -175,10 +174,9 @@ export class FullScreenOverlaysComponent
 		protected readonly cdr: ChangeDetectorRef,
 		private readonly init_DebugService: DebugService,
 		private readonly ow: OverwolfService,
-		private readonly renderer: Renderer2,
-		private readonly el: ElementRef,
 		private readonly scene: SceneService,
 		private readonly i18n: LocalizationFacadeService,
+		private readonly windowManager: WindowManagerService,
 	) {
 		super(store, cdr);
 	}
@@ -245,10 +243,10 @@ export class FullScreenOverlaysComponent
 		const gameHeight = gameInfo.height;
 		const height = gameHeight;
 		const width = gameWidth;
-		console.debug('full screen change window size', width, height, gameWidth, gameHeight, gameInfo, this.windowId);
-		await this.ow.changeWindowSize(this.windowId, width, height);
-		console.debug('full screen change window position');
-		await this.ow.changeWindowPosition(this.windowId, 0, 0);
+
+		const windowName = await this.windowManager.getCurrentWindowName();
+		await this.ow.changeWindowSize(windowName, width, height);
+		await this.windowManager.changeWindowPosition(windowName, 0, 0);
 		window.dispatchEvent(new Event('window-resize'));
 	}
 }

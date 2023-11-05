@@ -229,7 +229,8 @@ export class NotificationsComponent implements AfterViewInit, OnDestroy {
 			// https://stackoverflow.com/questions/8388440/converting-a-double-to-an-int-in-javascript-without-rounding
 			const newLeft = gameWidth - width * dpi;
 			const newTop = 1;
-			await this.ow.changeWindowPosition(this.windowId, newLeft, newTop);
+			const windowName = await this.windowManager.getCurrentWindowName();
+			await this.windowManager.changeWindowPosition(windowName, newLeft, newTop);
 		});
 	}
 }

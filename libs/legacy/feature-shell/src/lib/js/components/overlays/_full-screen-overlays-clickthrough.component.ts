@@ -10,7 +10,7 @@ import {
 	ViewRef,
 } from '@angular/core';
 import { GameType } from '@firestone-hs/reference-data';
-import { OverwolfService } from '@firestone/shared/framework/core';
+import { OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
 import { sleep } from '@services/utils';
 import { Observable } from 'rxjs';
 import { CurrentAppType } from '../../models/mainwindow/current-app.type';
@@ -70,11 +70,12 @@ export class FullScreenOverlaysClickthroughComponent
 	private gameInfoUpdatedListener: (message: any) => void;
 
 	constructor(
-		private readonly ow: OverwolfService,
-		private readonly init_DebugService: DebugService,
 		protected readonly store: AppUiStoreFacadeService,
 		protected readonly cdr: ChangeDetectorRef,
+		private readonly ow: OverwolfService,
+		private readonly init_DebugService: DebugService,
 		private readonly i18n: LocalizationFacadeService,
+		private readonly windowManager: WindowManagerService,
 	) {
 		super(store, cdr);
 	}
@@ -137,6 +138,7 @@ export class FullScreenOverlaysClickthroughComponent
 		await sleep(300);
 		const dpi = gameInfo.logicalWidth / gameWidth;
 		const newLeft = Math.floor(dpi * 0.5 * (gameWidth - width));
-		await this.ow.changeWindowPosition(this.windowId, newLeft, 0);
+		const windowName = await this.windowManager.getCurrentWindowName();
+		await this.windowManager.changeWindowPosition(windowName, newLeft, 0);
 	}
 }

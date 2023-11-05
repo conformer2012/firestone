@@ -144,7 +144,8 @@ export class BattlegroundsComponent extends AbstractSubscriptionStoreComponent i
 		const mainMonitor = gameInfo?.monitorHandle?.value ?? -1;
 		if (mainMonitor !== -1) {
 			const secondMonitor = monitorsList.displays.filter((monitor) => monitor.handle.value !== mainMonitor)[0];
-			this.ow.changeWindowPosition(this.windowId, secondMonitor.x + 100, secondMonitor.y + 100);
+			const mainWindowName = await this.windowManager.getCurrentWindowName();
+			await this.windowManager.changeWindowPosition(mainWindowName, secondMonitor.x + 100, secondMonitor.y + 100);
 		}
 	}
 }

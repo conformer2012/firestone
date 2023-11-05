@@ -101,7 +101,7 @@ export class WindowManagerService {
 	public async resetWindowPosition(windowName: string) {
 		const cWindow = await overwolf.windows.obtainDeclaredWindow(windowName);
 		const wasVisible = cWindow.isVisible;
-		await this.ow.changeWindowPosition(cWindow.id, 0, 0);
+		await this.changeWindowPosition(cWindow.id, 0, 0);
 		if (!wasVisible) {
 			await overwolf.windows.closeWindow(cWindow.id);
 		}
@@ -118,6 +118,9 @@ export class WindowManagerService {
 	}
 	public async bringToFront(windowName: string) {
 		return overwolf.windows.restoreWindow(windowName);
+	}
+	public async changeWindowPosition(windowName: string, left: number, top: number) {
+		return overwolf.windows.changeWindowPosition(windowName, left, top);
 	}
 
 	private isWindowClosed(state: string): boolean {
