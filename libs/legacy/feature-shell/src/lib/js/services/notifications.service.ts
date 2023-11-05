@@ -33,7 +33,7 @@ export class OwNotificationsService {
 
 	private async init() {
 		this.isDev = process.env.NODE_ENV !== 'production';
-		const settings = await this.ow.getExtensionSettings();
+		const settings = this.ow.isOwEnabled() ? await this.ow.getExtensionSettings() : null;
 		this.isBeta = settings?.settings?.channel === 'beta';
 	}
 
