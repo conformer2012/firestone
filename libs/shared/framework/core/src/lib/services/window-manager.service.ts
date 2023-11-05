@@ -122,6 +122,9 @@ export class WindowManagerService {
 	public async changeWindowPosition(windowName: string, left: number, top: number) {
 		return overwolf.windows.changeWindowPosition(windowName, left, top);
 	}
+	public async changeWindowSize(windowName: string, width: number, height: number): Promise<void> {
+		return overwolf.windows.changeWindowSize(windowName, width, height);
+	}
 
 	private isWindowClosed(state: string): boolean {
 		return state === 'closed' || state === 'hidden';

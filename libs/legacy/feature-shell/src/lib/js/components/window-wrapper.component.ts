@@ -211,7 +211,7 @@ export class WindowWrapperComponent extends AbstractSubscriptionStoreComponent i
 			return;
 		}
 		console.debug('changing window size', this.originalWidth, this.originalHeight, this.zoom);
-		await this.ow.changeWindowSize2(
+		await this.windowManager.changeWindowSize(
 			this.windowId.value,
 			Math.max(this.originalWidth, this.zoom * this.originalWidth),
 			Math.max(this.originalHeight, this.zoom * this.originalHeight),

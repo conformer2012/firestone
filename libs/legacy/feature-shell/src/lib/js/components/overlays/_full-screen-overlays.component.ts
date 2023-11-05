@@ -245,7 +245,7 @@ export class FullScreenOverlaysComponent
 		const width = gameWidth;
 
 		const windowName = await this.windowManager.getCurrentWindowName();
-		await this.ow.changeWindowSize(windowName, width, height);
+		await this.windowManager.changeWindowSize(windowName, width, height);
 		await this.windowManager.changeWindowPosition(windowName, 0, 0);
 		window.dispatchEvent(new Event('window-resize'));
 	}
