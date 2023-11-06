@@ -10,6 +10,12 @@ export class GameEventsPluginService {
 	private initializing = false;
 
 	constructor() {
+		try {
+			new OverwolfPlugin('overwolf-replay-converter', true);
+		} catch (e) {
+			console.warn('[ow-utils] ERROR: OverwolfPlugin is not defined');
+			return;
+		}
 		this.gameEventsPlugin = new OverwolfPlugin('overwolf-replay-converter', true);
 	}
 

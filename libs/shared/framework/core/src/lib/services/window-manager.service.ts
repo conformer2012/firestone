@@ -5,8 +5,11 @@ import { overwolf } from './overwolf/overwolf';
 
 @Injectable()
 export class WindowManagerService {
+	private serviceDelegate: WindowManagerServiceDelegate;
+
 	constructor(@Optional() private readonly ow: OverwolfService) {
 		// this.init();
+		this.serviceDelegate = this.ow?.isOwEnabled() ? overwolf.windowsService : electron.windowsService;
 	}
 
 	public getGlobalService<T>(serviceName: string): T {
@@ -48,24 +51,18 @@ export class WindowManagerService {
 			startHidden?: boolean;
 		},
 	) {
-		if (this.ow?.isOwEnabled()) {
-			return overwolf.windowsService.showWindow(windowName, options);
-		}
-		// Assume we're in an electron setting
-		else {
-			return electron.windowsService.showWindow(windowName, options);
-		}
+		this.serviceDelegate.showWindow(windowName, options);
 	}
 
 	public async hideWindow(windowName: string) {
-		return overwolf.windows.hideWindow(windowName);
+		this.serviceDelegate.hideWindow(windowName);
 	}
 
 	public async closeWindow(windowName: string, options?: { hideInsteadOfClose: boolean }) {
 		if (options?.hideInsteadOfClose) {
 			await this.hideWindow(windowName);
 		} else {
-			await overwolf.windows.closeWindow(windowName);
+			this.serviceDelegate.closeWindow(windowName, options);
 		}
 	}
 
@@ -73,17 +70,17 @@ export class WindowManagerService {
 		windowName: string,
 		options?: { hideInsteadOfClose: boolean },
 	): Promise<{ isNowClosed: boolean } | null> {
-		const window = await overwolf.windows.obtainDeclaredWindow(windowName);
-		if (this.isWindowClosed(window.stateEx) || window.stateEx === 'minimized') {
+		const isMinimized = await this.isWindowMinimized(windowName);
+		const isClosed = await this.isWindowClosed(windowName);
+		if (isClosed || isMinimized) {
 			await overwolf.windows.obtainDeclaredWindow(windowName);
 			await overwolf.windows.restoreWindow(windowName);
 			await overwolf.windows.bringToFront(windowName);
 			return { isNowClosed: false };
-		} else if (!this.isWindowClosed(window.stateEx)) {
+		} else {
 			await this.closeWindow(windowName, options);
 			return { isNowClosed: true };
 		}
-		return null;
 	}
 
 	public async getCurrentWindowName(): Promise<string> {
@@ -124,7 +121,27 @@ export class WindowManagerService {
 		return overwolf.windows.changeWindowSize(windowName, width, height);
 	}
 
-	private isWindowClosed(state: string): boolean {
-		return state === 'closed' || state === 'hidden';
+	public async isWindowClosed(windowName: string): Promise<boolean> {
+		const isClosed = await this.serviceDelegate.isClosed(windowName);
+		return isClosed;
 	}
+	public async isWindowMinimized(windowName: string): Promise<boolean> {
+		const isMinimized = await this.serviceDelegate.isMinimized(windowName);
+		return isMinimized;
+	}
+}
+
+export interface WindowManagerServiceDelegate {
+	hideWindow(windowName: string): Promise<void>;
+	isMinimized(windowName: string): Promise<boolean>;
+	isClosed(windowName: string): Promise<boolean>;
+	closeWindow(windowName: string, options?: { hideInsteadOfClose: boolean } | undefined): Promise<void>;
+	showWindow(
+		windowName: string,
+		options?: {
+			bringToFront?: boolean | undefined;
+			onlyIfNotMaximized?: boolean | undefined;
+			startHidden?: boolean | undefined;
+		},
+	);
 }

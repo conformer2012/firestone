@@ -215,6 +215,10 @@ export class GameStateService {
 		const decktrackerDisplayEventBus: BehaviorSubject<boolean> = await this.windowManager.getGlobalService(
 			'decktrackerDisplayEventBus',
 		);
+		if (!decktrackerDisplayEventBus) {
+			console.warn('[game-state] ERROR: could not retrieve decktrackerDisplayEventBus');
+			return;
+		}
 		decktrackerDisplayEventBus.subscribe((event) => {
 			if (this.showDecktrackerFromGameMode === event) {
 				return;

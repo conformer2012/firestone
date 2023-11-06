@@ -137,7 +137,7 @@ export class BattlegroundsComponent extends AbstractSubscriptionStoreComponent i
 			this.ow.getRunningGameInfo(),
 			this.prefs.getPreferences(),
 		]);
-		if (monitorsList.displays.length === 1 || prefs.bgsUseOverlay) {
+		if (!monitorsList?.displays?.length || monitorsList?.displays.length === 1 || prefs.bgsUseOverlay) {
 			return;
 		}
 

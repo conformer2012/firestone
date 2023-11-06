@@ -13,6 +13,8 @@ export class LogUtilsService {
 	}
 
 	private async init() {
+		console.warn('[log-utils] ERROR: skipping init while building electron');
+		return;
 		const timer$ = interval(5000);
 		timer$.subscribe(async () => {
 			const gameInfo = await this.ow.getRunningGameInfo();

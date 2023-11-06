@@ -209,6 +209,13 @@ class OwUtilsServiceInternal {
 	}
 
 	public initialize() {
+		try {
+			new OverwolfPlugin('ow-utils', true);
+		} catch (e) {
+			console.warn('[ow-utils] ERROR: OverwolfPlugin is not defined');
+			return;
+		}
+
 		this.initialized = false;
 		try {
 			console.log('[ow-utils] plugin init starting', this.plugin);

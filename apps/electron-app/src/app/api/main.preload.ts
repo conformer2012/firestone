@@ -10,4 +10,20 @@ contextBridge.exposeInMainWorld('windowServices', {
 		console.log('[electron] requested window creation', windowName, options);
 		ipcRenderer.send('create-window', windowName, options);
 	},
+	closeWindow: (windowName: string, options: any) => {
+		console.log('[electron] requested window close', windowName, options);
+		ipcRenderer.send('close-window', windowName, options);
+	},
+	hideWindow: (windowName: string, options: any) => {
+		console.log('[electron] requested window hide', windowName, options);
+		ipcRenderer.send('hide-window', windowName, options);
+	},
+	isMinimized: (windowName: string) => {
+		console.log('[electron] requested window minimized', windowName);
+		return ipcRenderer.invoke('is-window-minimized', windowName);
+	},
+	isClosed: (windowName: string) => {
+		console.log('[electron] requested window closed', windowName);
+		return ipcRenderer.invoke('is-window-closed', windowName);
+	},
 });

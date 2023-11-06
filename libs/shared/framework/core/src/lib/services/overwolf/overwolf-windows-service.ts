@@ -1,6 +1,7 @@
+import { WindowManagerServiceDelegate } from '../window-manager.service';
 import { overwolf } from './overwolf';
 
-export const overwolfWindowsService = {
+export const overwolfWindowsService: WindowManagerServiceDelegate = {
 	showWindow: async (
 		windowName: string,
 		options?: {
@@ -19,5 +20,19 @@ export const overwolfWindowsService = {
 		if (options?.startHidden) {
 			await overwolf.windows.hideWindow(window.id);
 		}
+	},
+	closeWindow: async (windowName: string, options?: { hideInsteadOfClose: boolean }) => {
+		overwolf.windows.closeWindow(windowName);
+	},
+	hideWindow: async (windowName: string) => {
+		overwolf.windows.hideWindow(windowName);
+	},
+	isMinimized: async (windowName: string) => {
+		const window = await overwolf.windows.obtainDeclaredWindow(windowName);
+		return window?.stateEx === 'minimized';
+	},
+	isClosed: async (windowName: string) => {
+		const window = await overwolf.windows.obtainDeclaredWindow(windowName);
+		return window?.stateEx === 'closed' || window?.stateEx === 'hidden';
 	},
 };

@@ -61,11 +61,13 @@ export class UserService extends AbstractFacadeService<UserService> {
 	}
 
 	private async retrieveUserInfo() {
+		let retries = 10;
 		let user = await this.ow.getCurrentUser();
 		// console.log('[user-service] retrieved user info', user);
-		while (user?.username && !user.avatar) {
+		while (user?.username && !user.avatar && retries > 0) {
 			// console.log('[user-service] no avatar yet', user);
 			user = await this.ow.getCurrentUser();
+			retries--;
 			await sleep(500);
 		}
 		return user;

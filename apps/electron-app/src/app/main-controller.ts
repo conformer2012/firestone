@@ -11,7 +11,21 @@ export class MainController {
 		console.log('[electron] bootstrap electron app');
 		// TODO: add all listeners here
 		ipcMain.on('create-window', (event, arg) => {
-			console.log('[electron] create-window in main', event, arg);
+			console.log('[electron] create-window in main', arg);
+		});
+		ipcMain.on('close-window', (event, arg) => {
+			console.log('[electron] close-window in main', arg);
+		});
+		ipcMain.on('hide-window', (event, arg) => {
+			console.log('[electron] hide-window in main', arg);
+		});
+		ipcMain.handle('is-window-minimized', () => {
+			console.log('[electron] is-window-minimized in main');
+			return false;
+		});
+		ipcMain.handle('is-window-closed', () => {
+			console.log('[electron] is-window-closed in main');
+			return false;
 		});
 	}
 
