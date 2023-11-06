@@ -1,4 +1,5 @@
 import { Injectable, Optional } from '@angular/core';
+import { electron } from './electron/electron';
 import { OverwolfService } from './overwolf.service';
 import { overwolf } from './overwolf/overwolf';
 
@@ -49,6 +50,10 @@ export class WindowManagerService {
 	) {
 		if (this.ow?.isOwEnabled()) {
 			return overwolf.windowsService.showWindow(windowName, options);
+		}
+		// Assume we're in an electron setting
+		else {
+			return electron.windowsService.showWindow(windowName, options);
 		}
 	}
 
