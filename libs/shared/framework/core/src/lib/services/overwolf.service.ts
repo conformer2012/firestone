@@ -80,10 +80,7 @@ export class OverwolfService {
 
 	public addAppLaunchTriggeredListener(callback) {
 		if (!this.isOwEnabled()) {
-			console.warn(
-				'[overwolf-utils] ERROR: overwolf not enabled, not addAppLaunchTriggeredListener',
-				new Error().stack,
-			);
+			console.warn('[overwolf-utils] ERROR: overwolf not enabled, not addAppLaunchTriggeredListener');
 			return;
 		}
 		overwolf.extensions.onAppLaunchTriggered.addListener(callback);
@@ -93,10 +90,7 @@ export class OverwolfService {
 		callback: (message: overwolf.games.GameInfoUpdatedEvent) => void,
 	): (message: overwolf.games.GameInfoUpdatedEvent) => void {
 		if (!this.isOwEnabled()) {
-			console.warn(
-				'[overwolf-utils] ERROR: overwolf not enabled, not listening to game info changes',
-				new Error().stack,
-			);
+			console.warn('[overwolf-utils] ERROR: overwolf not enabled, not listening to game info changes');
 			return callback;
 		}
 		overwolf.games.onGameInfoUpdated.addListener(callback);
@@ -148,10 +142,7 @@ export class OverwolfService {
 
 	public addHotKeyPressedListener(hotkey: string, callback): any {
 		if (!this.isOwEnabled()) {
-			console.warn(
-				'[overwolf-utils] ERROR:  overwolf not enabled, not enabling addHotKeyPressedListener',
-				new Error().stack,
-			);
+			console.warn('[overwolf-utils] ERROR:  overwolf not enabled, not enabling addHotKeyPressedListener');
 			return;
 		}
 		// overwolf.settings.registerHotKey(hotkey, callback);
@@ -195,7 +186,7 @@ export class OverwolfService {
 
 	public addMouseUpListener(callback) {
 		if (!this.isOwEnabled()) {
-			console.warn('[overwolf-utils] ERROR: overwolf not enabled, not addMouseUpListener', new Error().stack);
+			console.warn('[overwolf-utils] ERROR: overwolf not enabled, not addMouseUpListener');
 			return;
 		}
 		overwolf.games.inputTracking.onMouseUp.addListener(callback);
@@ -207,7 +198,7 @@ export class OverwolfService {
 
 	public addKeyUpListener(callback) {
 		if (!this.isOwEnabled()) {
-			console.warn('[overwolf-utils] ERROR: overwolf not enabled, not addKeyUpListener', new Error().stack);
+			console.warn('[overwolf-utils] ERROR: overwolf not enabled, not addKeyUpListener');
 			return;
 		}
 		overwolf.games.inputTracking.onKeyUp.addListener(callback);
@@ -282,7 +273,7 @@ export class OverwolfService {
 
 	public async getCurrentUser(): Promise<overwolf.profile.GetCurrentUserResult> {
 		if (!this.isOwEnabled()) {
-			console.warn('[overwolf-utils] ERROR: overwolf not enabled, not getting current user', new Error().stack);
+			console.warn('[overwolf-utils] ERROR: overwolf not enabled, not getting current user');
 			return {
 				userId: 'OW_e9585b6b-4468-4455-9768-9fe91b05faed',
 				username: 'daedin',
@@ -326,10 +317,7 @@ export class OverwolfService {
 
 	public addLoginStateChangedListener(callback) {
 		if (!this.isOwEnabled()) {
-			console.warn(
-				'[overwolf-utils] ERROR:  overwolf not enabled, not enabling login state changed listener',
-				new Error().stack,
-			);
+			console.warn('[overwolf-utils] ERROR:  overwolf not enabled, not enabling login state changed listener');
 			return;
 		}
 		overwolf.profile.onLoginStateChanged.addListener(callback);
@@ -353,7 +341,7 @@ export class OverwolfService {
 
 	public async inGame(): Promise<boolean> {
 		if (!this.isOwEnabled()) {
-			console.warn('[overwolf-utils] ERROR: overwolf not enabled, not getting in game info', new Error().stack);
+			console.warn('[overwolf-utils] ERROR: overwolf not enabled, not getting in game info');
 			return false;
 		}
 		return new Promise<boolean>((resolve) => {
@@ -386,10 +374,7 @@ export class OverwolfService {
 
 	public async getRunningGameInfo() {
 		if (!this.isOwEnabled()) {
-			console.warn(
-				'[overwolf-utils] ERROR: overwolf not enabled, not getting running game info',
-				new Error().stack,
-			);
+			console.warn('[overwolf-utils] ERROR: overwolf not enabled, not getting running game info');
 			return null;
 		}
 		return new Promise<overwolf.games.GetRunningGameInfoResult>((resolve) => {
@@ -415,7 +400,7 @@ export class OverwolfService {
 
 	public async getGameDbInfo() {
 		if (!this.isOwEnabled()) {
-			console.warn('[overwolf-utils] ERROR: overwolf not enabled, not getGameDbInfo', new Error().stack);
+			console.warn('[overwolf-utils] ERROR: overwolf not enabled, not getGameDbInfo');
 			return;
 		}
 		return new Promise<overwolf.games.GetGameDBInfoResult>((resolve) => {
@@ -524,10 +509,7 @@ export class OverwolfService {
 		listener: (event: overwolf.profile.subscriptions.SubscriptionChangedEvent) => void,
 	) {
 		if (!this.isOwEnabled()) {
-			console.warn(
-				'[overwolf-utils] ERROR: overwolf not enabled, not listening to subscription changes',
-				new Error().stack,
-			);
+			console.warn('[overwolf-utils] ERROR: overwolf not enabled, not listening to subscription changes');
 			return;
 		}
 		overwolf.profile.subscriptions.onSubscriptionChanged.addListener(listener);
@@ -704,7 +686,7 @@ export class OverwolfService {
 
 	public async listFilesInDirectory(directory: string): Promise<overwolf.io.DirResult & { path?: string }> {
 		if (!this.isOwEnabled()) {
-			console.warn('[overwolf-utils] ERROR:  overwolf not enabled, not writeFileContents', new Error().stack);
+			console.warn('[overwolf-utils] ERROR:  overwolf not enabled, not writeFileContents');
 			return {
 				data: [],
 				success: false,
@@ -727,7 +709,7 @@ export class OverwolfService {
 
 	public async writeFileContents(filePathOnDisk: string, content: string): Promise<boolean> {
 		if (!this.isOwEnabled()) {
-			console.warn('[overwolf-utils] ERROR:  overwolf not enabled, not writeFileContents', new Error().stack);
+			console.warn('[overwolf-utils] ERROR:  overwolf not enabled, not writeFileContents');
 			return true;
 		}
 		return new Promise<boolean>((resolve) => {
@@ -739,7 +721,7 @@ export class OverwolfService {
 
 	public async readTextFile(filePathOnDisk: string): Promise<string | null> {
 		if (!this.isOwEnabled()) {
-			console.warn('[overwolf-utils] ERROR: overwolf not enabled, not readTextFile', new Error().stack);
+			console.warn('[overwolf-utils] ERROR: overwolf not enabled, not readTextFile');
 			return null;
 		}
 		return new Promise<string>((resolve) => {
@@ -806,10 +788,7 @@ export class OverwolfService {
 
 	public async getMonitorsList(): Promise<overwolf.utils.getMonitorsListResult | null> {
 		if (!this.isOwEnabled()) {
-			console.warn(
-				'[overwolf-utils] ERROR:  overwolf not enabled, not enabling getMonitorsList',
-				new Error().stack,
-			);
+			console.warn('[overwolf-utils] ERROR:  overwolf not enabled, not enabling getMonitorsList');
 			return null;
 		}
 		return new Promise<overwolf.utils.getMonitorsListResult>((resolve) => {
@@ -833,7 +812,7 @@ export class OverwolfService {
 
 	public stopFileListener(id: string) {
 		if (!this.isOwEnabled()) {
-			console.warn('[overwolf-utils] ERROR: overwolf not enabled, not stopFileListener', new Error().stack);
+			console.warn('[overwolf-utils] ERROR: overwolf not enabled, not stopFileListener');
 			return;
 		}
 		console.log('[ow-service] stopping file listener', id);
@@ -896,7 +875,7 @@ export class OverwolfService {
 
 	public async setTrayMenu(menu: overwolf.os.tray.ExtensionTrayMenu): Promise<void> {
 		if (!this.isOwEnabled()) {
-			console.warn('[overwolf-utils] ERROR: overwolf not enabled, not setTrayMenu', new Error().stack);
+			console.warn('[overwolf-utils] ERROR: overwolf not enabled, not setTrayMenu');
 			return;
 		}
 		return new Promise<void>((resolve) => {
@@ -908,7 +887,7 @@ export class OverwolfService {
 
 	public onTrayMenuClicked(callback: (event: overwolf.os.tray.onMenuItemClickedEvent) => void): void {
 		if (!this.isOwEnabled()) {
-			console.warn('[overwolf-utils] ERROR: overwolf not enabled, not onTrayMenuClicked', new Error().stack);
+			console.warn('[overwolf-utils] ERROR: overwolf not enabled, not onTrayMenuClicked');
 			return;
 		}
 		overwolf.os.tray.onMenuItemClicked.addListener(callback);

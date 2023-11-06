@@ -84,8 +84,7 @@ export class WindowManagerService {
 	}
 
 	public async getCurrentWindowName(): Promise<string> {
-		const window = await overwolf.windows.getCurrentWindow();
-		return window.name;
+		return this.serviceDelegate.getCurrentWindowName();
 	}
 
 	public async isWindowVisible(windowName: string) {
@@ -132,6 +131,7 @@ export class WindowManagerService {
 }
 
 export interface WindowManagerServiceDelegate {
+	getCurrentWindowName(): Promise<string>;
 	hideWindow(windowName: string): Promise<void>;
 	isMinimized(windowName: string): Promise<boolean>;
 	isClosed(windowName: string): Promise<boolean>;

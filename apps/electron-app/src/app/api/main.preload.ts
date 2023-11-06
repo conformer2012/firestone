@@ -6,6 +6,10 @@ contextBridge.exposeInMainWorld('electron', {
 });
 
 contextBridge.exposeInMainWorld('windowServices', {
+	getCurrentWindowName: () => {
+		console.log('[electron] requested current window name');
+		return ipcRenderer.invoke('get-current-window-name');
+	},
 	createWindow: (windowName: string, options: any) => {
 		console.log('[electron] requested window creation', windowName, options);
 		ipcRenderer.send('create-window', windowName, options);

@@ -1,6 +1,10 @@
 import { WindowManagerServiceDelegate } from '../window-manager.service';
 
 export const electronWindowsService: WindowManagerServiceDelegate = {
+	getCurrentWindowName: async () => {
+		console.debug('[electron] getting window name');
+		return await getWindowServices().getCurrentWindowName();
+	},
 	showWindow: async (
 		windowName: string,
 		options?: {

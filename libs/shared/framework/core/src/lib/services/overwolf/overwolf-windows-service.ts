@@ -2,6 +2,10 @@ import { WindowManagerServiceDelegate } from '../window-manager.service';
 import { overwolf } from './overwolf';
 
 export const overwolfWindowsService: WindowManagerServiceDelegate = {
+	getCurrentWindowName: async () => {
+		const window = await overwolf.windows.getCurrentWindow();
+		return window.name;
+	},
 	showWindow: async (
 		windowName: string,
 		options?: {

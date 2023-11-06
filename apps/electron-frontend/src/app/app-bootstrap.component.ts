@@ -5,10 +5,11 @@ import {
 	Component,
 	HostListener,
 	OnDestroy,
+	ViewRef,
 } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { OverwolfService } from '@firestone/shared/framework/core';
-import { Observable, Subject, from } from 'rxjs';
+import { OverwolfService, WindowManagerService } from '@firestone/shared/framework/core';
+import { Observable, Subject, distinctUntilChanged, from, takeUntil, tap } from 'rxjs';
 
 @Component({
 	selector: 'app-bootstrap',
@@ -38,7 +39,11 @@ export class AppBoostrapperComponent implements AfterContentInit, OnDestroy {
 
 	private destroyed$ = new Subject<void>();
 
-	constructor(private readonly titleService: Title, private readonly cdr: ChangeDetectorRef) {}
+	constructor(
+		private readonly titleService: Title,
+		private readonly cdr: ChangeDetectorRef,
+		private readonly windowManager: WindowManagerService,
+	) {}
 
 	@HostListener('window:beforeunload')
 	ngOnDestroy() {
@@ -47,19 +52,18 @@ export class AppBoostrapperComponent implements AfterContentInit, OnDestroy {
 	}
 
 	ngAfterContentInit(): void {
-		// this.currentWindowName$ = from(this.ow?.getCurrentWindow()).pipe(
-		// 	map((currentWindow) => this.mapWindowName(currentWindow?.name)),
-		// 	distinctUntilChanged(),
-		// 	tap(() =>
-		// 		setTimeout(() => {
-		// 			if (!(this.cdr as ViewRef)?.destroyed) {
-		// 				this.cdr.detectChanges();
-		// 			}
-		// 		}, 0),
-		// 	),
-		// 	takeUntil(this.destroyed$),
-		// );
-		this.currentWindowName$ = from(['MainWindow']);
+		this.currentWindowName$ = from(this.windowManager.getCurrentWindowName()).pipe(
+			tap((name) => console.debug('current window name', name)),
+			distinctUntilChanged(),
+			tap(() =>
+				setTimeout(() => {
+					if (!(this.cdr as ViewRef)?.destroyed) {
+						this.cdr.detectChanges();
+					}
+				}, 0),
+			),
+			takeUntil(this.destroyed$),
+		);
 		this.currentWindowName$.subscribe((name) => {
 			console.debug('setting title', name);
 			const humanFriendlyName = this.buildHumanFriendlyName(name);

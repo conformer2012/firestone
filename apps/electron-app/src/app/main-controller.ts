@@ -1,17 +1,19 @@
-import { BrowserWindow, ipcMain } from 'electron';
-import { join } from 'path';
-import { format } from 'url';
+import { ipcMain } from 'electron';
+import { WindowService } from './services/window-service';
 
 export class MainController {
-	private windows = [];
+	private readonly windowService: WindowService;
 
-	constructor(private readonly electronApp: Electron.App) {}
+	constructor(private readonly electronApp: Electron.App) {
+		this.windowService = new WindowService(electronApp);
+	}
 
 	public bootstrap() {
 		console.log('[electron] bootstrap electron app');
 		// TODO: add all listeners here
-		ipcMain.on('create-window', (event, arg) => {
-			console.log('[electron] create-window in main', arg);
+		ipcMain.on('create-window', (event, windowName, options) => {
+			// console.log('[electron] create-window in main', windowName);
+			this.windowService.createWindow(windowName, options);
 		});
 		ipcMain.on('close-window', (event, arg) => {
 			console.log('[electron] close-window in main', arg);
@@ -27,39 +29,12 @@ export class MainController {
 			console.log('[electron] is-window-closed in main');
 			return false;
 		});
+		ipcMain.handle('get-current-window-name', (event) => {
+			return this.windowService.getCurrentWindowName(event);
+		});
 	}
 
-	public createBackgroundController(appName: string, appPort: number) {
-		let mainWindow: BrowserWindow | null = new BrowserWindow({
-			width: 0,
-			height: 0,
-			show: false,
-			webPreferences: {
-				contextIsolation: true,
-				backgroundThrottling: false,
-				preload: join(__dirname, 'main.preload.js'),
-			},
-		});
-		mainWindow.on('closed', () => {
-			// Dereference the window object, usually you would store windows
-			// in an array if your app supports multi windows, this is the time
-			// when you should delete the corresponding element.
-			mainWindow = null;
-		});
-
-		mainWindow.webContents.openDevTools({ mode: 'detach' });
-
-		// load the index.html of the app.
-		if (!this.electronApp.isPackaged) {
-			mainWindow.loadURL(`http://localhost:${appPort}`);
-		} else {
-			mainWindow.loadURL(
-				format({
-					pathname: join(__dirname, '..', appName, 'index.html'),
-					protocol: 'file:',
-					slashes: true,
-				}),
-			);
-		}
+	public createBackgroundController() {
+		this.windowService.createWindow('MainWindow');
 	}
 }
