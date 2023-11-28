@@ -47,7 +47,6 @@ import {
 	AchievementsProgressTracking,
 } from '../achievement/achievements-live-progress-tracking.service';
 import { AchievementsStateManagerService } from '../achievement/achievements-state-manager.service';
-import { AdService } from '../ad.service';
 import { BgsBoardHighlighterService, ShopMinion } from '../battlegrounds/bgs-board-highlighter.service';
 import { BattlegroundsQuestsService } from '../battlegrounds/bgs-quests.service';
 import { isBattlegrounds } from '../battlegrounds/bgs-utils';
@@ -68,6 +67,7 @@ import { CollectionBootstrapService } from '../mainwindow/store/collection-boots
 import { MainWindowStoreEvent } from '../mainwindow/store/events/main-window-store-event';
 import { HighlightSelector } from '../mercenaries/highlights/mercenaries-synergies-highlight.service';
 import { PatchesConfigService } from '../patches-config.service';
+import { AdService } from '../premium/ad.service';
 import { ProfileDuelsHeroStat } from '../profile/internal/internal-profile-info.service';
 import { GameStatsProviderService } from '../stats/game/game-stats-provider.service';
 import { arraysEqual } from '../utils';

@@ -8,7 +8,7 @@ import {
 	WindowManagerService,
 } from '@firestone/shared/framework/core';
 import { combineLatest, debounceTime, distinctUntilChanged, filter } from 'rxjs';
-import { AdService } from './ad.service';
+import { AdService } from './premium/ad.service';
 import { deepEqual } from './utils';
 
 const USER_MAPPING_UPDATE_URL = 'https://gpiulkkg75uipxcgcbfr4ixkju0ntere.lambda-url.us-west-2.on.aws/';

@@ -9,7 +9,6 @@ import {
 } from '@firestone/shared/common/service';
 import { ApiRunner, OverwolfService } from '@firestone/shared/framework/core';
 import { FirestoneAchievementsChallengeService } from '../../js/services/achievement/firestone-achievements-challenges.service';
-import { AdService } from '../../js/services/ad.service';
 import { LocalizationFacadeService } from '../../js/services/localization-facade.service';
 import { OutOfCardsService, OutOfCardsToken } from '../../js/services/mainwindow/out-of-cards.service';
 import { ChangeVisibleApplicationEvent } from '../../js/services/mainwindow/store/events/change-visible-application-event';
@@ -18,6 +17,7 @@ import { MainWindowStoreEvent } from '../../js/services/mainwindow/store/events/
 import { ShowMainWindowEvent } from '../../js/services/mainwindow/store/events/show-main-window-event';
 import { MainWindowStoreService } from '../../js/services/mainwindow/store/main-window-store.service';
 import { TwitchAuthService } from '../../js/services/mainwindow/twitch-auth.service';
+import { AdService } from '../../js/services/premium/ad.service';
 
 @Injectable()
 export class AppStartupService {

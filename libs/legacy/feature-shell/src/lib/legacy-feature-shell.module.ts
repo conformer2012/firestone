@@ -497,6 +497,8 @@ import { PremiumSettingDirective } from '@components/settings/premium-setting.di
 // import { ProfileMatchStatsClassInfoComponent } from '@components/stats/desktop/match-stats/profile-match-stats-class-info.component';
 // import { ProfileMatchStatsModeOverviewComponent } from '@components/stats/desktop/match-stats/profile-match-stats-mode-overview.component';
 // import { ProfileMatchStatsComponent } from '@components/stats/desktop/match-stats/profile-match-stats.component';
+import { PremiumDesktopComponent } from '@components/ads/premium-desktop.component';
+import { PremiumPackageComponent } from '@components/ads/premium-package.component';
 import { BattlegroundsAnomaliesFilterDropdownComponent } from '@components/battlegrounds/desktop/filters/battlegrounds-anomalies-filter-dropdown.component';
 import { ConstructedMetaArchetypeDetailsCardsComponent } from '@components/decktracker/main/constructed-meta-archetype-details-cards.component';
 import { ConstructedMetaArchetypeDetailsComponent } from '@components/decktracker/main/constructed-meta-archetype-details.component';
@@ -700,7 +702,6 @@ import { AchievementsMemoryMonitor } from './js/services/achievement/data/achiev
 import { FirestoneRemoteAchievementsLoaderService } from './js/services/achievement/data/firestone-remote-achievements-loader.service';
 import { RawAchievementsLoaderService } from './js/services/achievement/data/raw-achievements-loader.service';
 import { FirestoneAchievementsChallengeService } from './js/services/achievement/firestone-achievements-challenges.service';
-import { AdService } from './js/services/ad.service';
 import { HearthArenaAnalyticsService } from './js/services/analytics/heartharena-analytics.service';
 import { ArenaDraftManagerService } from './js/services/arena/arena-draft-manager.service';
 import { ArenaInfoService } from './js/services/arena/arena-info.service';
@@ -803,6 +804,8 @@ import { PatchesConfigService } from './js/services/patches-config.service';
 import { GameEventsPluginService } from './js/services/plugins/game-events-plugin.service';
 import { OwUtilsService } from './js/services/plugins/ow-utils.service';
 import { SimpleIOService } from './js/services/plugins/simple-io.service';
+import { AdService } from './js/services/premium/ad.service';
+import { TebexService } from './js/services/premium/tebex.service';
 import { InternalProfileAchievementsService } from './js/services/profile/internal/internal-profile-achievements.service';
 import { InternalProfileBattlegroundsService } from './js/services/profile/internal/internal-profile-battlegrounds.service';
 import { InternalProfileCollectionService } from './js/services/profile/internal/internal-profile-collection.service';
@@ -1073,6 +1076,8 @@ export function HttpLoaderFactory(http: HttpClient) {
 		AdsComponent,
 		SingleAdComponent,
 		AdTipComponent,
+		PremiumDesktopComponent,
+		PremiumPackageComponent,
 
 		DeckCardComponent,
 		DeckTrackerDeckListComponent,
@@ -1744,6 +1749,7 @@ export function HttpLoaderFactory(http: HttpClient) {
 		AppStartupService,
 
 		AdService,
+		TebexService,
 		TipService,
 		MainWindowStoreService,
 		StoreBootstrapService,

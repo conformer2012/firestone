@@ -16,6 +16,7 @@ export type CurrentAppType =
 	| 'tavern-brawl'
 	| 'profile'
 	| 'streams'
+	| 'premium'
 	| 'mailbox'
 	| 'live';
 export type LotteryTabType = 'lottery' | 'achievements';

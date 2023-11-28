@@ -12,4 +12,5 @@ export type CurrentAppType =
 	| 'profile'
 	| 'streams'
 	| 'mailbox'
+	| 'premium'
 	| 'live';

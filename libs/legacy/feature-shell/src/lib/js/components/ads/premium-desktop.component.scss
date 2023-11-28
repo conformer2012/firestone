@@ -1,0 +1,32 @@
+.premium {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	color: #f8f8f8;
+	padding: 20px;
+	padding-top: 5px;
+}
+
+.header {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: flex-start;
+	margin-bottom: 30px;
+
+	.title {
+		color: var(--default-title-color);
+		border-bottom: 1px solid currentColor;
+		padding-bottom: 5px;
+	}
+}
+
+.plans {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 15px;
+
+	&.show-legacy {
+		grid-template-columns: repeat(4, 1fr);
+	}
+}

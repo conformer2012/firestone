@@ -7,13 +7,14 @@ import {
 	WindowManagerService,
 } from '@firestone/shared/framework/core';
 import { BehaviorSubject, combineLatest } from 'rxjs';
-import { AppUiStoreFacadeService } from './ui-store/app-ui-store-facade.service';
+import { AppUiStoreFacadeService } from '../ui-store/app-ui-store-facade.service';
 
 @Injectable()
 export class AdService extends AbstractFacadeService<AdService> implements IAdsService {
 	public showAds$$: BehaviorSubject<boolean>;
 	public enablePremiumFeatures$$: BehaviorSubject<boolean>;
 	public hasPremiumSub$$: BehaviorSubject<boolean>;
+	public hasLegacySub$$: BehaviorSubject<boolean>;
 
 	private ow: OverwolfService;
 	private store: AppUiStoreFacadeService;
@@ -26,12 +27,14 @@ export class AdService extends AbstractFacadeService<AdService> implements IAdsS
 		this.showAds$$ = this.mainInstance.showAds$$;
 		this.enablePremiumFeatures$$ = this.mainInstance.enablePremiumFeatures$$;
 		this.hasPremiumSub$$ = this.mainInstance.hasPremiumSub$$;
+		this.hasLegacySub$$ = this.mainInstance.hasLegacySub$$;
 	}
 
 	protected async init() {
 		this.showAds$$ = new BehaviorSubject<boolean>(true);
 		this.enablePremiumFeatures$$ = new BehaviorSubject<boolean>(false);
 		this.hasPremiumSub$$ = new BehaviorSubject<boolean>(false);
+		this.hasLegacySub$$ = new BehaviorSubject<boolean>(false);
 		this.ow = AppInjector.get(OverwolfService);
 		this.store = AppInjector.get(AppUiStoreFacadeService);
 
@@ -42,11 +45,13 @@ export class AdService extends AbstractFacadeService<AdService> implements IAdsS
 
 			const isPremium = await this.hasPremiumSub();
 			this.hasPremiumSub$$.next(isPremium);
+			this.hasLegacySub$$.next(isPremium);
 		});
 		const showAds = await this.shouldDisplayAds();
 		const isPremium = await this.hasPremiumSub();
 		this.showAds$$.next(showAds);
 		this.hasPremiumSub$$.next(isPremium);
+		this.hasLegacySub$$.next(isPremium);
 
 		await this.store.initComplete();
 		combineLatest([this.hasPremiumSub$$, this.store.shouldTrackLottery$()]).subscribe(
@@ -59,6 +64,10 @@ export class AdService extends AbstractFacadeService<AdService> implements IAdsS
 
 	public async shouldDisplayAds(): Promise<boolean> {
 		return this.mainInstance.shouldDisplayAdsInternal();
+	}
+
+	public async hasPremiumSub(): Promise<boolean> {
+		return this.mainInstance.hasPremiumSubInternal();
 	}
 
 	public async shouldDisplayAdsInternal(): Promise<boolean> {
@@ -89,8 +98,14 @@ export class AdService extends AbstractFacadeService<AdService> implements IAdsS
 		});
 	}
 
-	public async hasPremiumSub(): Promise<boolean> {
-		return this.mainInstance.hasPremiumSubInternal();
+	private async getAdsStatus(): Promise<boolean> {
+		const showAdsOw = await this.ow.shouldShowAds();
+		// User is on the legacy plan
+		if (!showAdsOw) {
+			return false;
+		}
+		const showAdsTebex = await this.showAdsTebex();
+		return showAdsTebex;
 	}
 
 	private async hasPremiumSubInternal(): Promise<boolean> {
@@ -100,5 +115,10 @@ export class AdService extends AbstractFacadeService<AdService> implements IAdsS
 		}
 		const shouldDisplayAds = await this.shouldDisplayAds();
 		return !shouldDisplayAds;
+	}
+
+	private async showAdsTebex(): Promise<boolean> {
+		// https://github.com/overwolf/tebex-subs-sample/tree/main
+		return true;
 	}
 }

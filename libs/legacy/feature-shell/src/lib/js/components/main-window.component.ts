@@ -89,6 +89,7 @@ import { AbstractSubscriptionStoreComponent } from './abstract-subscription-stor
 						<stats-desktop class="main-section" *ngIf="value.currentApp === 'profile'"> </stats-desktop>
 						<mailbox-desktop class="main-section" *ngIf="value.currentApp === 'mailbox'"> </mailbox-desktop>
 						<streams-desktop class="main-section" *ngIf="value.currentApp === 'streams'"> </streams-desktop>
+						<premium-desktop class="main-section" *ngIf="value.currentApp === 'premium'"> </premium-desktop>
 					</section>
 				</div>
 				<ads *ngIf="value.showAds"></ads>
