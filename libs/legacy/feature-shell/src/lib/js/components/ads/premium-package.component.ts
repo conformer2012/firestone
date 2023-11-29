@@ -31,10 +31,13 @@ export class PremiumPackageComponent {
 		this.isReadonly = value.isReadonly;
 		this.isActive = value.isActive;
 		this.name = this.i18n.translateString(`app.premium.plan.${value.id}`);
-		this.price = `$${value.price}`;
+		this.price = `$${value.price ?? '-'}`;
 		this.periodicity = this.i18n.translateString(`app.premium.periodicity.monthly`);
 		const allFeatures = ['supportFirestone', 'discordRole', 'removeAds', 'premiumFeatures', 'prioritySupport'];
 		this.features = allFeatures.map((feature) => {
+			const key = `app.premium.features.params.${value.features[feature] || ''}`;
+			const translation = this.i18n.translateString(key);
+			const featureValue = key === translation ? '' : translation;
 			return {
 				enabled: value.features[feature],
 				iconPath: !!value.features[feature]
@@ -42,7 +45,7 @@ export class PremiumPackageComponent {
 					: `assets/svg/premium_checkmark_inactive.svg`,
 				text: this.i18n
 					.translateString(`app.premium.features.${feature}`, {
-						value: value.features[feature] || '',
+						value: featureValue,
 					})
 					.trim(),
 			};
