@@ -92,7 +92,6 @@ const ALL_PLANS: readonly Partial<PremiumPlan>[] = [
 			discordRole: 'premium',
 			removeAds: true,
 			premiumFeatures: true,
-			prioritySupport: true,
 		},
 	},
 ];
