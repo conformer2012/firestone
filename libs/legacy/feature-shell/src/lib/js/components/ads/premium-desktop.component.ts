@@ -35,16 +35,16 @@ export class PremiumDesktopComponent extends AbstractSubscriptionComponent imple
 		await this.tebex.isReady();
 		await this.ads.isReady();
 
-		this.plans$ = combineLatest([this.tebex.packages$$, this.ads.hasLegacySub$$]).pipe(
+		this.plans$ = combineLatest([this.tebex.packages$$, this.ads.currentPlan$$]).pipe(
 			shareReplay(1),
-			this.mapData(([packages, hasLegacySub]) => {
+			this.mapData(([packages, currentPlanSub]) => {
 				console.debug('building plans');
-				return ALL_PLANS.filter((plan) => hasLegacySub || plan.id !== 'legacy').map((plan) => {
+				return ALL_PLANS.filter((plan) => currentPlanSub === 'legacy' || plan.id !== 'legacy').map((plan) => {
 					const packageForPlan = packages?.find((p) => p.name.toLowerCase() === plan.id);
 					return {
 						...plan,
 						price: packageForPlan?.total_price ?? plan.price,
-						isActive: plan.id === 'legacy' && hasLegacySub,
+						activePlan: currentPlanSub,
 					} as PremiumPlan;
 				});
 			}),
@@ -67,6 +67,7 @@ const ALL_PLANS: readonly Partial<PremiumPlan>[] = [
 		},
 		isReadonly: true,
 		price: 4.99,
+		text: `app.premium.legacy-plan-text`,
 	},
 	{
 		id: 'friend',
@@ -107,5 +108,6 @@ export interface PremiumPlan {
 		readonly prioritySupport?: boolean;
 	};
 	readonly isReadonly?: boolean;
-	readonly isActive?: boolean;
+	readonly activePlan?: string;
+	readonly text?: string;
 }

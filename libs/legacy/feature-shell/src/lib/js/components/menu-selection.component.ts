@@ -209,7 +209,7 @@ import { AbstractSubscriptionStoreComponent } from './abstract-subscription-stor
 			</button>
 
 			<li class="push-down"></li>
-			<ng-container *ngIf="showGoPremium$ | async">
+			<ng-container>
 				<button
 					[attr.tabindex]="tabIndex$ | async"
 					type="button"

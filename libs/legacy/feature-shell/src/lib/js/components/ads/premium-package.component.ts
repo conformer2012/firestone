@@ -19,17 +19,25 @@ import { PremiumPlan } from './premium-desktop.component';
 					<div class="text">{{ feature.text }}</div>
 				</div>
 			</div>
-			<button class="button subscribe-button" [fsTranslate]="'app.premium.subscribe-button'"></button>
-			<button class="button unsubscribe-button" [fsTranslate]="'app.premium.unsubscribe-button'"></button>
+			<button
+				class="button subscribe-button"
+				[fsTranslate]="'app.premium.subscribe-button'"
+				[helpTooltip]="helpTooltipSubscribe"
+			></button>
+			<button
+				class="button unsubscribe-button"
+				[fsTranslate]="'app.premium.unsubscribe-button'"
+				[helpTooltip]="helpTooltipUnsubscribe"
+			></button>
 		</div>
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PremiumPackageComponent {
 	@Input() set plan(value: PremiumPlan) {
-		this.id = value.id;
+		this.id = value.id.replaceAll('+', '-plus');
 		this.isReadonly = value.isReadonly;
-		this.isActive = value.isActive;
+		this.isActive = value.activePlan === value.id;
 		this.name = this.i18n.translateString(`app.premium.plan.${value.id}`);
 		this.price = `$${value.price ?? '-'}`;
 		this.periodicity = this.i18n.translateString(`app.premium.periodicity.monthly`);
@@ -50,6 +58,12 @@ export class PremiumPackageComponent {
 					.trim(),
 			};
 		});
+
+		// this.subscribeButton = value.hasAc
+		this.helpTooltipUnsubscribe =
+			this.id === 'legacy'
+				? this.i18n.translateString(`app.premium.unsubscribe-button-tooltip-legacy`)
+				: this.i18n.translateString(`app.premium.unsubscribe-button-tooltip`);
 	}
 
 	isReadonly: boolean;
@@ -59,6 +73,10 @@ export class PremiumPackageComponent {
 	price: string;
 	periodicity: string;
 	features: readonly { enabled: boolean; iconPath: string; text: string }[];
+
+	subscribeButton: string;
+	helpTooltipSubscribe: string;
+	helpTooltipUnsubscribe: string;
 
 	constructor(private readonly i18n: LocalizationFacadeService) {}
 }

@@ -8,10 +8,10 @@
 	font-family: 'Roboto', sans-serif;
 	padding-bottom: 3vh;
 
-	&.readonly {
+	&.read-only {
 		.header,
 		.features {
-			opacity: 0.5;
+			opacity: 0.3;
 		}
 	}
 
@@ -22,6 +22,16 @@
 		.unsubscribe-button {
 			display: inherit;
 		}
+	}
+
+	&.friend .name {
+		color: #ae96a8;
+	}
+	&.premium .name {
+		color: var(--default-title-color);
+	}
+	&.premium-plus .name {
+		color: #bdff00;
 	}
 }
 
