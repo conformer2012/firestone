@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { LocalizationFacadeService } from '../../services/localization-facade.service';
 import { PremiumPlan } from './premium-desktop.component';
 
@@ -23,17 +23,22 @@ import { PremiumPlan } from './premium-desktop.component';
 				class="button subscribe-button"
 				[fsTranslate]="'app.premium.subscribe-button'"
 				[helpTooltip]="helpTooltipSubscribe"
+				(click)="onSubscribe()"
 			></button>
 			<button
 				class="button unsubscribe-button"
 				[fsTranslate]="'app.premium.unsubscribe-button'"
 				[helpTooltip]="helpTooltipUnsubscribe"
+				(click)="onUnsubscribe()"
 			></button>
 		</div>
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PremiumPackageComponent {
+	@Output() subscribe = new EventEmitter<string>();
+	@Output() unsubscribe = new EventEmitter<string>();
+
 	@Input() set plan(value: PremiumPlan) {
 		this.id = value.id.replaceAll('+', '-plus');
 		this.isReadonly = value.isReadonly;
@@ -60,10 +65,10 @@ export class PremiumPackageComponent {
 		});
 
 		// this.subscribeButton = value.hasAc
-		this.helpTooltipUnsubscribe =
-			this.id === 'legacy'
-				? this.i18n.translateString(`app.premium.unsubscribe-button-tooltip-legacy`)
-				: this.i18n.translateString(`app.premium.unsubscribe-button-tooltip`);
+		// this.helpTooltipUnsubscribe =
+		// 	this.id === 'legacy'
+		// 		? this.i18n.translateString(`app.premium.unsubscribe-button-tooltip-legacy`)
+		// 		: this.i18n.translateString(`app.premium.unsubscribe-button-tooltip`);
 	}
 
 	isReadonly: boolean;
@@ -79,4 +84,12 @@ export class PremiumPackageComponent {
 	helpTooltipUnsubscribe: string;
 
 	constructor(private readonly i18n: LocalizationFacadeService) {}
+
+	onSubscribe() {
+		this.subscribe.emit(this.id);
+	}
+
+	onUnsubscribe() {
+		this.unsubscribe.emit(this.id);
+	}
 }

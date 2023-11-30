@@ -805,6 +805,8 @@ import { GameEventsPluginService } from './js/services/plugins/game-events-plugi
 import { OwUtilsService } from './js/services/plugins/ow-utils.service';
 import { SimpleIOService } from './js/services/plugins/simple-io.service';
 import { AdService } from './js/services/premium/ad.service';
+import { OwLegacyPremiumService } from './js/services/premium/ow-legacy-premium.service';
+import { SubscriptionService } from './js/services/premium/subscription.service';
 import { TebexService } from './js/services/premium/tebex.service';
 import { InternalProfileAchievementsService } from './js/services/profile/internal/internal-profile-achievements.service';
 import { InternalProfileBattlegroundsService } from './js/services/profile/internal/internal-profile-battlegrounds.service';
@@ -1749,7 +1751,9 @@ export function HttpLoaderFactory(http: HttpClient) {
 		AppStartupService,
 
 		AdService,
+		SubscriptionService,
 		TebexService,
+		OwLegacyPremiumService,
 		TipService,
 		MainWindowStoreService,
 		StoreBootstrapService,

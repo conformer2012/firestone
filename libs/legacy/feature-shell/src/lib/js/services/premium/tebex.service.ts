@@ -23,6 +23,7 @@ export class TebexService extends AbstractFacadeService<TebexService> {
 		this.api = AppInjector.get(ApiRunner);
 
 		this.packages$$.onFirstSubscribe(async () => {
+			console.log('[tebex] will load config');
 			const result: readonly TebexPackage[] | null = await this.api.callGetApi(TEBEX_PACKAGES_URL);
 			console.log('[tebex] loaded duels config');
 			this.packages$$.next(result);

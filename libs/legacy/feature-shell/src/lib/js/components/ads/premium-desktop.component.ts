@@ -2,6 +2,8 @@ import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, V
 import { AbstractSubscriptionComponent } from '@firestone/shared/framework/common';
 import { Observable, combineLatest, shareReplay } from 'rxjs';
 import { AdService } from '../../services/premium/ad.service';
+import { OwLegacyPremiumService } from '../../services/premium/ow-legacy-premium.service';
+import { SubscriptionService } from '../../services/premium/subscription.service';
 import { TebexService } from '../../services/premium/tebex.service';
 
 @Component({
@@ -13,7 +15,13 @@ import { TebexService } from '../../services/premium/tebex.service';
 				<div class="title" [fsTranslate]="'app.premium.title'"></div>
 			</div>
 			<div class="plans" [ngClass]="{ 'show-legacy': showLegacyPlan$ | async }">
-				<premium-package class="plan" *ngFor="let plan of plans$ | async" [plan]="plan"></premium-package>
+				<premium-package
+					class="plan"
+					*ngFor="let plan of plans$ | async"
+					[plan]="plan"
+					(subscribe)="onSubscribe($event)"
+					(unsubscribe)="onUnsubscribe($event)"
+				></premium-package>
 			</div>
 		</div>
 	`,
@@ -25,7 +33,9 @@ export class PremiumDesktopComponent extends AbstractSubscriptionComponent imple
 
 	constructor(
 		protected readonly cdr: ChangeDetectorRef,
+		private readonly subscriptionService: SubscriptionService,
 		private readonly tebex: TebexService,
+		private readonly owLegacyPremium: OwLegacyPremiumService,
 		private readonly ads: AdService,
 	) {
 		super(cdr);
@@ -33,7 +43,9 @@ export class PremiumDesktopComponent extends AbstractSubscriptionComponent imple
 
 	async ngAfterViewInit() {
 		await this.tebex.isReady();
+		await this.owLegacyPremium.isReady();
 		await this.ads.isReady();
+		await this.subscriptionService.isReady();
 
 		this.plans$ = combineLatest([this.tebex.packages$$, this.ads.currentPlan$$]).pipe(
 			shareReplay(1),
@@ -54,6 +66,16 @@ export class PremiumDesktopComponent extends AbstractSubscriptionComponent imple
 		if (!(this.cdr as ViewRef)?.destroyed) {
 			this.cdr.detectChanges();
 		}
+	}
+
+	async onUnsubscribe(planId: string) {
+		console.log('unsubscribing from plan', planId);
+		const result = await this.subscriptionService.unsubscribe(planId);
+		console.log('unsubscribed from plan result', planId, result);
+	}
+
+	onSubscribe(planId: string) {
+		console.log('subscribing to plan', planId);
 	}
 }
 

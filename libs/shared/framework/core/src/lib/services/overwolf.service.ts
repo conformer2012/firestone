@@ -679,6 +679,7 @@ export class OverwolfService {
 			}
 			overwolf.profile.subscriptions.getActivePlans(
 				(activePlans: overwolf.profile.subscriptions.GetActivePlansResult) => {
+					console.debug('[ads] ow subscriptions', activePlans);
 					const hideAds = activePlans && activePlans.plans && activePlans.plans.includes(NO_AD_PLAN);
 					resolve(!hideAds);
 				},
