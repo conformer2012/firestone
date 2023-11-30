@@ -6,6 +6,7 @@ import {
 	OverwolfService,
 	WindowManagerService,
 } from '@firestone/shared/framework/core';
+import { OwSub } from './subscription.service';
 
 const UNSUB_URL = 'https://56ogovbpuj3wqndoj6j3fv3qs40ustlm.lambda-url.us-west-2.on.aws/';
 const STATUS_URL = 'https://kb3ek7w47ofny2lhrnv7xlmxnq0ifkbj.lambda-url.us-west-2.on.aws/';
@@ -31,7 +32,7 @@ export class OwLegacyPremiumService extends AbstractFacadeService<OwLegacyPremiu
 		this.ow = AppInjector.get(OverwolfService);
 	}
 
-	public async getSubscriptionStatus() {
+	public async getSubscriptionStatus(): Promise<OwSub> {
 		return this.mainInstance.getSubscriptionStatusInternal();
 	}
 
@@ -39,13 +40,16 @@ export class OwLegacyPremiumService extends AbstractFacadeService<OwLegacyPremiu
 		return this.mainInstance.unsubscribeInternal();
 	}
 
-	private async getSubscriptionStatusInternal() {
+	private async getSubscriptionStatusInternal(): Promise<OwSub> {
 		const owToken = await this.ow.generateSessionToken();
-		const result = await this.api.callPostApi(STATUS_URL, {
+		const legacyPlan = await this.api.callPostApi<OwSub>(STATUS_URL, {
 			owToken: owToken,
 		});
-		console.log('[ow-legacy-premium] sub status', result);
-		return result;
+		console.log('[ow-legacy-premium] sub status', legacyPlan);
+		if (legacyPlan?.state === 0) {
+			return legacyPlan;
+		}
+		return null;
 	}
 
 	private async unsubscribeInternal() {

@@ -47,18 +47,20 @@ export class PremiumDesktopComponent extends AbstractSubscriptionComponent imple
 		await this.ads.isReady();
 		await this.subscriptionService.isReady();
 
-		this.plans$ = combineLatest([this.tebex.packages$$, this.ads.currentPlan$$]).pipe(
+		this.plans$ = combineLatest([this.tebex.packages$$, this.subscriptionService.currentPlan$$]).pipe(
 			shareReplay(1),
 			this.mapData(([packages, currentPlanSub]) => {
 				console.debug('building plans');
-				return ALL_PLANS.filter((plan) => currentPlanSub === 'legacy' || plan.id !== 'legacy').map((plan) => {
-					const packageForPlan = packages?.find((p) => p.name.toLowerCase() === plan.id);
-					return {
-						...plan,
-						price: packageForPlan?.total_price ?? plan.price,
-						activePlan: currentPlanSub,
-					} as PremiumPlan;
-				});
+				return ALL_PLANS.filter((plan) => currentPlanSub?.id === 'legacy' || plan.id !== 'legacy').map(
+					(plan) => {
+						const packageForPlan = packages?.find((p) => p.name.toLowerCase() === plan.id);
+						return {
+							...plan,
+							price: packageForPlan?.total_price ?? plan.price,
+							activePlan: currentPlanSub?.id,
+						} as PremiumPlan;
+					},
+				);
 			}),
 		);
 		this.showLegacyPlan$ = this.plans$.pipe(this.mapData((plans) => plans.some((plan) => plan.id === 'legacy')));

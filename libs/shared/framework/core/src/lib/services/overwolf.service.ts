@@ -651,42 +651,6 @@ export class OverwolfService {
 		overwolf.windows.setZoom(zoomFactor, null as any);
 	}
 
-	public async getActiveSubscriptionPlans(): Promise<overwolf.profile.subscriptions.GetActivePlansResult> {
-		return new Promise<overwolf.profile.subscriptions.GetActivePlansResult>((resolve) => {
-			if (!overwolf.profile.subscriptions) {
-				resolve({} as overwolf.profile.subscriptions.GetActivePlansResult);
-				return;
-			}
-			overwolf.profile.subscriptions.getActivePlans(
-				(res: overwolf.profile.subscriptions.GetActivePlansResult) => {
-					resolve(res);
-				},
-			);
-		});
-	}
-
-	public async onSubscriptionChanged(
-		listener: (event: overwolf.profile.subscriptions.SubscriptionChangedEvent) => void,
-	) {
-		overwolf.profile.subscriptions.onSubscriptionChanged.addListener(listener);
-	}
-
-	public async shouldShowAds(): Promise<boolean> {
-		return new Promise<boolean>((resolve) => {
-			if (!overwolf.profile.subscriptions) {
-				resolve(true);
-				return;
-			}
-			overwolf.profile.subscriptions.getActivePlans(
-				(activePlans: overwolf.profile.subscriptions.GetActivePlansResult) => {
-					console.debug('[ads] ow subscriptions', activePlans);
-					const hideAds = activePlans && activePlans.plans && activePlans.plans.includes(NO_AD_PLAN);
-					resolve(!hideAds);
-				},
-			);
-		});
-	}
-
 	public addTwitterLoginStateChangedListener(callback) {
 		overwolf.social.twitter.onLoginStateChanged.addListener(async (result) => {
 			callback(result);
