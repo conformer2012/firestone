@@ -83,17 +83,6 @@ export class PremiumDesktopComponent extends AbstractSubscriptionComponent imple
 
 const ALL_PLANS: readonly Partial<PremiumPlan>[] = [
 	{
-		id: 'legacy',
-		features: {
-			supportFirestone: true,
-			removeAds: true,
-			premiumFeatures: true,
-		},
-		isReadonly: true,
-		price: 4.99,
-		text: `app.premium.legacy-plan-text`,
-	},
-	{
 		id: 'friend',
 		features: {
 			supportFirestone: true,
@@ -118,6 +107,17 @@ const ALL_PLANS: readonly Partial<PremiumPlan>[] = [
 			removeAds: true,
 			premiumFeatures: true,
 		},
+	},
+	{
+		id: 'legacy',
+		features: {
+			supportFirestone: true,
+			removeAds: true,
+			premiumFeatures: true,
+		},
+		isReadonly: true,
+		price: 4.99,
+		text: `app.premium.legacy-plan-text`,
 	},
 ];
 

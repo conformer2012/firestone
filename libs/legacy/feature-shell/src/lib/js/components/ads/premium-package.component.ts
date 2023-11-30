@@ -19,6 +19,7 @@ import { PremiumPlan } from './premium-desktop.component';
 					<div class="text">{{ feature.text }}</div>
 				</div>
 			</div>
+			<div class="plan-text" *ngIf="planTextKey" [fsTranslate]="planTextKey"></div>
 			<button
 				class="button subscribe-button"
 				[fsTranslate]="'app.premium.subscribe-button'"
@@ -63,6 +64,7 @@ export class PremiumPackageComponent {
 					.trim(),
 			};
 		});
+		this.planTextKey = value.text;
 
 		// this.subscribeButton = value.hasAc
 		// this.helpTooltipUnsubscribe =
@@ -78,6 +80,7 @@ export class PremiumPackageComponent {
 	price: string;
 	periodicity: string;
 	features: readonly { enabled: boolean; iconPath: string; text: string }[];
+	planTextKey: string;
 
 	subscribeButton: string;
 	helpTooltipSubscribe: string;

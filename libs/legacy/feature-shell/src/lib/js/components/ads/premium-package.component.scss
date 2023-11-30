@@ -1,3 +1,7 @@
+:host {
+	display: flex;
+}
+
 .package {
 	display: flex;
 	flex-direction: column;
@@ -7,6 +11,7 @@
 	border-radius: 2vh;
 	font-family: 'Roboto', sans-serif;
 	padding-bottom: 3vh;
+	flex-grow: 1;
 
 	&.read-only {
 		.header,
@@ -100,11 +105,22 @@
 	}
 }
 
+.plan-text {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 20px;
+	padding-top: 0;
+	margin-bottom: 10px;
+	color: #ae96a8;
+}
+
 .button {
 	border-radius: 1.5vh;
 	padding: 1.5vh;
 	border: 1px solid var(--default-title-color);
 	font-size: 1.1em;
+	margin-top: auto;
 
 	&.unsubscribe-button {
 		display: none;
