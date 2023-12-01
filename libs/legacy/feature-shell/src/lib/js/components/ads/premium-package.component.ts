@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { LocalizationFacadeService } from '../../services/localization-facade.service';
+import { PremiumPlanId } from '../../services/premium/subscription.service';
 import { PremiumPlan } from './premium-desktop.component';
 
 @Component({
@@ -23,7 +24,7 @@ import { PremiumPlan } from './premium-desktop.component';
 			<div class="plan-text" *ngIf="planTextKey" [fsTranslate]="planTextKey"></div>
 			<button
 				class="button subscribe-button"
-				[fsTranslate]="'app.premium.subscribe-button'"
+				[fsTranslate]="subscribeButtonKey"
 				[helpTooltip]="helpTooltipSubscribe"
 				(click)="onSubscribe()"
 			></button>
@@ -72,8 +73,8 @@ export class PremiumPackageComponent {
 			};
 		});
 		this.planTextKey = value.text;
+		this.subscribeButtonKey = this.buildSubscribeButtonKey(value.id, value.activePlan?.id);
 
-		// this.subscribeButton = value.hasAc
 		// this.helpTooltipUnsubscribe =
 		// 	this.id === 'legacy'
 		// 		? this.i18n.translateString(`app.premium.unsubscribe-button-tooltip-legacy`)
@@ -90,7 +91,7 @@ export class PremiumPackageComponent {
 	features: readonly { enabled: boolean; iconPath: string; text: string }[];
 	planTextKey: string;
 
-	subscribeButton: string;
+	subscribeButtonKey = 'app.premium.subscribe-button';
 	helpTooltipSubscribe: string;
 	helpTooltipUnsubscribe: string;
 
@@ -102,5 +103,15 @@ export class PremiumPackageComponent {
 
 	onUnsubscribe() {
 		this.unsubscribe.emit(this.id);
+	}
+
+	private buildSubscribeButtonKey(thisId: PremiumPlanId, activePlanId: PremiumPlanId): string {
+		if (thisId === 'premium' && activePlanId !== 'premium+') {
+			return 'app.premium.subscribe-button-upgrade';
+		}
+		if (thisId === 'premium+') {
+			return 'app.premium.subscribe-button-epic';
+		}
+		return 'app.premium.subscribe-button';
 	}
 }

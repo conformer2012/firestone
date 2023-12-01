@@ -3,7 +3,7 @@ import { AbstractSubscriptionComponent } from '@firestone/shared/framework/commo
 import { Observable, combineLatest, shareReplay } from 'rxjs';
 import { AdService } from '../../services/premium/ad.service';
 import { OwLegacyPremiumService } from '../../services/premium/ow-legacy-premium.service';
-import { CurrentPlan, SubscriptionService } from '../../services/premium/subscription.service';
+import { CurrentPlan, PremiumPlanId, SubscriptionService } from '../../services/premium/subscription.service';
 import { TebexService } from '../../services/premium/tebex.service';
 
 @Component({
@@ -122,7 +122,7 @@ const ALL_PLANS: readonly Partial<PremiumPlan>[] = [
 ];
 
 export interface PremiumPlan {
-	readonly id: string;
+	readonly id: PremiumPlanId;
 	readonly price: number;
 	readonly features: {
 		readonly supportFirestone?: boolean;
