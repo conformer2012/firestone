@@ -1,6 +1,11 @@
 import { Injectable } from '@angular/core';
 import { SubscriberAwareBehaviorSubject } from '@firestone/shared/framework/common';
-import { AbstractFacadeService, AppInjector, WindowManagerService } from '@firestone/shared/framework/core';
+import {
+	AbstractFacadeService,
+	AppInjector,
+	LocalStorageService,
+	WindowManagerService,
+} from '@firestone/shared/framework/core';
 import { OwLegacyPremiumService } from './ow-legacy-premium.service';
 import { TebexService } from './tebex.service';
 
@@ -10,6 +15,7 @@ export class SubscriptionService extends AbstractFacadeService<SubscriptionServi
 
 	private legacy: OwLegacyPremiumService;
 	private tebex: TebexService;
+	private localStorage: LocalStorageService;
 
 	constructor(protected override readonly windowManager: WindowManagerService) {
 		super(windowManager, 'premiumSubscription', () => !!this.currentPlan$$);
@@ -23,11 +29,18 @@ export class SubscriptionService extends AbstractFacadeService<SubscriptionServi
 		this.currentPlan$$ = new SubscriberAwareBehaviorSubject<CurrentPlan>(undefined);
 		this.legacy = AppInjector.get(OwLegacyPremiumService);
 		this.tebex = AppInjector.get(TebexService);
+		this.localStorage = AppInjector.get(LocalStorageService);
 
 		this.currentPlan$$.onFirstSubscribe(async () => {
+			const localPlan = this.localStorage.getItem<CurrentPlan>(LocalStorageService.CURRENT_SUB_PLAN);
+			if (localPlan) {
+				this.currentPlan$$.next(localPlan);
+			}
+
 			const currentPlan = await this.getCurrentPlanInternal();
 			// Once it is initialized, it should not be null, otherwise the getValueWithInit() will hang indefinitely
 			this.currentPlan$$.next(currentPlan ?? null);
+			this.localStorage.setItem(LocalStorageService.CURRENT_SUB_PLAN, currentPlan);
 		});
 	}
 
@@ -61,7 +74,7 @@ export class SubscriptionService extends AbstractFacadeService<SubscriptionServi
 }
 
 export interface CurrentPlan {
-	readonly id: string;
+	readonly id: PremiumPlanId;
 	readonly expireAt: Date;
 }
 
@@ -71,3 +84,5 @@ export interface OwSub {
 	readonly expireAt: Date;
 	readonly state: number;
 }
+
+export type PremiumPlanId = 'legacy' | 'friend' | 'premium' | 'premium+';
