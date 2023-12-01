@@ -51,12 +51,12 @@ export class PremiumPackageComponent {
 	@Output() unsubscribe = new EventEmitter<string>();
 
 	@Input() set plan(value: PremiumPlan) {
-		console.debug('setting plan', value);
 		this.id = value.id.replaceAll('+', '-plus');
 		this.isReadonly = value.isReadonly;
 		this.isActive = value.activePlan?.id === value.id;
 		const expireAtDate = value.activePlan?.expireAt ? new Date(value.activePlan.expireAt) : null;
-		this.isAutoRenew == value.activePlan?.autoRenews;
+		this.isAutoRenew = value.activePlan?.autoRenews;
+		console.debug('setting plan', value, this.isActive, this.isAutoRenew);
 		this.name = this.i18n.translateString(`app.premium.plan.${value.id}`);
 		this.price = `$${value.price ?? '-'}`;
 		this.periodicity = this.i18n.translateString(`app.premium.periodicity.monthly`);
