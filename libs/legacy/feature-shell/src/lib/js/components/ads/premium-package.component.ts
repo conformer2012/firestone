@@ -7,7 +7,11 @@ import { PremiumPlan } from './premium-desktop.component';
 	selector: 'premium-package',
 	styleUrls: [`./premium-package.component.scss`],
 	template: `
-		<div class="package {{ id }}" [ngClass]="{ 'read-only': isReadonly, active: isActive }">
+		<div
+			class="package {{ id }}"
+			[ngClass]="{ 'read-only': isReadonly, active: isActive }"
+			(click)="onSubscribe($event)"
+		>
 			<div class="header">
 				<div class="name">{{ name }}</div>
 				<div class="price">{{ price }}</div>
@@ -29,14 +33,14 @@ import { PremiumPlan } from './premium-desktop.component';
 				*ngIf="!isReadonly && !isActive"
 				[fsTranslate]="subscribeButtonKey"
 				[helpTooltip]="helpTooltipSubscribe"
-				(click)="onSubscribe()"
+				(click)="onSubscribe($event)"
 			></button>
 			<button
 				class="button unsubscribe-button"
 				*ngIf="isActive && isAutoRenew"
 				[fsTranslate]="'app.premium.unsubscribe-button'"
 				[helpTooltip]="helpTooltipUnsubscribe"
-				(click)="onUnsubscribe()"
+				(click)="onUnsubscribe($event)"
 			></button>
 		</div>
 	`,
@@ -107,11 +111,17 @@ export class PremiumPackageComponent {
 
 	constructor(private readonly i18n: LocalizationFacadeService) {}
 
-	onSubscribe() {
+	onSubscribe(event: MouseEvent) {
+		event.stopPropagation();
+		if (this.isActive) {
+			return;
+		}
+		console.debug('subscribing to plan', this.id);
 		this.subscribe.emit(this.id);
 	}
 
-	onUnsubscribe() {
+	onUnsubscribe(event: MouseEvent) {
+		event.stopPropagation();
 		this.unsubscribe.emit(this.id);
 	}
 

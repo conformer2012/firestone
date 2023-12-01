@@ -6,7 +6,7 @@ import {
 	OverwolfService,
 	WindowManagerService,
 } from '@firestone/shared/framework/core';
-import { OwSub } from './subscription.service';
+import { CurrentPlan, OwSub } from './subscription.service';
 
 const UNSUB_URL = 'https://56ogovbpuj3wqndoj6j3fv3qs40ustlm.lambda-url.us-west-2.on.aws/';
 const STATUS_URL = 'https://kb3ek7w47ofny2lhrnv7xlmxnq0ifkbj.lambda-url.us-west-2.on.aws/';
@@ -32,7 +32,7 @@ export class OwLegacyPremiumService extends AbstractFacadeService<OwLegacyPremiu
 		this.ow = AppInjector.get(OverwolfService);
 	}
 
-	public async getSubscriptionStatus(): Promise<OwSub> {
+	public async getSubscriptionStatus(): Promise<CurrentPlan> {
 		return this.mainInstance.getSubscriptionStatusInternal();
 	}
 
@@ -40,14 +40,20 @@ export class OwLegacyPremiumService extends AbstractFacadeService<OwLegacyPremiu
 		return this.mainInstance.unsubscribeInternal();
 	}
 
-	private async getSubscriptionStatusInternal(): Promise<OwSub> {
+	private async getSubscriptionStatusInternal(): Promise<CurrentPlan> {
 		const owToken = await this.ow.generateSessionToken();
 		const legacyPlan = await this.api.callPostApi<OwSub>(STATUS_URL, {
 			owToken: owToken,
 		});
 		console.log('[ads] [ow-legacy-premium] sub status', legacyPlan);
 		if (legacyPlan?.state === 0 || (legacyPlan?.state === 1 && new Date(legacyPlan.expireAt) < new Date())) {
-			return legacyPlan;
+			return {
+				id: 'legacy',
+				expireAt: legacyPlan.expireAt,
+				active: true,
+				autoRenews: legacyPlan.state === 0,
+				cancelled: legacyPlan.state === 1,
+			};
 		}
 		return null;
 	}

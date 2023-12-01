@@ -1,6 +1,6 @@
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewRef } from '@angular/core';
-import { AbstractSubscriptionComponent } from '@firestone/shared/framework/common';
-import { BehaviorSubject, Observable, combineLatest, shareReplay } from 'rxjs';
+import { AbstractSubscriptionComponent, deepEqual } from '@firestone/shared/framework/common';
+import { BehaviorSubject, Observable, combineLatest, distinctUntilChanged, shareReplay } from 'rxjs';
 import { LocalizationFacadeService } from '../../services/localization-facade.service';
 import { AdService } from '../../services/premium/ad.service';
 import { OwLegacyPremiumService } from '../../services/premium/ow-legacy-premium.service';
@@ -20,12 +20,12 @@ import { TebexService } from '../../services/premium/tebex.service';
 					class="plan"
 					*ngFor="let plan of plans$ | async"
 					[plan]="plan"
-					(subscribe)="onSubscribe($event)"
+					(subscribe)="onSubscribeRequest($event)"
 					(unsubscribe)="onUnsubscribeRequest($event)"
 				></premium-package>
 			</div>
 		</div>
-		<div class="confirmation-modal" *ngIf="showConfirmationPopUp$ | async as model">
+		<div class="modal-container confirmation-modal" *ngIf="showConfirmationPopUp$ | async as model">
 			<div class="modal">
 				<div class="background-container">
 					<div class="title">{{ model.title }}</div>
@@ -51,6 +51,26 @@ import { TebexService } from '../../services/premium/tebex.service';
 				</div>
 			</div>
 		</div>
+		<div class="modal-container pre-subscribe-modal" *ngIf="showPreSubscribeModal$ | async as model">
+			<div class="modal">
+				<div class="background-container">
+					<div class="title">{{ model.title }}</div>
+					<div class="text">{{ model.text }}</div>
+					<div class="buttons">
+						<button
+							class="button cancel-button"
+							[fsTranslate]="'app.premium.presubscribe-modal.cancel-button'"
+							(click)="onCancelSubscribe()"
+						></button>
+						<button
+							class="button subscribe-button"
+							[fsTranslate]="'app.premium.presubscribe-modal.subscribe-button'"
+							(click)="onSubscribe(model.planId)"
+						></button>
+					</div>
+				</div>
+			</div>
+		</div>
 	`,
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -58,8 +78,10 @@ export class PremiumDesktopComponent extends AbstractSubscriptionComponent imple
 	plans$: Observable<readonly PremiumPlan[]>;
 	showLegacyPlan$: Observable<boolean>;
 	showConfirmationPopUp$: Observable<UnsubscribeModel>;
+	showPreSubscribeModal$: Observable<PresubscribeModel>;
 
 	private showConfirmationPopUp$$ = new BehaviorSubject<UnsubscribeModel>(null);
+	private showPreSubscribeModal$$ = new BehaviorSubject<PresubscribeModel>(null);
 
 	constructor(
 		protected readonly cdr: ChangeDetectorRef,
@@ -79,7 +101,9 @@ export class PremiumDesktopComponent extends AbstractSubscriptionComponent imple
 		await this.subscriptionService.isReady();
 
 		this.showConfirmationPopUp$ = this.showConfirmationPopUp$$.asObservable();
+		this.showPreSubscribeModal$ = this.showPreSubscribeModal$$.asObservable();
 		this.plans$ = combineLatest([this.tebex.packages$$, this.subscriptionService.currentPlan$$]).pipe(
+			distinctUntilChanged((a, b) => deepEqual(a, b)),
 			shareReplay(1),
 			this.mapData(([packages, currentPlanSub]) => {
 				console.debug('building plans');
@@ -96,6 +120,10 @@ export class PremiumDesktopComponent extends AbstractSubscriptionComponent imple
 			}),
 		);
 		this.showLegacyPlan$ = this.plans$.pipe(this.mapData((plans) => plans.some((plan) => plan.id === 'legacy')));
+		this.plans$.subscribe((plans) => {
+			this.showPreSubscribeModal$$.next(null);
+			this.showConfirmationPopUp$$.next(null);
+		});
 
 		if (!(this.cdr as ViewRef)?.destroyed) {
 			this.cdr.detectChanges();
@@ -132,8 +160,23 @@ export class PremiumDesktopComponent extends AbstractSubscriptionComponent imple
 		this.showConfirmationPopUp$$.next(null);
 	}
 
-	onSubscribe(planId: string) {
-		console.log('subscribing to plan', planId);
+	onSubscribeRequest(planId: string) {
+		const model: PresubscribeModel = {
+			planId: planId,
+			title: this.i18n.translateString('app.premium.presubscribe-modal.title', {
+				plan: this.i18n.translateString(`app.premium.plan.${planId}`),
+			}),
+			text: this.i18n.translateString('app.premium.presubscribe-modal.text'),
+		};
+		this.showPreSubscribeModal$$.next(model);
+	}
+
+	async onSubscribe(planId: string) {
+		const result = await this.subscriptionService.subscribe(planId);
+	}
+
+	onCancelSubscribe() {
+		this.showPreSubscribeModal$$.next(null);
 	}
 }
 
@@ -198,4 +241,9 @@ interface UnsubscribeModel {
 	readonly text: string;
 	readonly subscribing?: boolean;
 	readonly unsubscribing?: boolean;
+}
+interface PresubscribeModel {
+	readonly planId: string;
+	readonly title: string;
+	readonly text: string;
 }

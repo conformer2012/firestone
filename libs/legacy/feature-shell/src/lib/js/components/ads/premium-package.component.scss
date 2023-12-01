@@ -13,6 +13,7 @@
 	padding-bottom: 3vh;
 	flex-grow: 1;
 	position: relative;
+	border: solid 2px transparent;
 
 	&.read-only {
 		.header,
@@ -23,13 +24,11 @@
 
 	&.active {
 		border: solid 2px var(--default-title-color);
+	}
 
-		// .subscribe-button {
-		// 	display: none;
-		// }
-		// .unsubscribe-button {
-		// 	display: inherit;
-		// }
+	&:hover:not(.active) {
+		border: solid 2px var(--default-title-color);
+		background: rgba(255, 255, 255, 0.12);
 	}
 
 	&.friend .name {

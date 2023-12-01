@@ -806,6 +806,7 @@ import { OwUtilsService } from './js/services/plugins/ow-utils.service';
 import { SimpleIOService } from './js/services/plugins/simple-io.service';
 import { AdService } from './js/services/premium/ad.service';
 import { OwLegacyPremiumService } from './js/services/premium/ow-legacy-premium.service';
+import { PremiumDeeplinkService } from './js/services/premium/premium-deeplink.service';
 import { SubscriptionService } from './js/services/premium/subscription.service';
 import { TebexService } from './js/services/premium/tebex.service';
 import { InternalProfileAchievementsService } from './js/services/profile/internal/internal-profile-achievements.service';
@@ -1752,6 +1753,7 @@ export function HttpLoaderFactory(http: HttpClient) {
 
 		AdService,
 		SubscriptionService,
+		PremiumDeeplinkService,
 		TebexService,
 		OwLegacyPremiumService,
 		TipService,

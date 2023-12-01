@@ -27,6 +27,7 @@ import { MercenariesSynergiesHighlightService } from '../../js/services/mercenar
 import { MercenariesStoreService } from '../../js/services/mercenaries/mercenaries-store.service';
 import { MercenariesOutOfCombatService } from '../../js/services/mercenaries/out-of-combat/mercenaries-out-of-combat.service';
 import { OwLegacyPremiumService } from '../../js/services/premium/ow-legacy-premium.service';
+import { PremiumDeeplinkService } from '../../js/services/premium/premium-deeplink.service';
 import { SubscriptionService } from '../../js/services/premium/subscription.service';
 import { TebexService } from '../../js/services/premium/tebex.service';
 import { ProfileUploaderService } from '../../js/services/profile/profile-uploader.service';
@@ -79,6 +80,7 @@ export class BootstrapStoreServicesService {
 		private readonly init_TebexService: TebexService,
 		private readonly init_OwLegacyPremiumService: OwLegacyPremiumService,
 		private readonly init_SubscriptionService: SubscriptionService,
+		private readonly init_PremiumDeeplinkService: PremiumDeeplinkService,
 		// Other dependencies
 		private readonly decktrackerDisplayEventBus: OverlayDisplayService,
 	) {}

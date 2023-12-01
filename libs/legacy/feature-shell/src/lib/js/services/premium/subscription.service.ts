@@ -37,15 +37,24 @@ export class SubscriptionService extends AbstractFacadeService<SubscriptionServi
 				this.currentPlan$$.next(localPlan);
 			}
 
-			const currentPlan = await this.getCurrentPlanInternal();
-			// Once it is initialized, it should not be null, otherwise the getValueWithInit() will hang indefinitely
-			this.currentPlan$$.next(currentPlan ?? null);
-			this.localStorage.setItem(LocalStorageService.CURRENT_SUB_PLAN, currentPlan);
+			await this.fetchCurrentPlan();
 		});
+	}
+
+	public async subscribe(planId: string) {
+		return this.mainInstance.subscribeInternal(planId);
 	}
 
 	public async unsubscribe(planId: string) {
 		return this.mainInstance.unsubscribeInternal(planId);
+	}
+
+	public async fetchCurrentPlan(): Promise<CurrentPlan> {
+		return this.mainInstance.fetchCurrentPlanInternal();
+	}
+
+	private async subscribeInternal(planId: string) {
+		await this.tebex.subscribe(planId);
 	}
 
 	private async unsubscribeInternal(planId: string) {
@@ -56,17 +65,25 @@ export class SubscriptionService extends AbstractFacadeService<SubscriptionServi
 		// return this.tebex.unsubscribe(planId);
 	}
 
+	private async fetchCurrentPlanInternal(): Promise<CurrentPlan> {
+		const currentPlan = await this.getCurrentPlanInternal();
+		// Once it is initialized, it should not be null, otherwise the getValueWithInit() will hang indefinitely
+		this.currentPlan$$.next(currentPlan ?? null);
+		this.localStorage.setItem(LocalStorageService.CURRENT_SUB_PLAN, currentPlan);
+		return currentPlan;
+	}
+
 	private async getCurrentPlanInternal(): Promise<CurrentPlan> {
+		const tebexPlan = await this.tebex.getSubscriptionStatus();
+		if (tebexPlan != null) {
+			console.log('tebex plan', tebexPlan);
+			return tebexPlan;
+		}
+
 		const legacyPlan = await this.legacy.getSubscriptionStatus();
 		if (legacyPlan != null) {
 			console.log('legacy plan', legacyPlan);
-			return {
-				id: 'legacy',
-				expireAt: legacyPlan.expireAt,
-				active: true,
-				autoRenews: legacyPlan.state === 0,
-				cancelled: legacyPlan.state === 1,
-			};
+			return;
 		}
 		// const tebexStatus = await this.tebex.getSubscriptionStatus();
 		// if (tebexStatus?.status === 'active') {
