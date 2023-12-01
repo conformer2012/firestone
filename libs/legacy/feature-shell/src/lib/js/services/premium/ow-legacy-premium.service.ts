@@ -45,7 +45,7 @@ export class OwLegacyPremiumService extends AbstractFacadeService<OwLegacyPremiu
 		const legacyPlan = await this.api.callPostApi<OwSub>(STATUS_URL, {
 			owToken: owToken,
 		});
-		console.log('[ow-legacy-premium] sub status', legacyPlan);
+		console.log('[ads] [ow-legacy-premium] sub status', legacyPlan);
 		if (legacyPlan?.state === 0) {
 			return legacyPlan;
 		}
@@ -57,8 +57,8 @@ export class OwLegacyPremiumService extends AbstractFacadeService<OwLegacyPremiu
 		const unsubResult = await this.api.callPostApi(UNSUB_URL, {
 			owToken: owToken,
 		});
-		console.log('[ow-legacy-premium] unsub result', unsubResult);
-		console.debug('[ow-legacy-premium] should show ads now?');
+		console.log('[ads] [ow-legacy-premium] unsub result', unsubResult);
+		console.debug('[ads] [ow-legacy-premium] should show ads now?');
 		return unsubResult;
 	}
 }

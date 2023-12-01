@@ -3,7 +3,7 @@ import { AbstractSubscriptionComponent } from '@firestone/shared/framework/commo
 import { Observable, combineLatest, shareReplay } from 'rxjs';
 import { AdService } from '../../services/premium/ad.service';
 import { OwLegacyPremiumService } from '../../services/premium/ow-legacy-premium.service';
-import { SubscriptionService } from '../../services/premium/subscription.service';
+import { CurrentPlan, SubscriptionService } from '../../services/premium/subscription.service';
 import { TebexService } from '../../services/premium/tebex.service';
 
 @Component({
@@ -57,7 +57,7 @@ export class PremiumDesktopComponent extends AbstractSubscriptionComponent imple
 						return {
 							...plan,
 							price: packageForPlan?.total_price ?? plan.price,
-							activePlan: currentPlanSub?.id,
+							activePlan: currentPlanSub,
 						} as PremiumPlan;
 					},
 				);
@@ -132,6 +132,6 @@ export interface PremiumPlan {
 		readonly prioritySupport?: boolean;
 	};
 	readonly isReadonly?: boolean;
-	readonly activePlan?: string;
+	readonly activePlan?: CurrentPlan;
 	readonly text?: string;
 }

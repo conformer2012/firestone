@@ -187,12 +187,12 @@ export class AppStartupService {
 			return;
 		}
 		this.loadingWindowShown = true;
-		console.log('[startup] showing loading screen?', this.currentState, this.loadingWindowId);
 
 		// Don't open the loading window if the main window is open
 		const prefs = await this.prefs.getPreferences();
 		const collectionWindow = await this.ow.getCollectionWindow(prefs);
 		const shouldShowAds = await this.ads.shouldDisplayAds();
+		console.log('[startup] showing loading screen?', shouldShowAds, this.currentState, this.loadingWindowId);
 		const isDev = !!process.env.NODE_ENV && process.env.NODE_ENV !== 'production';
 		if (shouldShowAds && !collectionWindow.isVisible) {
 			await this.ow.obtainDeclaredWindow(OverwolfService.LOADING_WINDOW);

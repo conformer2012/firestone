@@ -11,6 +11,7 @@ import { PremiumPlan } from './premium-desktop.component';
 				<div class="name">{{ name }}</div>
 				<div class="price">{{ price }}</div>
 				<div class="periodicity">{{ periodicity }}</div>
+				<div class="auto-renew">{{ autoRenewText }}</div>
 			</div>
 			<div class="features">
 				<div class="title" [fsTranslate]="'app.premium.features.title'"></div>
@@ -43,7 +44,13 @@ export class PremiumPackageComponent {
 	@Input() set plan(value: PremiumPlan) {
 		this.id = value.id.replaceAll('+', '-plus');
 		this.isReadonly = value.isReadonly;
-		this.isActive = value.activePlan === value.id;
+		this.isActive = value.activePlan?.id === value.id;
+		this.autoRenewText =
+			this.isActive && !!value.activePlan?.expireAt
+				? this.i18n.translateString('app.premium.auto-renew', {
+						date: new Date(value.activePlan.expireAt).toLocaleDateString(this.i18n.formatCurrentLocale()),
+				  })
+				: null;
 		this.name = this.i18n.translateString(`app.premium.plan.${value.id}`);
 		this.price = `$${value.price ?? '-'}`;
 		this.periodicity = this.i18n.translateString(`app.premium.periodicity.monthly`);
@@ -77,6 +84,7 @@ export class PremiumPackageComponent {
 	isActive: boolean;
 	id: string;
 	name: string;
+	autoRenewText: string;
 	price: string;
 	periodicity: string;
 	features: readonly { enabled: boolean; iconPath: string; text: string }[];

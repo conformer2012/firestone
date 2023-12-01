@@ -12,15 +12,18 @@
 	font-family: 'Roboto', sans-serif;
 	padding-bottom: 3vh;
 	flex-grow: 1;
+	position: relative;
 
 	&.read-only {
 		.header,
 		.features {
-			opacity: 0.3;
+			opacity: 0.5;
 		}
 	}
 
 	&.active {
+		border: solid 2px var(--default-title-color);
+
 		.subscribe-button {
 			display: none;
 		}
@@ -62,6 +65,13 @@
 
 	.periodicity {
 		color: #846c7e;
+	}
+
+	.auto-renew {
+		margin-top: 10px;
+		color: #846c7e;
+		align-self: flex-start;
+		height: 2vh;
 	}
 }
 
