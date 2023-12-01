@@ -24,12 +24,12 @@
 	&.active {
 		border: solid 2px var(--default-title-color);
 
-		.subscribe-button {
-			display: none;
-		}
-		.unsubscribe-button {
-			display: inherit;
-		}
+		// .subscribe-button {
+		// 	display: none;
+		// }
+		// .unsubscribe-button {
+		// 	display: inherit;
+		// }
 	}
 
 	&.friend .name {
@@ -133,7 +133,7 @@
 	margin-top: auto;
 
 	&.unsubscribe-button {
-		display: none;
+		// display: none;
 	}
 
 	&:hover {

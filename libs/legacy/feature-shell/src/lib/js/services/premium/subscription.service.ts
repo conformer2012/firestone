@@ -63,6 +63,9 @@ export class SubscriptionService extends AbstractFacadeService<SubscriptionServi
 			return {
 				id: 'legacy',
 				expireAt: legacyPlan.expireAt,
+				active: true,
+				autoRenews: legacyPlan.state === 0,
+				cancelled: legacyPlan.state === 1,
 			};
 		}
 		// const tebexStatus = await this.tebex.getSubscriptionStatus();
@@ -76,6 +79,9 @@ export class SubscriptionService extends AbstractFacadeService<SubscriptionServi
 export interface CurrentPlan {
 	readonly id: PremiumPlanId;
 	readonly expireAt: Date;
+	readonly active: boolean;
+	readonly cancelled: boolean;
+	readonly autoRenews: boolean;
 }
 
 export interface OwSub {

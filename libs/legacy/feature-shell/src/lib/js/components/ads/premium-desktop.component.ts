@@ -1,6 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewRef } from '@angular/core';
 import { AbstractSubscriptionComponent } from '@firestone/shared/framework/common';
-import { Observable, combineLatest, shareReplay } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, shareReplay } from 'rxjs';
+import { LocalizationFacadeService } from '../../services/localization-facade.service';
 import { AdService } from '../../services/premium/ad.service';
 import { OwLegacyPremiumService } from '../../services/premium/ow-legacy-premium.service';
 import { CurrentPlan, PremiumPlanId, SubscriptionService } from '../../services/premium/subscription.service';
@@ -20,8 +21,34 @@ import { TebexService } from '../../services/premium/tebex.service';
 					*ngFor="let plan of plans$ | async"
 					[plan]="plan"
 					(subscribe)="onSubscribe($event)"
-					(unsubscribe)="onUnsubscribe($event)"
+					(unsubscribe)="onUnsubscribeRequest($event)"
 				></premium-package>
+			</div>
+		</div>
+		<div class="confirmation-modal" *ngIf="showConfirmationPopUp$ | async as model">
+			<div class="modal">
+				<div class="background-container">
+					<div class="title">{{ model.title }}</div>
+					<div class="text">{{ model.text }}</div>
+					<div class="buttons">
+						<button
+							class="button unsubscribe-button"
+							*ngIf="!model.unsubscribing"
+							[fsTranslate]="'app.premium.unsubscribe-button'"
+							(click)="onUnsubscribe(model.planId)"
+						></button>
+						<button
+							class="button unsubscribe-button processing"
+							*ngIf="model.unsubscribing"
+							[fsTranslate]="'app.premium.unsubscribe-modal.unsubscribe-ongoing-label'"
+						></button>
+						<button
+							class="button cancel-button"
+							[fsTranslate]="'app.premium.unsubscribe-modal.cancel-button'"
+							(click)="onCancelUnsubscribe()"
+						></button>
+					</div>
+				</div>
 			</div>
 		</div>
 	`,
@@ -30,6 +57,9 @@ import { TebexService } from '../../services/premium/tebex.service';
 export class PremiumDesktopComponent extends AbstractSubscriptionComponent implements AfterViewInit {
 	plans$: Observable<readonly PremiumPlan[]>;
 	showLegacyPlan$: Observable<boolean>;
+	showConfirmationPopUp$: Observable<UnsubscribeModel>;
+
+	private showConfirmationPopUp$$ = new BehaviorSubject<UnsubscribeModel>(null);
 
 	constructor(
 		protected readonly cdr: ChangeDetectorRef,
@@ -37,6 +67,7 @@ export class PremiumDesktopComponent extends AbstractSubscriptionComponent imple
 		private readonly tebex: TebexService,
 		private readonly owLegacyPremium: OwLegacyPremiumService,
 		private readonly ads: AdService,
+		private readonly i18n: LocalizationFacadeService,
 	) {
 		super(cdr);
 	}
@@ -47,6 +78,7 @@ export class PremiumDesktopComponent extends AbstractSubscriptionComponent imple
 		await this.ads.isReady();
 		await this.subscriptionService.isReady();
 
+		this.showConfirmationPopUp$ = this.showConfirmationPopUp$$.asObservable();
 		this.plans$ = combineLatest([this.tebex.packages$$, this.subscriptionService.currentPlan$$]).pipe(
 			shareReplay(1),
 			this.mapData(([packages, currentPlanSub]) => {
@@ -70,10 +102,34 @@ export class PremiumDesktopComponent extends AbstractSubscriptionComponent imple
 		}
 	}
 
+	async onUnsubscribeRequest(planId: string) {
+		const model: UnsubscribeModel = {
+			planId: planId,
+			title: this.i18n.translateString('app.premium.unsubscribe-modal.title', {
+				plan: this.i18n.translateString(`app.premium.plan.${planId}`),
+			}),
+			text:
+				planId === 'legacy'
+					? this.i18n.translateString('app.premium.unsubscribe-modal.text-legacy')
+					: this.i18n.translateString('app.premium.unsubscribe-modal.text'),
+		};
+		this.showConfirmationPopUp$$.next(model);
+	}
+
 	async onUnsubscribe(planId: string) {
+		const newModel: UnsubscribeModel = {
+			...this.showConfirmationPopUp$$.getValue(),
+			unsubscribing: true,
+		};
+		this.showConfirmationPopUp$$.next(newModel);
 		console.log('unsubscribing from plan', planId);
 		const result = await this.subscriptionService.unsubscribe(planId);
 		console.log('unsubscribed from plan result', planId, result);
+		this.showConfirmationPopUp$$.next(null);
+	}
+
+	onCancelUnsubscribe() {
+		this.showConfirmationPopUp$$.next(null);
 	}
 
 	onSubscribe(planId: string) {
@@ -134,4 +190,12 @@ export interface PremiumPlan {
 	readonly isReadonly?: boolean;
 	readonly activePlan?: CurrentPlan;
 	readonly text?: string;
+}
+
+interface UnsubscribeModel {
+	readonly planId: string;
+	readonly title: string;
+	readonly text: string;
+	readonly subscribing?: boolean;
+	readonly unsubscribing?: boolean;
 }

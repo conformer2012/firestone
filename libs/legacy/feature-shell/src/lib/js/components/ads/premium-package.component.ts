@@ -12,7 +12,9 @@ import { PremiumPlan } from './premium-desktop.component';
 				<div class="name">{{ name }}</div>
 				<div class="price">{{ price }}</div>
 				<div class="periodicity">{{ periodicity }}</div>
-				<div class="auto-renew">{{ autoRenewText }}</div>
+				<div class="auto-renew" *ngIf="isAutoRenew">{{ autoRenewText }}</div>
+				<div class="auto-renew" *ngIf="isActive && !isAutoRenew">{{ activeText }}</div>
+				<div class="auto-renew" *ngIf="!isActive && !isAutoRenew"></div>
 			</div>
 			<div class="features">
 				<div class="title" [fsTranslate]="'app.premium.features.title'"></div>
@@ -24,12 +26,14 @@ import { PremiumPlan } from './premium-desktop.component';
 			<div class="plan-text" *ngIf="planTextKey" [fsTranslate]="planTextKey"></div>
 			<button
 				class="button subscribe-button"
+				*ngIf="!isReadonly && !isActive"
 				[fsTranslate]="subscribeButtonKey"
 				[helpTooltip]="helpTooltipSubscribe"
 				(click)="onSubscribe()"
 			></button>
 			<button
 				class="button unsubscribe-button"
+				*ngIf="isActive && isAutoRenew"
 				[fsTranslate]="'app.premium.unsubscribe-button'"
 				[helpTooltip]="helpTooltipUnsubscribe"
 				(click)="onUnsubscribe()"
@@ -43,15 +47,12 @@ export class PremiumPackageComponent {
 	@Output() unsubscribe = new EventEmitter<string>();
 
 	@Input() set plan(value: PremiumPlan) {
+		console.debug('setting plan', value);
 		this.id = value.id.replaceAll('+', '-plus');
 		this.isReadonly = value.isReadonly;
 		this.isActive = value.activePlan?.id === value.id;
-		this.autoRenewText =
-			this.isActive && !!value.activePlan?.expireAt
-				? this.i18n.translateString('app.premium.auto-renew', {
-						date: new Date(value.activePlan.expireAt).toLocaleDateString(this.i18n.formatCurrentLocale()),
-				  })
-				: null;
+		const expireAtDate = value.activePlan?.expireAt ? new Date(value.activePlan.expireAt) : null;
+		this.isAutoRenew == value.activePlan?.autoRenews;
 		this.name = this.i18n.translateString(`app.premium.plan.${value.id}`);
 		this.price = `$${value.price ?? '-'}`;
 		this.periodicity = this.i18n.translateString(`app.premium.periodicity.monthly`);
@@ -72,6 +73,13 @@ export class PremiumPackageComponent {
 					.trim(),
 			};
 		});
+
+		this.autoRenewText = this.i18n.translateString('app.premium.auto-renew', {
+			date: expireAtDate?.toLocaleDateString(this.i18n.formatCurrentLocale()),
+		});
+		this.activeText = this.i18n.translateString('app.premium.active-until', {
+			date: expireAtDate?.toLocaleDateString(this.i18n.formatCurrentLocale()),
+		});
 		this.planTextKey = value.text;
 		this.subscribeButtonKey = this.buildSubscribeButtonKey(value.id, value.activePlan?.id);
 
@@ -83,9 +91,11 @@ export class PremiumPackageComponent {
 
 	isReadonly: boolean;
 	isActive: boolean;
+	isAutoRenew: boolean;
 	id: string;
 	name: string;
 	autoRenewText: string;
+	activeText: string;
 	price: string;
 	periodicity: string;
 	features: readonly { enabled: boolean; iconPath: string; text: string }[];

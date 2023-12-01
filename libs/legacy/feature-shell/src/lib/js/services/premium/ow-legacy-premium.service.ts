@@ -46,7 +46,7 @@ export class OwLegacyPremiumService extends AbstractFacadeService<OwLegacyPremiu
 			owToken: owToken,
 		});
 		console.log('[ads] [ow-legacy-premium] sub status', legacyPlan);
-		if (legacyPlan?.state === 0) {
+		if (legacyPlan?.state === 0 || (legacyPlan?.state === 1 && new Date(legacyPlan.expireAt) < new Date())) {
 			return legacyPlan;
 		}
 		return null;
