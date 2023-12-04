@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { SubscriberAwareBehaviorSubject } from '@firestone/shared/framework/common';
+import { SubscriberAwareBehaviorSubject, deepEqual } from '@firestone/shared/framework/common';
 import {
 	AbstractFacadeService,
 	AppInjector,
 	LocalStorageService,
 	WindowManagerService,
 } from '@firestone/shared/framework/core';
+import { distinctUntilChanged } from 'rxjs';
 import { OwLegacyPremiumService } from './ow-legacy-premium.service';
 import { TebexService } from './tebex.service';
 
@@ -16,6 +17,8 @@ export class SubscriptionService extends AbstractFacadeService<SubscriptionServi
 	private legacy: OwLegacyPremiumService;
 	private tebex: TebexService;
 	private localStorage: LocalStorageService;
+
+	private shouldCheckForUpdates = false;
 
 	constructor(protected override readonly windowManager: WindowManagerService) {
 		super(windowManager, 'premiumSubscription', () => !!this.currentPlan$$);
@@ -37,8 +40,19 @@ export class SubscriptionService extends AbstractFacadeService<SubscriptionServi
 				this.currentPlan$$.next(localPlan);
 			}
 
+			this.currentPlan$$.pipe(distinctUntilChanged((a, b) => deepEqual(a, b))).subscribe((plan) => {
+				console.log('[ads] [subscription] new plan', plan);
+			});
+
 			await this.fetchCurrentPlan();
 		});
+
+		setInterval(() => {
+			if (!this.shouldCheckForUpdates) {
+				return;
+			}
+			this.fetchCurrentPlan();
+		}, 60 * 1000);
 	}
 
 	public async subscribe(planId: string) {
@@ -55,6 +69,7 @@ export class SubscriptionService extends AbstractFacadeService<SubscriptionServi
 
 	private async subscribeInternal(planId: string) {
 		await this.tebex.subscribe(planId);
+		this.startCheckingForUpdates();
 	}
 
 	private async unsubscribeInternal(planId: string) {
@@ -62,7 +77,8 @@ export class SubscriptionService extends AbstractFacadeService<SubscriptionServi
 			await this.legacy.unsubscribe();
 			this.currentPlan$$.next(null);
 		}
-		// return this.tebex.unsubscribe(planId);
+		await this.tebex.unsubscribe(planId);
+		this.startCheckingForUpdates();
 	}
 
 	private async fetchCurrentPlanInternal(): Promise<CurrentPlan> {
@@ -76,20 +92,19 @@ export class SubscriptionService extends AbstractFacadeService<SubscriptionServi
 	private async getCurrentPlanInternal(): Promise<CurrentPlan> {
 		const tebexPlan = await this.tebex.getSubscriptionStatus();
 		if (tebexPlan != null) {
-			console.log('tebex plan', tebexPlan);
 			return tebexPlan;
 		}
 
 		const legacyPlan = await this.legacy.getSubscriptionStatus();
 		if (legacyPlan != null) {
-			console.log('legacy plan', legacyPlan);
-			return;
+			return legacyPlan;
 		}
-		// const tebexStatus = await this.tebex.getSubscriptionStatus();
-		// if (tebexStatus?.status === 'active') {
-		// 	return tebexStatus.package?.name;
-		// }
 		return null;
+	}
+
+	private startCheckingForUpdates() {
+		this.shouldCheckForUpdates = true;
+		setTimeout(() => (this.shouldCheckForUpdates = false), 10 * 60 * 1000);
 	}
 }
 
