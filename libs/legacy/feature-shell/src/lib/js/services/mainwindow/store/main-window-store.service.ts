@@ -4,7 +4,7 @@ import { ConstructedPersonalDecksService } from '@firestone/constructed/common';
 import { DuelsMetaHeroStatsAccessService } from '@firestone/duels/data-access';
 import { DuelsPersonalDecksService } from '@firestone/duels/general';
 import { MemoryInspectionService } from '@firestone/memory';
-import { OwNotificationsService, PreferencesService } from '@firestone/shared/common/service';
+import { AppNavigationService, OwNotificationsService, PreferencesService } from '@firestone/shared/common/service';
 import { CardsFacadeService, OverwolfService } from '@firestone/shared/framework/core';
 import { DuelsAdventureInfoService } from '@legacy-import/src/lib/js/services/duels/duels-adventure-info.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -36,10 +36,11 @@ import { DuelsExploreDecksParser } from '@services/mainwindow/store/processors/d
 import { DuelsIsOnDeckBuildingLobbyScreenProcessor } from '@services/mainwindow/store/processors/duels/duels-is-on-deck-building-lobby-screen-processor';
 import { DuelsIsOnMainScreenProcessor } from '@services/mainwindow/store/processors/duels/duels-is-on-main-screen-processor';
 import { Map } from 'immutable';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, filter } from 'rxjs';
 import { MailboxMarkMessageReadEvent } from '../../../../libs/mails/services/mailbox-mark-message-read-event';
 import { MailboxMarkMessageReadProcessor } from '../../../../libs/mails/services/mailbox-mark-message-read-processor';
 import { PackStatsService } from '../../../../libs/packs/services/pack-stats.service';
+import { CurrentAppType } from '../../../models/mainwindow/current-app.type';
 import { MainWindowState } from '../../../models/mainwindow/main-window-state';
 import { NavigationState } from '../../../models/mainwindow/navigation/navigation-state';
 import { AchievementHistoryService } from '../../achievement/achievements-history.service';
@@ -399,15 +400,24 @@ export class MainWindowStoreService {
 		private readonly bgsPerfectGames: BgsPerfectGamesService,
 		private readonly duelsPersonalDecksService: DuelsPersonalDecksService,
 		private readonly constructedPersonalDeckService: ConstructedPersonalDecksService,
+		private readonly appNavigation: AppNavigationService,
 	) {
 		window['mainWindowStoreMerged'] = this.mergedEmitter;
 		window['mainWindowStoreUpdater'] = this.stateUpdater;
+		this.serviceInit();
+	}
+
+	private async serviceInit() {
 		this.gameStatsUpdater.stateUpdater = this.stateUpdater;
-
 		this.processors = this.buildProcessors();
-
 		this.stateUpdater.subscribe((event: MainWindowStoreEvent) => {
 			this.processingQueue.enqueue(event);
+		});
+
+		await this.appNavigation.isReady();
+		this.appNavigation.currentTab$$.pipe(filter((tab) => !!tab)).subscribe((tab) => {
+			console.debug('[navigation] changing tab', tab);
+			this.stateUpdater.next(new ChangeVisibleApplicationEvent(tab as CurrentAppType));
 		});
 	}
 

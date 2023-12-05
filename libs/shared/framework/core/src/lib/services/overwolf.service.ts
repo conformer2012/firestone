@@ -871,12 +871,6 @@ export class OverwolfService {
 		});
 	}
 
-	public openStore() {
-		overwolf.utils.openStore({
-			page: overwolf.utils.enums.eStorePage.SubscriptionPage,
-		});
-	}
-
 	public async getFromClipboard(): Promise<string> {
 		return new Promise<string>((resolve) => {
 			overwolf.utils.getFromClipboard((res) => {

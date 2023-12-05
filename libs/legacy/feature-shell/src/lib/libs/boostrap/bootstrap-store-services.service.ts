@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ArenaCardStatsService, ArenaClassStatsService } from '@firestone/arena/common';
 import { ConstructedPersonalDecksService } from '@firestone/constructed/common';
 import { DuelsConfigService, DuelsPersonalDecksService } from '@firestone/duels/general';
-import { PreferencesService } from '@firestone/shared/common/service';
+import { AppNavigationService, PreferencesService } from '@firestone/shared/common/service';
 import { AchievementsLiveProgressTrackingService } from '../../js/services/achievement/achievements-live-progress-tracking.service';
 import { ArenaDraftManagerService } from '../../js/services/arena/arena-draft-manager.service';
 import { BgsBoardHighlighterService } from '../../js/services/battlegrounds/bgs-board-highlighter.service';
@@ -81,6 +81,7 @@ export class BootstrapStoreServicesService {
 		private readonly init_OwLegacyPremiumService: OwLegacyPremiumService,
 		private readonly init_SubscriptionService: SubscriptionService,
 		private readonly init_PremiumDeeplinkService: PremiumDeeplinkService,
+		private readonly init_AppNavigationService: AppNavigationService,
 		// Other dependencies
 		private readonly decktrackerDisplayEventBus: OverlayDisplayService,
 	) {}

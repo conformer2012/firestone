@@ -9,6 +9,7 @@ import {
 	ViewEncapsulation,
 	ViewRef,
 } from '@angular/core';
+import { AppNavigationService } from '@firestone/shared/common/service';
 import { AnalyticsService, OverwolfService } from '@firestone/shared/framework/core';
 import { Observable, combineLatest } from 'rxjs';
 import { CurrentAppType } from '../models/mainwindow/current-app.type';
@@ -270,10 +271,11 @@ export class MenuSelectionComponent
 	constructor(
 		protected readonly store: AppUiStoreFacadeService,
 		protected readonly cdr: ChangeDetectorRef,
-		private ow: OverwolfService,
+		private readonly ow: OverwolfService,
 		private readonly i18n: LocalizationFacadeService,
 		private readonly analytics: AnalyticsService,
 		private readonly userService: UserService,
+		private readonly appNavigation: AppNavigationService,
 	) {
 		super(store, cdr);
 	}
@@ -322,8 +324,6 @@ export class MenuSelectionComponent
 
 	goPremium() {
 		this.analytics.trackEvent('subscription-click', { page: 'left-menu' });
-		this.stateUpdater.next(new ChangeVisibleApplicationEvent('premium'));
-
-		// this.ow.openStore();
+		this.appNavigation.goToPremium();
 	}
 }

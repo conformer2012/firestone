@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { AnalyticsService, OverwolfService } from '@firestone/shared/framework/core';
+import { AppNavigationService } from '@firestone/shared/common/service';
+import { AnalyticsService } from '@firestone/shared/framework/core';
 
 @Component({
 	selector: 'arena-option-info-premium',
@@ -21,11 +22,11 @@ import { AnalyticsService, OverwolfService } from '@firestone/shared/framework/c
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ArenaOptionInfoPremiumComponent {
-	constructor(private readonly ow: OverwolfService, private readonly analytics: AnalyticsService) {}
+	constructor(private readonly analytics: AnalyticsService, private readonly appNavigation: AppNavigationService) {}
 
 	showPremium() {
 		console.debug('show premium');
 		this.analytics.trackEvent('subscription-click', { page: 'arena-card-pick' });
-		this.ow.openStore();
+		this.appNavigation.goToPremium();
 	}
 }

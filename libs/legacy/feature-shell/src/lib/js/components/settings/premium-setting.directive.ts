@@ -5,12 +5,14 @@ import {
 	Directive,
 	ElementRef,
 	Host,
+	HostListener,
 	Input,
 	Optional,
 	Renderer2,
 	Self,
 	ViewContainerRef,
 } from '@angular/core';
+import { AppNavigationService } from '@firestone/shared/common/service';
 import { AppUiStoreFacadeService } from '../../services/ui-store/app-ui-store-facade.service';
 import { AbstractSubscriptionStoreComponent } from '../abstract-subscription-store.component';
 import { PreferenceToggleComponent } from './preference-toggle.component';
@@ -24,12 +26,15 @@ export class PremiumSettingDirective
 {
 	@Input() premiumSettingEnabled = true;
 
+	private isLocked: boolean;
+
 	constructor(
 		protected readonly store: AppUiStoreFacadeService,
 		protected readonly cdr: ChangeDetectorRef,
 		private readonly renderer: Renderer2,
 		private readonly el: ElementRef,
 		private readonly viewContainerRef: ViewContainerRef,
+		private readonly appNavigation: AppNavigationService,
 		// Need to find another solution when targeting another component
 		// Maybe see https://stackoverflow.com/questions/46014761/how-to-access-host-component-from-directive
 		// https://github.com/angular/angular/issues/8277#issuecomment-323678013
@@ -54,14 +59,23 @@ export class PremiumSettingDirective
 		this.renderer.addClass(this.el.nativeElement, 'premium-setting');
 	}
 
+	@HostListener('click')
+	onClick() {
+		if (this.isLocked) {
+			// TODO: will handle this later, as it has some usability concerns
+			// this.appNavigation.goToPremium();
+		}
+	}
+
 	private setPremium(value: boolean) {
 		console.debug('setting premium', value);
+		this.isLocked = !value;
 		this.renderer.removeClass(this.el.nativeElement, 'locked');
 		this.renderer.removeClass(this.el.nativeElement, 'unlocked');
 		this.renderer.addClass(this.el.nativeElement, value ? 'unlocked' : 'locked');
 		if (this.targetPreferenceToggle) {
 			console.debug('target', this.targetPreferenceToggle);
-			this.targetPreferenceToggle.isLocked = !value;
+			this.targetPreferenceToggle.isLocked = this.isLocked;
 		}
 	}
 }

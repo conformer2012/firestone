@@ -7,6 +7,7 @@ import {
 	OnDestroy,
 	Output,
 } from '@angular/core';
+import { AppNavigationService } from '@firestone/shared/common/service';
 import { AnalyticsService, OverwolfService } from '@firestone/shared/framework/core';
 import { FeatureFlags } from '../../services/feature-flags';
 import { AppUiStoreFacadeService } from '../../services/ui-store/app-ui-store-facade.service';
@@ -60,6 +61,7 @@ export class AdsComponent extends AbstractSubscriptionStoreComponent implements 
 		protected readonly cdr: ChangeDetectorRef,
 		private readonly ow: OverwolfService,
 		private readonly analytics: AnalyticsService,
+		private readonly appNavigation: AppNavigationService,
 	) {
 		super(store, cdr);
 	}
@@ -71,7 +73,7 @@ export class AdsComponent extends AbstractSubscriptionStoreComponent implements 
 
 	showSubscription() {
 		this.analytics.trackEvent('subscription-click', { page: 'banner' });
-		this.ow.openStore();
+		this.appNavigation.goToPremium();
 	}
 
 	showFeatures() {

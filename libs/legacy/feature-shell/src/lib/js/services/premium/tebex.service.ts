@@ -67,13 +67,14 @@ export class TebexService extends AbstractFacadeService<TebexService> {
 		const tebexPlans = await this.api.callGetApi<readonly TebexSub[]>(TEBEX_SUBSCRIPTIONS_URL, {
 			bearerToken: owToken,
 		});
-		// console.log('[ads] [tebex] sub status', tebexPlans);
+		console.debug('[ads] [tebex] sub status', tebexPlans);
 		if (!tebexPlans?.length) {
 			return null;
 		}
 
 		const packages = await this.packages$$.getValueWithInit();
 		const tebexPackage = packages?.find((p) => p.id === tebexPlans[0].packageId);
+		console.debug('[ads] [tebex] tebexPackage', tebexPackage);
 		if (!tebexPackage) {
 			console.warn('[ads] [tebex] could not find package for sub', packages, tebexPlans);
 			return null;
