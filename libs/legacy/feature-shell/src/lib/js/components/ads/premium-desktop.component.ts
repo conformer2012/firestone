@@ -1,5 +1,6 @@
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewRef } from '@angular/core';
 import { AbstractSubscriptionComponent, deepEqual } from '@firestone/shared/framework/common';
+import { AnalyticsService } from '@firestone/shared/framework/core';
 import { BehaviorSubject, Observable, combineLatest, distinctUntilChanged, shareReplay } from 'rxjs';
 import { LocalizationFacadeService } from '../../services/localization-facade.service';
 import { AdService } from '../../services/premium/ad.service';
@@ -90,6 +91,7 @@ export class PremiumDesktopComponent extends AbstractSubscriptionComponent imple
 		private readonly owLegacyPremium: OwLegacyPremiumService,
 		private readonly ads: AdService,
 		private readonly i18n: LocalizationFacadeService,
+		private readonly analytics: AnalyticsService,
 	) {
 		super(cdr);
 	}
@@ -131,6 +133,7 @@ export class PremiumDesktopComponent extends AbstractSubscriptionComponent imple
 	}
 
 	async onUnsubscribeRequest(planId: string) {
+		this.analytics.trackEvent('premium', { type: 'unsubscribe-request', planId: planId });
 		const model: UnsubscribeModel = {
 			planId: planId,
 			title: this.i18n.translateString('app.premium.unsubscribe-modal.title', {
@@ -145,6 +148,7 @@ export class PremiumDesktopComponent extends AbstractSubscriptionComponent imple
 	}
 
 	async onUnsubscribe(planId: string) {
+		this.analytics.trackEvent('premium', { type: 'unsubscribe', planId: planId });
 		const newModel: UnsubscribeModel = {
 			...this.showConfirmationPopUp$$.getValue(),
 			unsubscribing: true,
@@ -161,6 +165,7 @@ export class PremiumDesktopComponent extends AbstractSubscriptionComponent imple
 	}
 
 	onSubscribeRequest(planId: string) {
+		this.analytics.trackEvent('premium', { type: 'subscribe-request', planId: planId });
 		const model: PresubscribeModel = {
 			planId: planId,
 			title: this.i18n.translateString('app.premium.presubscribe-modal.title', {
@@ -172,6 +177,7 @@ export class PremiumDesktopComponent extends AbstractSubscriptionComponent imple
 	}
 
 	async onSubscribe(planId: string) {
+		this.analytics.trackEvent('premium', { type: 'subscribe', planId: planId });
 		const result = await this.subscriptionService.subscribe(planId);
 	}
 
