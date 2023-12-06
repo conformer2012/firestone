@@ -114,6 +114,7 @@ export interface CurrentPlan {
 	readonly active: boolean;
 	readonly cancelled: boolean;
 	readonly autoRenews: boolean;
+	readonly discordCode?: string;
 }
 
 export interface OwSub {

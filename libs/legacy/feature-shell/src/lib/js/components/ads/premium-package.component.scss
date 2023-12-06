@@ -71,6 +71,16 @@
 		color: #846c7e;
 		align-self: flex-start;
 		height: 2vh;
+
+		::ng-deep {
+			a {
+				color: var(--color-2);
+
+				&:hover {
+					color: var(--default-title-color);
+				}
+			}
+		}
 	}
 }
 
@@ -114,14 +124,48 @@
 	}
 }
 
-.plan-text {
+.plan-text,
+.activate-discord {
 	display: flex;
-	align-items: center;
-	justify-content: center;
+	flex-direction: column;
+	// align-items: center;
+	// justify-content: center;
 	padding: 20px;
 	padding-top: 0;
 	margin-bottom: 10px;
 	color: #ae96a8;
+
+	.main-text {
+		display: inline;
+	}
+
+	.code {
+		display: flex;
+		font-family: monospace;
+		background: rgba(255, 255, 255, 0.08);
+		padding: 6px 6px;
+		align-items: center;
+		justify-content: center;
+		width: fit-content;
+		align-self: center;
+		justify-self: center;
+		margin-top: 5px;
+
+		.icon {
+			display: inline-block;
+			width: 12px;
+			margin-right: 5px;
+			--icon-color-secondary: var(--color-2);
+			--icon-color: transparent;
+
+			&:hover {
+				--icon-color: var(--color-2);
+			}
+		}
+		.text {
+			display: inline;
+		}
+	}
 }
 
 .button {

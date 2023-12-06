@@ -91,6 +91,7 @@ export class TebexService extends AbstractFacadeService<TebexService> {
 			active: true,
 			autoRenews: true,
 			cancelled: false,
+			discordCode: tebexPlans[0].recurringPaymentId,
 		};
 	}
 }
