@@ -83,9 +83,6 @@ import { LocalizationFacadeService } from '../../../services/localization-facade
 						class="custom-text-input"
 						[showSearchIcon]="false"
 						[value]="customMatchInput$ | async"
-						[placeholder]="customInMatchTextPlaceholder"
-						[debounceTime]="500"
-						(fsModelUpdate)="onCustomMatchStringUpdated($event)"
 					>
 					</fs-text-input>
 				</div>
