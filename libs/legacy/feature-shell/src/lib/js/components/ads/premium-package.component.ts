@@ -1,4 +1,15 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	ChangeDetectorRef,
+	Component,
+	ElementRef,
+	EventEmitter,
+	Input,
+	Output,
+	Renderer2,
+	ViewRef,
+} from '@angular/core';
+import { sleep } from '@firestone/shared/framework/common';
 import { OverwolfService } from '@firestone/shared/framework/core';
 import { LocalizationFacadeService } from '../../services/localization-facade.service';
 import { PremiumPlanId } from '../../services/premium/subscription.service';
@@ -23,7 +34,11 @@ import { PremiumPlan } from './premium-desktop.component';
 			</div>
 			<div class="features">
 				<div class="title" [fsTranslate]="'app.premium.features.title'"></div>
-				<div class="feature" *ngFor="let feature of features" [ngClass]="{ disabled: !feature.enabled }">
+				<div
+					class="feature"
+					*ngFor="let feature of features"
+					[ngClass]="{ disabled: !feature.enabled, 'coming-soon': feature.comingSoon }"
+				>
 					<div class="icon" [inlineSVG]="feature.iconPath"></div>
 					<div class="text">{{ feature.text }}</div>
 				</div>
@@ -79,6 +94,7 @@ export class PremiumPackageComponent {
 			const featureValue = key === translation ? '' : translation;
 			return {
 				enabled: value.features[feature],
+				comingSoon: feature === 'discordRole',
 				iconPath: !!value.features[feature]
 					? `assets/svg/premium_checkmark_active.svg`
 					: `assets/svg/premium_checkmark_inactive.svg`,
@@ -110,6 +126,7 @@ export class PremiumPackageComponent {
 			this.activateDiscordText = this.i18n.translateString('app.premium.activate-discord-details');
 		}
 
+		this.setComingSoonText();
 		// this.helpTooltipUnsubscribe =
 		// 	this.id === 'legacy'
 		// 		? this.i18n.translateString(`app.premium.unsubscribe-button-tooltip-legacy`)
@@ -125,7 +142,7 @@ export class PremiumPackageComponent {
 	activeText: string;
 	price: string;
 	periodicity: string;
-	features: readonly { enabled: boolean; iconPath: string; text: string }[];
+	features: readonly { enabled: boolean; iconPath: string; text: string; comingSoon?: boolean }[];
 	planTextKey: string;
 	discordCode: string;
 	activateDiscordText: string;
@@ -134,7 +151,28 @@ export class PremiumPackageComponent {
 	helpTooltipSubscribe: string;
 	helpTooltipUnsubscribe: string;
 
-	constructor(private readonly i18n: LocalizationFacadeService, private readonly ow: OverwolfService) {}
+	constructor(
+		private readonly i18n: LocalizationFacadeService,
+		private readonly ow: OverwolfService,
+		private readonly renderer: Renderer2,
+		private readonly el: ElementRef,
+		private readonly cdr: ChangeDetectorRef,
+	) {}
+
+	// We need to wait until the CSS class has been set
+	async setComingSoonText() {
+		await sleep(1);
+		this.el.nativeElement
+			.querySelector('.coming-soon')
+			.style.setProperty(
+				'--coming-soon-text',
+				`"${this.i18n.translateString('app.collection.sets.coming-soon')}"`,
+			);
+		console.debug('set style', this.el.nativeElement);
+		if (!(this.cdr as ViewRef)?.destroyed) {
+			this.cdr.detectChanges();
+		}
+	}
 
 	onSubscribe(event: MouseEvent) {
 		event.stopPropagation();

@@ -1,5 +1,6 @@
 :host {
 	display: flex;
+	--coming-soon-text: 'hop';
 }
 
 .package {
@@ -102,6 +103,8 @@
 		align-items: center;
 		margin-bottom: 1.8vh;
 		padding-bottom: 1.8vh;
+		position: relative;
+		width: 100%;
 
 		.icon {
 			margin-right: 1vh;
@@ -119,6 +122,25 @@
 		&.disabled {
 			.text {
 				color: #51676d;
+			}
+		}
+
+		&.coming-soon {
+			--coming-soon-text: 'hop';
+			.text,
+			.icon {
+				opacity: 0.5;
+			}
+
+			&::after {
+				content: var(--coming-soon-text);
+				color: var(--default-title-color);
+				font-size: 1.7em;
+				font-weight: bold;
+				position: absolute;
+				transform: rotate(4deg);
+				width: 100%;
+				text-align: center;
 			}
 		}
 	}
