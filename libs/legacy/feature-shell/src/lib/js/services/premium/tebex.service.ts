@@ -9,8 +9,9 @@ import {
 } from '@firestone/shared/framework/core';
 import { CurrentPlan, PremiumPlanId } from './subscription.service';
 
-const TEBEX_PACKAGES_URL = `https://subscriptions-api.overwolf.com/packages/t9wt-043c3ea78537238deb522bbc918ec940272175c0`;
-const TEBEX_SUBSCRIPTIONS_URL = `https://subscriptions-api.overwolf.com/subscriptions/t9wt-043c3ea78537238deb522bbc918ec940272175c0`;
+const STORE_PUBLIC_TOKEN = 'tgwf-5d18aa446fdc2d90ad150052b94881af883d826f';
+const TEBEX_PACKAGES_URL = `https://subscriptions-api.overwolf.com/packages/${STORE_PUBLIC_TOKEN}`;
+const TEBEX_SUBSCRIPTIONS_URL = `https://subscriptions-api.overwolf.com/subscriptions/${STORE_PUBLIC_TOKEN}`;
 const TEBEX_SUB_DETAILS_URL = `https://x3dealpmov6br4o7vmtiy5peyq0wzbms.lambda-url.us-west-2.on.aws`;
 
 @Injectable()
@@ -50,7 +51,7 @@ export class TebexService extends AbstractFacadeService<TebexService> {
 			return;
 		}
 		this.ow.openUrlInDefaultBrowser(
-			`https://subscriptions-api.overwolf.com/checkout/t9wt-043c3ea78537238deb522bbc918ec940272175c0/${packageForPlan.id}`,
+			`https://subscriptions-api.overwolf.com/checkout/${STORE_PUBLIC_TOKEN}/${packageForPlan.id}`,
 		);
 	}
 

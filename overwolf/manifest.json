@@ -220,7 +220,7 @@
 			"googlesyndication": "http"
 		},
 		"url_protocol": {
-			"scheme": "firestoneapp"
+			"schemes": ["firestoneapp", "firestoneapp-tebex"]
 		},
 		"externally_connectable": {
 			"matches": [
