@@ -129,18 +129,18 @@
 			--coming-soon-text: 'hop';
 			.text,
 			.icon {
-				opacity: 0.5;
+				opacity: 0.2;
 			}
 
 			&::after {
 				content: var(--coming-soon-text);
 				color: var(--default-title-color);
-				font-size: 1.7em;
+				font-size: 0.8em;
 				font-weight: bold;
 				position: absolute;
-				transform: rotate(4deg);
 				width: 100%;
-				text-align: center;
+				text-align: end;
+				opacity: 0.9;
 			}
 		}
 	}
