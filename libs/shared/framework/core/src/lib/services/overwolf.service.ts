@@ -11,6 +11,8 @@ type Preferences = any;
 type TwitterUserInfo = any;
 type RedditUserInfo = any;
 
+export const APP_ID = 'lnknbakkpommmjjdnelmfbjjdbocfpnpbkijjnob';
+
 @Injectable()
 export class OverwolfService {
 	public static MAIN_WINDOW = 'MainWindow';

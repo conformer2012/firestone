@@ -8,7 +8,7 @@ import {
 } from '@firestone/shared/framework/core';
 import { combineLatest } from 'rxjs';
 import { AppUiStoreFacadeService } from '../ui-store/app-ui-store-facade.service';
-import { SubscriptionService } from './subscription.service';
+import { SubscriptionService, premiumPlanIds } from './subscription.service';
 
 @Injectable()
 export class AdService extends AbstractFacadeService<AdService> implements IAdsService {
@@ -41,8 +41,8 @@ export class AdService extends AbstractFacadeService<AdService> implements IAdsS
 
 		this.subscriptions.currentPlan$$.subscribe((plan) => {
 			console.log('[ads] current plan', plan);
-			const showAds = !['legacy', 'premium', 'premium+'].includes(plan?.id);
-			const hasPremiumSub = ['legacy', 'premium', 'premium+'].includes(plan?.id);
+			const showAds = !premiumPlanIds.includes(plan?.id);
+			const hasPremiumSub = premiumPlanIds.includes(plan?.id);
 			this.showAds$$.next(showAds);
 			this.hasPremiumSub$$.next(hasPremiumSub);
 		});
@@ -60,7 +60,7 @@ export class AdService extends AbstractFacadeService<AdService> implements IAdsS
 
 	private async shouldDisplayAdsInternal(): Promise<boolean> {
 		const plan = await this.subscriptions.currentPlan$$.getValueWithInit(undefined);
-		if (['legacy', 'premium', 'premium+'].includes(plan?.id)) {
+		if (premiumPlanIds.includes(plan?.id)) {
 			return false;
 		}
 		return true;

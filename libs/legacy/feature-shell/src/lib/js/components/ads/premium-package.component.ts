@@ -193,10 +193,10 @@ export class PremiumPackageComponent {
 	}
 
 	private buildSubscribeButtonKey(thisId: PremiumPlanId, activePlanId: PremiumPlanId): string {
-		if (thisId === 'premium' && activePlanId !== 'premium+') {
+		if (thisId === 'premium' && activePlanId != null && activePlanId !== 'epic') {
 			return 'app.premium.subscribe-button-upgrade';
 		}
-		if (thisId === 'premium+') {
+		if (thisId === 'epic') {
 			return 'app.premium.subscribe-button-epic';
 		}
 		return 'app.premium.subscribe-button';

@@ -17,7 +17,7 @@ export class PremiumDeeplinkService {
 
 			const param = decodeURIComponent(info.parameter);
 			console.debug('decoded param', param);
-			const scheme = 'firestoneapp:///?';
+			const scheme = 'firestoneapp-tebex:///?';
 			if (!param.startsWith(scheme)) {
 				return;
 			}

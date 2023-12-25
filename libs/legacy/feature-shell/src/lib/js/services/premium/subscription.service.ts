@@ -124,4 +124,5 @@ export interface OwSub {
 	readonly state: number;
 }
 
-export type PremiumPlanId = 'legacy' | 'friend' | 'premium' | 'premium+';
+export type PremiumPlanId = 'legacy' | 'friend' | 'premium' | 'epic';
+export const premiumPlanIds = ['legacy', 'premium', 'epic'] as PremiumPlanId[];

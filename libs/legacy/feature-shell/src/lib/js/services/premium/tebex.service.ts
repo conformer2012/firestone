@@ -1,17 +1,19 @@
 import { Injectable } from '@angular/core';
 import { SubscriberAwareBehaviorSubject } from '@firestone/shared/framework/common';
 import {
+	APP_ID,
 	AbstractFacadeService,
 	ApiRunner,
 	AppInjector,
 	OverwolfService,
 	WindowManagerService,
 } from '@firestone/shared/framework/core';
+import { UserService } from '../user.service';
 import { CurrentPlan, PremiumPlanId } from './subscription.service';
 
 const STORE_PUBLIC_TOKEN = 'tgwf-5d18aa446fdc2d90ad150052b94881af883d826f';
-const TEBEX_PACKAGES_URL = `https://subscriptions-api.overwolf.com/packages/${STORE_PUBLIC_TOKEN}`;
-const TEBEX_SUBSCRIPTIONS_URL = `https://subscriptions-api.overwolf.com/subscriptions/${STORE_PUBLIC_TOKEN}`;
+const TEBEX_PACKAGES_URL = `https://subscriptions-api.overwolf.com/packages/${STORE_PUBLIC_TOKEN}?extensionId=${APP_ID}`;
+const TEBEX_SUBSCRIPTIONS_URL = `https://subscriptions-api.overwolf.com/subscriptions/${STORE_PUBLIC_TOKEN}?extensionId=${APP_ID}`;
 const TEBEX_SUB_DETAILS_URL = `https://x3dealpmov6br4o7vmtiy5peyq0wzbms.lambda-url.us-west-2.on.aws`;
 
 @Injectable()
@@ -20,6 +22,7 @@ export class TebexService extends AbstractFacadeService<TebexService> {
 
 	private api: ApiRunner;
 	private ow: OverwolfService;
+	private user: UserService;
 
 	constructor(protected override readonly windowManager: WindowManagerService) {
 		super(windowManager, 'tebex', () => !!this.packages$$);
@@ -33,6 +36,7 @@ export class TebexService extends AbstractFacadeService<TebexService> {
 		this.packages$$ = new SubscriberAwareBehaviorSubject<readonly TebexPackage[] | null>(null);
 		this.api = AppInjector.get(ApiRunner);
 		this.ow = AppInjector.get(OverwolfService);
+		this.user = AppInjector.get(UserService);
 
 		this.packages$$.onFirstSubscribe(async () => {
 			console.log('[tebex] will load packages');
@@ -45,13 +49,15 @@ export class TebexService extends AbstractFacadeService<TebexService> {
 
 	public async subscribe(planId: string) {
 		const allPackages = await this.packages$$.getValueWithInit();
+		const currentUser = await this.user.getCurrentUser();
+		const userId = currentUser.userId;
 		const packageForPlan = allPackages?.find((p) => p.name.toLowerCase() === planId);
 		if (!packageForPlan) {
 			console.error('[tebex] could not find package for plan', planId);
 			return;
 		}
 		this.ow.openUrlInDefaultBrowser(
-			`https://subscriptions-api.overwolf.com/checkout/${STORE_PUBLIC_TOKEN}/${packageForPlan.id}`,
+			`https://subscriptions-api.overwolf.com/checkout/${STORE_PUBLIC_TOKEN}/${packageForPlan.id}?extensionId=${APP_ID}&userId=${userId}`,
 		);
 	}
 

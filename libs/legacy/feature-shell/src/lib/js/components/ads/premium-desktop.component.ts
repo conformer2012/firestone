@@ -195,10 +195,10 @@ const ALL_PLANS: readonly Partial<PremiumPlan>[] = [
 		},
 	},
 	{
-		id: 'premium+',
+		id: 'epic',
 		features: {
 			supportFirestone: true,
-			discordRole: 'premium+',
+			discordRole: 'epic',
 			removeAds: true,
 			premiumFeatures: true,
 			prioritySupport: true,
