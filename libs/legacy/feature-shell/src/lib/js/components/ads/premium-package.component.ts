@@ -44,7 +44,7 @@ import { PremiumPlan } from './premium-desktop.component';
 				</div>
 			</div>
 			<div class="plan-text" *ngIf="planTextKey" [fsTranslate]="planTextKey"></div>
-			<div class="activate-discord" *ngIf="discordCode">
+			<!-- <div class="activate-discord" *ngIf="discordCode">
 				<span class="main-text" [innerHTML]="activateDiscordText"></span>
 				<span
 					class="code"
@@ -54,7 +54,7 @@ import { PremiumPlan } from './premium-desktop.component';
 					<span class="icon" inlineSVG="assets/svg/copy.svg"></span>
 					<span class="text">/claim {{ discordCode }} </span>
 				</span>
-			</div>
+			</div> -->
 			<button
 				class="button subscribe-button"
 				*ngIf="!isReadonly && !isActive"

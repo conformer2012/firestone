@@ -50,14 +50,14 @@ export class TebexService extends AbstractFacadeService<TebexService> {
 	public async subscribe(planId: string) {
 		const allPackages = await this.packages$$.getValueWithInit();
 		const currentUser = await this.user.getCurrentUser();
-		const userId = currentUser.userId;
+		const userUuid = currentUser.uuid;
 		const packageForPlan = allPackages?.find((p) => p.name.toLowerCase() === planId);
 		if (!packageForPlan) {
 			console.error('[tebex] could not find package for plan', planId);
 			return;
 		}
 		this.ow.openUrlInDefaultBrowser(
-			`https://subscriptions-api.overwolf.com/checkout/${STORE_PUBLIC_TOKEN}/${packageForPlan.id}?extensionId=${APP_ID}&userId=${userId}`,
+			`https://subscriptions-api.overwolf.com/checkout/${STORE_PUBLIC_TOKEN}/${packageForPlan.id}?extensionId=${APP_ID}&userId=${userUuid}`,
 		);
 	}
 
