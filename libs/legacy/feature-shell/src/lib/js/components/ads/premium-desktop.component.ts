@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewRef } from '@angular/core';
 import { AbstractSubscriptionComponent, deepEqual } from '@firestone/shared/framework/common';
 import { AnalyticsService } from '@firestone/shared/framework/core';
-import { BehaviorSubject, Observable, combineLatest, distinctUntilChanged, shareReplay } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, distinctUntilChanged, shareReplay, takeUntil, tap } from 'rxjs';
 import { LocalizationFacadeService } from '../../services/localization-facade.service';
 import { AdService } from '../../services/premium/ad.service';
 import { OwLegacyPremiumService } from '../../services/premium/ow-legacy-premium.service';
@@ -15,7 +15,16 @@ import { TebexService } from '../../services/premium/tebex.service';
 		<div class="premium">
 			<div class="header">
 				<div class="title" [fsTranslate]="'app.premium.title'"></div>
+			</div>
+			<div class="plans-container">
 				<div class="annual-toggle" *ngIf="billingPeriodicity$ | async as billing">
+					<div
+						class="element monthly"
+						[ngClass]="{ selected: billing === 'monthly' }"
+						(click)="changePeriodicity('monthly')"
+					>
+						<div class="text" [fsTranslate]="'app.premium.billing.monthly'"></div>
+					</div>
 					<div
 						class="element yearly"
 						[ngClass]="{ selected: billing === 'yearly' }"
@@ -24,16 +33,7 @@ import { TebexService } from '../../services/premium/tebex.service';
 						<div class="text" [fsTranslate]="'app.premium.billing.yearly'"></div>
 						<div class="sub-text" [fsTranslate]="'app.premium.billing.yearly-subtext'"></div>
 					</div>
-					<div
-						class="element monthly"
-						[ngClass]="{ selected: billing === 'monthly' }"
-						(click)="changePeriodicity('monthly')"
-					>
-						<div class="text" [fsTranslate]="'app.premium.billing.monthly'"></div>
-					</div>
 				</div>
-			</div>
-			<div class="plans-container">
 				<div class="plans" [ngClass]="{ 'show-legacy': showLegacyPlan$ | async }">
 					<premium-package
 						class="plan"
@@ -126,22 +126,37 @@ export class PremiumDesktopComponent extends AbstractSubscriptionComponent imple
 		this.showConfirmationPopUp$ = this.showConfirmationPopUp$$.asObservable();
 		this.showPreSubscribeModal$ = this.showPreSubscribeModal$$.asObservable();
 		this.billingPeriodicity$ = this.billingPeriodicity$$.asObservable();
-		this.plans$ = combineLatest([this.tebex.packages$$, this.subscriptionService.currentPlan$$]).pipe(
+		this.plans$ = combineLatest([
+			this.tebex.packages$$,
+			this.billingPeriodicity$$,
+			this.subscriptionService.currentPlan$$,
+		]).pipe(
 			distinctUntilChanged((a, b) => deepEqual(a, b)),
-			shareReplay(1),
-			this.mapData(([packages, currentPlanSub]) => {
-				console.debug('building plans');
-				return ALL_PLANS.filter((plan) => currentPlanSub?.id === 'legacy' || plan.id !== 'legacy').map(
-					(plan) => {
-						const packageForPlan = packages?.find((p) => p.name.toLowerCase() === plan.id);
-						return {
+			this.mapData(([allPackages, billingPeriodicity, currentPlanSub]) => {
+				const plans = billingPeriodicity === 'monthly' ? ALL_PLANS : ALL_PLANS_YEARLY;
+				const packages =
+					billingPeriodicity === 'yearly'
+						? allPackages.filter((p) => p.name.includes('annual'))
+						: allPackages.filter((p) => !p.name.includes('annual'));
+				console.debug('building plans', plans, packages, billingPeriodicity, currentPlanSub);
+				return plans
+					.filter((plan) => currentPlanSub?.id === 'legacy' || plan.id !== 'legacy')
+					.map((plan) => {
+						const packageForPlan = packages?.find((p) => p.name.toLowerCase().includes(plan.id));
+						const rawPrice = packageForPlan?.total_price ?? plan.price;
+						const price = billingPeriodicity === 'yearly' ? (rawPrice / 12).toFixed(2) : rawPrice;
+						const result: PremiumPlan = {
 							...plan,
-							price: packageForPlan?.total_price ?? plan.price,
+							price: price,
 							activePlan: currentPlanSub,
+							periodicity: billingPeriodicity,
 						} as PremiumPlan;
-					},
-				);
+						return result;
+					});
 			}),
+			tap((plans) => console.debug('built plans', plans)),
+			shareReplay(1),
+			takeUntil(this.destroyed$),
 		);
 		this.showLegacyPlan$ = this.plans$.pipe(this.mapData((plans) => plans.some((plan) => plan.id === 'legacy')));
 		this.plans$.subscribe((plans) => {
@@ -221,6 +236,15 @@ const ALL_PLANS: readonly Partial<PremiumPlan>[] = [
 		},
 	},
 	{
+		id: 'premium',
+		features: {
+			supportFirestone: true,
+			discordRole: 'premium',
+			removeAds: true,
+			premiumFeatures: true,
+		},
+	},
+	{
 		id: 'epic',
 		features: {
 			supportFirestone: true,
@@ -228,15 +252,6 @@ const ALL_PLANS: readonly Partial<PremiumPlan>[] = [
 			removeAds: true,
 			premiumFeatures: true,
 			prioritySupport: true,
-		},
-	},
-	{
-		id: 'premium',
-		features: {
-			supportFirestone: true,
-			discordRole: 'premium',
-			removeAds: true,
-			premiumFeatures: true,
 		},
 	},
 	{
@@ -251,16 +266,49 @@ const ALL_PLANS: readonly Partial<PremiumPlan>[] = [
 		text: `app.premium.legacy-plan-text`,
 	},
 ];
+const ALL_PLANS_YEARLY: readonly Partial<PremiumPlan>[] = [
+	{
+		id: 'friend',
+		features: {
+			supportFirestone: true,
+			discordRole: 'friend',
+			yearlyDiscount: true,
+		},
+	},
+	{
+		id: 'premium',
+		features: {
+			supportFirestone: true,
+			discordRole: 'premium',
+			removeAds: true,
+			premiumFeatures: true,
+			yearlyDiscount: true,
+		},
+	},
+	{
+		id: 'epic',
+		features: {
+			supportFirestone: true,
+			discordRole: 'epic',
+			removeAds: true,
+			premiumFeatures: true,
+			prioritySupport: true,
+			yearlyDiscount: true,
+		},
+	},
+];
 
 export interface PremiumPlan {
 	readonly id: PremiumPlanId;
 	readonly price: number;
+	readonly periodicity: 'monthly' | 'yearly';
 	readonly features: {
 		readonly supportFirestone?: boolean;
 		readonly discordRole?: string;
 		readonly removeAds?: boolean;
 		readonly premiumFeatures?: boolean;
 		readonly prioritySupport?: boolean;
+		readonly yearlyDiscount?: boolean;
 	};
 	readonly isReadonly?: boolean;
 	readonly activePlan?: CurrentPlan;
