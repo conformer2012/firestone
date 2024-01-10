@@ -20,15 +20,28 @@
 		}
 	}
 
+	.plans-container {
+		min-width: 1100px;
+		max-width: 110vh;
+		width: 100%;
+		align-self: center;
+		display: flex;
+	}
+
 	.plans {
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
 		gap: 15px;
+		width: 100%;
 
 		&.show-legacy {
 			grid-template-columns: repeat(4, 1fr);
 		}
 	}
+}
+
+.annual-toggle {
+	display: flex;
 }
 
 .modal-container {

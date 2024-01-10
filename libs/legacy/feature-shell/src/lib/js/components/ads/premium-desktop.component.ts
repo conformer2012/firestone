@@ -15,15 +15,34 @@ import { TebexService } from '../../services/premium/tebex.service';
 		<div class="premium">
 			<div class="header">
 				<div class="title" [fsTranslate]="'app.premium.title'"></div>
+				<div class="annual-toggle" *ngIf="billingPeriodicity$ | async as billing">
+					<div
+						class="element yearly"
+						[ngClass]="{ selected: billing === 'yearly' }"
+						(click)="changePeriodicity('yearly')"
+					>
+						<div class="text" [fsTranslate]="'app.premium.billing.yearly'"></div>
+						<div class="sub-text" [fsTranslate]="'app.premium.billing.yearly-subtext'"></div>
+					</div>
+					<div
+						class="element monthly"
+						[ngClass]="{ selected: billing === 'monthly' }"
+						(click)="changePeriodicity('monthly')"
+					>
+						<div class="text" [fsTranslate]="'app.premium.billing.monthly'"></div>
+					</div>
+				</div>
 			</div>
-			<div class="plans" [ngClass]="{ 'show-legacy': showLegacyPlan$ | async }">
-				<premium-package
-					class="plan"
-					*ngFor="let plan of plans$ | async"
-					[plan]="plan"
-					(subscribe)="onSubscribeRequest($event)"
-					(unsubscribe)="onUnsubscribeRequest($event)"
-				></premium-package>
+			<div class="plans-container">
+				<div class="plans" [ngClass]="{ 'show-legacy': showLegacyPlan$ | async }">
+					<premium-package
+						class="plan"
+						*ngFor="let plan of plans$ | async"
+						[plan]="plan"
+						(subscribe)="onSubscribeRequest($event)"
+						(unsubscribe)="onUnsubscribeRequest($event)"
+					></premium-package>
+				</div>
 			</div>
 		</div>
 		<div class="modal-container confirmation-modal" *ngIf="showConfirmationPopUp$ | async as model">
@@ -80,9 +99,11 @@ export class PremiumDesktopComponent extends AbstractSubscriptionComponent imple
 	showLegacyPlan$: Observable<boolean>;
 	showConfirmationPopUp$: Observable<UnsubscribeModel>;
 	showPreSubscribeModal$: Observable<PresubscribeModel>;
+	billingPeriodicity$: Observable<'monthly' | 'yearly'>;
 
 	private showConfirmationPopUp$$ = new BehaviorSubject<UnsubscribeModel>(null);
 	private showPreSubscribeModal$$ = new BehaviorSubject<PresubscribeModel>(null);
+	private billingPeriodicity$$ = new BehaviorSubject<'monthly' | 'yearly'>('monthly');
 
 	constructor(
 		protected readonly cdr: ChangeDetectorRef,
@@ -104,6 +125,7 @@ export class PremiumDesktopComponent extends AbstractSubscriptionComponent imple
 
 		this.showConfirmationPopUp$ = this.showConfirmationPopUp$$.asObservable();
 		this.showPreSubscribeModal$ = this.showPreSubscribeModal$$.asObservable();
+		this.billingPeriodicity$ = this.billingPeriodicity$$.asObservable();
 		this.plans$ = combineLatest([this.tebex.packages$$, this.subscriptionService.currentPlan$$]).pipe(
 			distinctUntilChanged((a, b) => deepEqual(a, b)),
 			shareReplay(1),
@@ -183,6 +205,10 @@ export class PremiumDesktopComponent extends AbstractSubscriptionComponent imple
 
 	onCancelSubscribe() {
 		this.showPreSubscribeModal$$.next(null);
+	}
+
+	changePeriodicity(periodicity: 'monthly' | 'yearly') {
+		this.billingPeriodicity$$.next(periodicity);
 	}
 }
 
