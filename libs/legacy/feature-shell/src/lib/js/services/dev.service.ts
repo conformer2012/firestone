@@ -123,18 +123,19 @@ export class DevService {
 			events = null;
 			console.debug('processing done');
 		};
-		window['startDeckCycle'] = async (logName, repeats, deckString) => {
-			console.debug('starting new deck cycle', logName, repeats, deckString);
+		window['startDeckCycle'] = async (deckString) => {
+			console.debug('starting new deck cycle', deckString);
 			// eslint-disable-next-line @typescript-eslint/no-empty-function
 			console.debug = console.debug = (args) => {};
-			const logsLocation = `E:\\Source\\zerotoheroes\\firestone\\integration-tests\\events\\${logName}.json`;
+			const logsLocation = `G:\\Source\\firestone\\twitch-test-events\\events.json`;
 			const logContents = await this.ow.readTextFile(logsLocation);
 			const events = JSON.parse(logContents);
-			while (repeats > 0) {
-				console.warn('starting iteration', repeats);
-				await this.loadEvents(events, true, deckString);
+			let i = 0;
+			while (true) {
+				console.warn('starting iteration', i++);
+				await this.loadEvents(events, true, deckString, 100);
 				await sleep(10000);
-				repeats--;
+				// repeats--;
 			}
 			console.warn('iterations over');
 			// window['startDeckCycle'](logName, deckString);
@@ -228,7 +229,7 @@ export class DevService {
 					await sleep(timeBetweenEvents);
 				}
 			} else {
-				this.gameEvents.dispatchGameEvent({ ...event });
+				await this.gameEvents.dispatchGameEvent({ ...event });
 			}
 
 			if (deckstring && event.Type === 'LOCAL_PLAYER') {

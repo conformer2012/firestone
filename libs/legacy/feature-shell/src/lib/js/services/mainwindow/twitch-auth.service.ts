@@ -196,7 +196,7 @@ export class TwitchAuthService {
 			: null;
 
 		const result: TwitchEvent = {
-			scene: currentScene,
+			scene: SceneMode.GAMEPLAY,
 			deck: newDeckState,
 			bgs: newBgsState,
 			streamerPrefs: streamerPrefs,
