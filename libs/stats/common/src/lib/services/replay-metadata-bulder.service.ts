@@ -38,7 +38,7 @@ export class ReplayMetadataBuilderService {
 			user: {
 				userId: userId,
 				userName: userName,
-			},
+			} as any,
 			meta: {
 				application: `firestone-${version}`,
 				appVersion: version,
@@ -85,7 +85,7 @@ export class ReplayMetadataBuilderService {
 				playCoin: replay.playCoin,
 				totalDurationSeconds: totalDurationSeconds,
 				totalDurationTurns: totalDurationTurns,
-			},
+			} as any,
 			bgs: bgs as ReplayUploadMetadata['bgs'],
 			stats: {
 				matchAnalysis: this.matchAnalysisService.buildMatchStats(game),
@@ -146,7 +146,7 @@ export class ReplayMetadataBuilderService {
 			warbandStats: warbandStats,
 			postMatchStats: finalPostMatchStats,
 			isPerfectGame: isBgPerfectGame(postMatchStats, game.additionalResult, game.replay.mainPlayerId),
-		};
+		} as any;
 	}
 }
 
